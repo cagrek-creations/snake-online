@@ -75,9 +75,9 @@ class Controller {
         }
 
         void notifyMessage(const std::string &message) {
-            if(m_client->isConnected()) {
-                m_client->send(message.c_str(), message.size());
-            }
+            // if(m_client->isConnected()) {
+            //     m_client->send(message.c_str(), message.size());
+            // }
 
             for (auto observer : observers) {
                 observer->onMessage(message);

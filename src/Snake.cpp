@@ -186,6 +186,10 @@ void Snake::grow() {
     snakeBlocks.push_back(Snakeblock(m_renderer, -99, -99, m_snakeWidth-2, m_snakeHeight-2, m_textureSnakeHead, m_degrees, m_color));
 }
 
+void Snake::grow(int xPos, int yPos) {
+    snakeBlocks.push_back(Snakeblock(m_renderer, xPos, yPos, m_snakeWidth-2, m_snakeHeight-2, m_textureSnakeHead, m_degrees, m_color));
+}
+
 void Snake::updatePos(int xPos, int yPos) {
     
     int newPosX = xPos;

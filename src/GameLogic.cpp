@@ -38,6 +38,16 @@ void Game::handleEvent(std::vector<std::string> &event) {
         playerGrow();
     }
 
+    // SCORE_COLLECTED;0;berry;1;22;26
+    if (command == "SCORE_COLLECTED") {
+        int pid = stoi(event[1]);
+        int xPos = stoi(event[4]);
+        int yPos = stoi(event[5]);
+
+        removeScore(xPos, yPos);
+        // m_players[pid]->grow();
+    }
+
     if (command == "NEW_PLAYER") {
         addNewPlayer(event);
     }
@@ -70,12 +80,24 @@ void Game::updatePlayerPosition(std::vector<std::string> event) {
 }
 
 void Game::addNewPlayer(std::vector<std::string> event) {
+    int eventsize = event.size();
     int pid = stoi(event[1]);
     std::string color = event[3];
+
     int xPos = stoi(event[4]);
     int yPos = stoi(event[5]);
-    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), xPos, yPos, m_grid.get(), 40, 40, 3, m_gui->getColor(color));
+
+    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), xPos, yPos, m_grid.get(), 40, 40, 1, m_gui->getColor(color));
     m_players[pid] = std::move(newPlayer);
+
+    // Should always be true but just in case.
+    if (eventsize > 6) {
+        for (int i = 0; i <= eventsize; i += 2) {
+            int _xPos = stoi(event[i]) * m_grid->getGridPointWidth();
+            int _yPos = stoi(event[i + 1]) * m_grid->getGridPointHeight();
+            m_players[pid]->grow(_xPos, _yPos);
+        }
+    }
 }
 
 void Game::setupFromServer(std::vector<std::string> event) {
