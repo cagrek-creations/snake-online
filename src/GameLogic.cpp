@@ -29,23 +29,29 @@ void Game::handleEvent(std::vector<std::string> &event) {
         addScore(xPos, yPos);
     }
 
-    if (command == "PLAYER_SCORE_COLLECTED") {
+    if (command == "BERRY_POSITION") {
         int xPos = stoi(event[1]);
         int yPos = stoi(event[2]);
-        std::string command = "SCORE_COLLECTED;" + std::to_string(m_myPid) + ";0;0;" + std::to_string(xPos) + ";" + std::to_string(yPos); 
-        m_gameController->sendMessage(command);
-        removeScore(xPos, yPos);
-        playerGrow();
+        addScore(xPos, yPos);
     }
+
+    // if (command == "PLAYER_SCORE_COLLECTED") {
+    //     int xPos = stoi(event[1]);
+    //     int yPos = stoi(event[2]);
+    //     std::string command = "SCORE_COLLECTED;" + std::to_string(m_myPid) + ";0;0;" + std::to_string(xPos) + ";" + std::to_string(yPos); 
+    //     m_gameController->sendMessage(command);
+    //     removeScore(xPos, yPos);
+    //     playerGrow();
+    // }
 
     // SCORE_COLLECTED;0;berry;1;22;26
     if (command == "SCORE_COLLECTED") {
         int pid = stoi(event[1]);
-        int xPos = stoi(event[4]);
-        int yPos = stoi(event[5]);
+        int xPos = stoi(event[4]) * m_grid->getGridPointWidth();
+        int yPos = stoi(event[5]) * m_grid->getGridPointHeight();
 
         removeScore(xPos, yPos);
-        // m_players[pid]->grow();
+        m_players[pid]->grow();
     }
 
     if (command == "NEW_PLAYER") {
@@ -83,21 +89,21 @@ void Game::addNewPlayer(std::vector<std::string> event) {
     int eventsize = event.size();
     int pid = stoi(event[1]);
     std::string color = event[3];
+    int snakeSize = stoi(event[4]);
+    int xPos = stoi(event[5]) * m_grid->getGridPointWidth();
+    int yPos = stoi(event[6]) * m_grid->getGridPointHeight();
 
-    int xPos = stoi(event[4]);
-    int yPos = stoi(event[5]);
-
-    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), xPos, yPos, m_grid.get(), 40, 40, 1, m_gui->getColor(color));
+    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), xPos, yPos, m_grid.get(), 40, 40, snakeSize, m_gui->getColor(color));
     m_players[pid] = std::move(newPlayer);
 
     // Should always be true but just in case.
-    if (eventsize > 6) {
-        for (int i = 0; i <= eventsize; i += 2) {
-            int _xPos = stoi(event[i]) * m_grid->getGridPointWidth();
-            int _yPos = stoi(event[i + 1]) * m_grid->getGridPointHeight();
-            m_players[pid]->grow(_xPos, _yPos);
-        }
+    for (int i = 7; i <= eventsize - 1; i += 2) {
+        int _xPos = stoi(event[i]) * m_grid->getGridPointWidth();
+        int _yPos = stoi(event[i + 1]) * m_grid->getGridPointHeight();
+        std::cout << _xPos << ", " << _yPos << std::endl;
+        m_players[pid]->grow(_xPos, _yPos);
     }
+    
 }
 
 void Game::setupFromServer(std::vector<std::string> event) {
