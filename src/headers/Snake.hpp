@@ -52,7 +52,7 @@ class Snakeblock {
 class Snake : public Observer {
 
     public:
-        Snake(GUI *gui, int xPos, int yPos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color);
+        Snake(GUI *gui, int xPos, int yPos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color, int pid);
         Snake() {
             
         }
@@ -64,6 +64,7 @@ class Snake : public Observer {
         void updatePos(int xPos, int yPos);
 
         void grow();
+        void grow(int xPos, int yPos);
 
         int getPosX() {
             return snakeBlocks[0].getPosX();
@@ -105,6 +106,7 @@ class Snake : public Observer {
         int m_snakeHeight;
         int m_degrees;
         int m_newDegrees;
+        int m_pid;
 
         double m_limit;
 
