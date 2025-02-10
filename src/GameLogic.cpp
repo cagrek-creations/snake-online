@@ -93,7 +93,7 @@ void Game::addNewPlayer(std::vector<std::string> event) {
     int xPos = stoi(event[5]) * m_grid->getGridPointWidth();
     int yPos = stoi(event[6]) * m_grid->getGridPointHeight();
 
-    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), xPos, yPos, m_grid.get(), 40, 40, snakeSize, m_gui->getColor(color));
+    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), xPos, yPos, m_grid.get(), 40, 40, snakeSize, m_gui->getColor(color), m_players.size());
     m_players[pid] = std::move(newPlayer);
 
     // Should always be true but just in case.

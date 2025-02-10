@@ -1,6 +1,6 @@
 #include "Snake.hpp"
 
-Snake::Snake(GUI *gui, int xPos, int yPos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color) {
+Snake::Snake(GUI *gui, int xPos, int yPos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color, int pid) {
 
     this->m_renderer = gui->getRenderer();
     // this->m_snakeWidth = snakeWidth;
@@ -9,6 +9,7 @@ Snake::Snake(GUI *gui, int xPos, int yPos, Grid *grid, int snakeWidth, int snake
     this->m_grid = grid;
     this->m_gui = gui;
     m_color = color;
+    m_pid = pid;
 
     m_speedBoostRect.h = 15;
     m_speedBoostTimeLimit = 1500.0f;
@@ -57,7 +58,7 @@ void Snake::render() {
         }
     }
 
-    if (true) {
+    if (m_pid == 0) {
         // std::cout << "Drawing bar" << std::endl;
         renderBoostBar();
     }
