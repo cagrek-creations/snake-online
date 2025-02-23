@@ -89,7 +89,7 @@ class TcpCommunication {
                 return false;
             }
 
-            const size_t bufferSize = 1024; // You can adjust this based on your needs
+            const size_t bufferSize = 2048; // You can adjust this based on your needs
             char buffer[bufferSize];
 
             ssize_t bytesRead = ::recv(m_clientSocket, buffer, bufferSize - 1, 0);
@@ -105,7 +105,7 @@ class TcpCommunication {
 
             buffer[bytesRead] = '\0'; // Null-terminate the received data
             receivedData = buffer;    // Assign the buffer to the std::string
-            // std::cout << "Received data from server: " << receivedData << "\n";
+            std::cout << "Received data from server: " << receivedData << "\n";
             return true;
         }
 
