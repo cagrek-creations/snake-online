@@ -35,28 +35,31 @@ class TcpCommunication {
 
         void receiveData() {
             char responseBuffer[1024];
-            int resp = 1;
-            std::string input;
+            std::string inputBuffer;
             while (true) {
-                // Example: Receiving a response from the server
-                
-
-                // resp = receive(input);
-                input = receiveChar(1024);
-                if(input == "false") return;
-                std::cout << "Received new message!" << std::endl;
-
-                std::vector<std::string> parsedInput = splitString(input, ';');
-                for (auto x : parsedInput) std::cout << x << std::endl;
-
-                input = "";
-                if (resp == 0) {
+                ssize_t bytesRead = ::recv(m_clientSocket, responseBuffer, sizeof(responseBuffer) - 1, 0);
+                if (bytesRead <= 0) {
                     m_isConnected = false;
                     return;
                 }
-                
+        
+                responseBuffer[bytesRead] = '\0';
+                inputBuffer.append(responseBuffer, bytesRead);
+        
+                size_t pos;
+                while ((pos = inputBuffer.find('\n')) != std::string::npos) {
+                    std::string message = inputBuffer.substr(0, pos);
+                    inputBuffer.erase(0, pos + 1);
+        
+                    if (message == "false") return;
+                    std::cout << "Received new message: " << message << std::endl;
+        
+                    std::vector<std::string> parsedInput = splitString(message, ';');
+                    for (const auto& x : parsedInput) std::cout << x << std::endl;
+                }
             }
         }
+        
 
         std::string receiveChar(size_t bufferSize) {
             
