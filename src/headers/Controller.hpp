@@ -144,10 +144,15 @@ class Controller {
             while(m_client && m_client->isConnected()) {
                 std::string input = "";
                 m_client->receive(input);
-                std::cout << input << std::endl;
+                std::cout << "Receiving: " << input << std::endl;
                 // std::vector<std::string> parsedInput = splitString(input, ';');
 
-                handleInput(input);
+                // In cases of multiple messages being received in the same buffer at once.
+                std::vector<std::string> messages = splitString(input, '\n');
+
+                for (auto m : messages) {
+                    handleInput(m);
+                }
             }
         }
 
