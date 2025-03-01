@@ -81,7 +81,7 @@ void Game::updatePlayerPosition(std::vector<std::string> event) {
     int xPos = stoi(event[2]);
     int yPos = stoi(event[3]);
     if (m_players[pid]) {
-        m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth(), yPos * m_grid->getGridPointHeight());
+        m_players[pid]->updatePos(xPos * m_grid->getGridPointGranularityX(), yPos * m_grid->getGridPointGranularityY());
     }
 }
 
@@ -90,8 +90,8 @@ void Game::addNewPlayer(std::vector<std::string> event) {
     int pid = stoi(event[1]);
     std::string color = event[3];
     int snakeSize = stoi(event[4]);
-    int xPos = stoi(event[5]) * m_grid->getGridPointWidth();
-    int yPos = stoi(event[6]) * m_grid->getGridPointHeight();
+    int xPos = stoi(event[5]) * m_grid->getGridPointGranularityX();
+    int yPos = stoi(event[6]) * m_grid->getGridPointGranularityY();
 
     std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), xPos, yPos, m_grid.get(), 40, 40, snakeSize, m_gui->getColor(color), m_players.size());
     m_players[pid] = std::move(newPlayer);

@@ -63,6 +63,14 @@ int Grid::getHeight() {
     return m_gridHeight;
 }
 
+int Grid::getGridPointGranularityX() {
+    return m_granularityX;
+}
+
+int Grid::getGridPointGranularityY() {
+    return m_granularityY;
+}
+
 Gridpoint *Grid::getPoint(int x, int y) {
     for (auto &gp : m_gridpoints) {
         if(gp.contains(x, y)) return &gp;

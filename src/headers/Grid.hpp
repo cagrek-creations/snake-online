@@ -67,6 +67,9 @@ class Grid {
         Gridpoint *getPoint(int x, int y);
         bool isPointEmpty(Gridpoint point);
 
+        int getGridPointGranularityX();
+        int getGridPointGranularityY();
+
     private: 
         SDL_Renderer *m_renderer;
 
