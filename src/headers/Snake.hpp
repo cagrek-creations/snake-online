@@ -9,6 +9,7 @@
 #include "Grid.hpp"
 #include "Gui.hpp"
 #include "Observer.hpp"
+#include "Effect.hpp"
 
 struct direction {
     int x;
@@ -100,6 +101,13 @@ class Snake : public Observer {
             }
         }
 
+        // Effects
+        void updateEffects(float deltaTime);
+        void addEffect(std::unique_ptr<Effect> effect);
+
+        void invertControls();
+
+
     private:
         int m_snakeSize;
         int m_snakeWidth;
@@ -131,6 +139,11 @@ class Snake : public Observer {
         void renderBoostBar();
 
         std::function<void(const std::string&)> signalCallback;
+
+        // Effects
+        bool m_invertControls = false;
+
+        std::vector<std::unique_ptr<Effect>> m_effects;
 
 };
 
