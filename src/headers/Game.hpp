@@ -105,7 +105,7 @@ class Game : public Observer{
         void addNewPlayer(std::vector<std::string> event);
         void updatePlayerPosition(std::vector<std::string> event);
 
-        void addScore(int xPos, int yPos);
-        void removeScore(int xPos, int yPos);
+        void addScore(Vector2 pos);
+        void removeScore(Vector2 pos);
         void playerGrow();
 };
