@@ -49,3 +49,4 @@ src/SDL2
 # Python files
 *.py
 debug/*
+src/headers/cpp-lib/*

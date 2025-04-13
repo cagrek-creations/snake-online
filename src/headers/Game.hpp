@@ -12,6 +12,7 @@
 #include "Gui.hpp"
 #include "Snake.hpp"
 #include "Controller.hpp"
+#include "Vector2.hpp"
 
 #define WINDOW_FULLSCREEN 0
 

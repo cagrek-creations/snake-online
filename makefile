@@ -27,10 +27,19 @@ ODIR = ./obj
 _OBJ =  Gui.o Snake.o Grid.o main.o Menu.o Score.o Soundmanager.o comm_util.o Game.o GameLogic.o Controller.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
+.PHONY: all install 
+
 all: snake
 
+install::
+	mkdir -p external
+	mkdir -p src/headers/cpp-lib
+	git clone https://github.com/cagrek-creations/cpp-lib external/cpp-lib
+	cp external/cpp-lib/src/* src/headers/cpp-lib
+	rm -rf external
+
 ./obj/%.o: ./src/%.cpp $(DEPS)
-	$(CC) -c $(OPTIMIZATION) -o $@ $< -I./src/headers
+	$(CC) -c $(OPTIMIZATION) -o $@ $< -I./src/headers -I./src/headers/cpp-lib
 
 snake: $(OBJ)
 	$(CC) $(OPTIMIZATION) -o ./debug/$@ $^ $(CFLAGS) 
