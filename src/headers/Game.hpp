@@ -14,6 +14,8 @@
 #include "Controller.hpp"
 #include "Vector2.hpp"
 
+#include "SnakeEffects.hpp"
+
 #define WINDOW_FULLSCREEN 0
 
 #define WINDOW_WIDTH 800

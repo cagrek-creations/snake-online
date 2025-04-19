@@ -85,28 +85,28 @@ void Snake::onEvent(const SDL_Event& event) {
 
     if(key_state[SDL_SCANCODE_S] || key_state[SDL_SCANCODE_DOWN]) {
         if((m_snakeDirection != DIR_UP) && (m_snakeDirection != DIR_DOWN)) {
-            m_newSnakeDirection = DIR_DOWN;
+            m_newSnakeDirection = m_invertControls ? DIR_UP : DIR_DOWN;
             m_newDegrees = 90;
         }
     }
 
     if(key_state[SDL_SCANCODE_W] || key_state[SDL_SCANCODE_UP]) {
         if((m_snakeDirection != DIR_DOWN) && (m_snakeDirection != DIR_UP)) {
-            m_newSnakeDirection = DIR_UP;
+            m_newSnakeDirection = m_invertControls ? DIR_DOWN : DIR_UP;
             m_newDegrees = -90;
         }
     }
 
     if(key_state[SDL_SCANCODE_D] || key_state[SDL_SCANCODE_RIGHT]) {
         if((m_snakeDirection != DIR_LEFT) && (m_snakeDirection != DIR_RIGHT)) {
-            m_newSnakeDirection = DIR_RIGHT;
+            m_newSnakeDirection = m_invertControls ? DIR_LEFT : DIR_RIGHT;
             m_newDegrees = 0;
         }
     }
 
     if(key_state[SDL_SCANCODE_A] || key_state[SDL_SCANCODE_LEFT]) {
         if((m_snakeDirection != DIR_RIGHT) && (m_snakeDirection != DIR_LEFT)) {
-            m_newSnakeDirection = DIR_LEFT;
+            m_newSnakeDirection = m_invertControls ? DIR_RIGHT : DIR_LEFT;
             m_newDegrees = 180;
         }
     }
@@ -121,8 +121,26 @@ void Snake::onEvent(const SDL_Event& event) {
     }
 }
 
+void Snake::addEffect(std::unique_ptr<Effect> effect) {
+    m_effects.emplace_back(std::move(effect));
+}
+
+void Snake::updateEffects(float deltaTime) {
+    for (auto it = m_effects.begin(); it != m_effects.end(); ) {
+        (*it)->update(deltaTime);
+
+        if (!(*it)->isActive()) {
+            it = m_effects.erase(it); // Removes and deletes inactive effect
+        } else {
+            ++it;
+        }
+    }
+}
+
 void Snake::update(double deltaTime, float limit) {
     m_limit += deltaTime;
+
+    updateEffects(deltaTime);
 
     // TODO: move to own function
     if (m_speedBoostTimeout > 0) m_speedBoostTimeout -= deltaTime;
@@ -184,6 +202,10 @@ void Snake::grow() {
 
 void Snake::grow(int xPos, int yPos) {
     snakeBlocks.push_back(Snakeblock(m_renderer, xPos, yPos, m_snakeWidth-2, m_snakeHeight-2, m_textureSnakeHead, m_degrees, m_color));
+}
+
+void Snake::invertControls() {
+    m_invertControls = !m_invertControls;
 }
 
 void Snake::updatePos(int xPos, int yPos) {
