@@ -10,6 +10,7 @@
 #include "Gui.hpp"
 #include "Observer.hpp"
 #include "Effect.hpp"
+#include "Vector2.hpp"
 
 struct direction {
     int x;
@@ -30,6 +31,8 @@ class Snakeblock {
         void render(); 
         void renderHead();
 
+        Vector2 getPos();
+
         int getPosX();
         int getPosY();
 
@@ -37,6 +40,7 @@ class Snakeblock {
         int m_snakeBlockWidth;
         int m_snakeBlockheight;
 
+        Vector2 m_snakeBlockPos;
         int m_snakeBlockXpos;
         int m_snakeBlockYpos;
         int m_degrees;
@@ -67,13 +71,17 @@ class Snake : public Observer {
         void grow();
         void grow(int xPos, int yPos);
 
-        int getPosX() {
-            return snakeBlocks[0].getPosX();
+        Vector2 getPos() {
+            return snakeBlocks[0].getPos();
         }
 
-        int getPosY() {
-            return snakeBlocks[0].getPosY();
-        }
+        // int getPosX() {
+        //     return snakeBlocks[0].getPosX();
+        // }
+
+        // int getPosY() {
+        //     return snakeBlocks[0].getPosY();
+        // }
 
         int getSize() {
             return snakeBlocks.size();
@@ -85,7 +93,7 @@ class Snake : public Observer {
 
         void getPositions() {
             for (auto &sb : snakeBlocks) {
-                std::cout << sb.getPosX() << ", " << sb.getPosY() << std::endl; 
+                std::cout << sb.getPos().x << ", " << sb.getPos().y << std::endl; 
             }
         }
 

@@ -5,6 +5,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "Vector2.hpp"
+
 class Gridpoint {
 
     public: 
@@ -29,6 +31,8 @@ class Gridpoint {
         void removeScore();
 
         bool hasScore();
+
+        Vector2 getGridPointPos();
 
         int getGridPointX();
         int getGridPointY();

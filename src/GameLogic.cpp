@@ -26,13 +26,13 @@ void Game::handleEvent(std::vector<std::string> &event) {
     if (command == "ADD_SCORE") {
         int xPos = stoi(event[3]);
         int yPos = stoi(event[4]);
-        addScore(xPos, yPos);
+        addScore(Vector2(xPos, yPos));
     }
 
     if (command == "BERRY_POSITION") {
         int xPos = stoi(event[1]);
         int yPos = stoi(event[2]);
-        addScore(xPos, yPos);
+        addScore(Vector2(xPos, yPos));
     }
 
     // if (command == "PLAYER_SCORE_COLLECTED") {
@@ -50,7 +50,7 @@ void Game::handleEvent(std::vector<std::string> &event) {
         int xPos = stoi(event[4]) * m_grid->getGridPointWidth();
         int yPos = stoi(event[5]) * m_grid->getGridPointHeight();
 
-        removeScore(xPos, yPos);
+        removeScore(Vector2(xPos, yPos));
         m_players[pid]->grow();
         m_players[pid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[pid], 5000.0f));
     }
@@ -118,8 +118,8 @@ void Game::setupFromServer(std::vector<std::string> event) {
     createPlayer(6, stoi(event[2]), stoi(event[3]));
 }
 
-void Game::removeScore(int xPos, int yPos) {
-    Gridpoint *gp = m_grid->getPoint(xPos + 1, yPos + 1);
+void Game::removeScore(Vector2 pos) {
+    Gridpoint *gp = m_grid->getPoint(pos.x + 1, pos.y + 1);
     if(!(gp == nullptr)) {
         gp->removeScore();
         std::string key = std::to_string(gp->getGridPointX()) + "," + std::to_string(gp->getGridPointY());
@@ -128,15 +128,11 @@ void Game::removeScore(int xPos, int yPos) {
     }
 }
 
-void Game::playerGrow() {
-    m_players[m_myPid]->grow();
-}
-
-void Game::addScore(int xPos, int yPos) {
+void Game::addScore(Vector2 pos) {
     std::shared_ptr<Score> score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth());
-    xPos = ((xPos) * (m_grid->getGridPointWidth())) + 1;
-    yPos = ((yPos) * (m_grid->getGridPointHeight())) + 1;
-    Gridpoint *gp = m_grid->getPoint(xPos, yPos);
+    pos.x = ((pos.x) * (m_grid->getGridPointWidth())) + 1;
+    pos.y = ((pos.y) * (m_grid->getGridPointHeight())) + 1;
+    Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
     if(!(gp == nullptr)) {
         gp->setScore();
         score->move(gp->getGridPointX(), gp->getGridPointY());
@@ -144,4 +140,8 @@ void Game::addScore(int xPos, int yPos) {
         std::cout << "key: " << key << std::endl;
         m_scores[key] = (score);
     }
+}
+
+void Game::playerGrow() {
+    m_players[m_myPid]->grow();
 }
