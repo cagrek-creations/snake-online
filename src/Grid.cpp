@@ -151,6 +151,10 @@ bool Gridpoint::isEmpty() {
     return m_gridPointIsEmpty;
 }
 
+Vector2 Gridpoint::getGridPointPos() {
+    return Vector2(m_gridPointX, m_gridPointY);
+}
+
 int Gridpoint::getGridPointX() {
     return m_gridPointX;
 }
