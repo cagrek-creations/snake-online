@@ -43,7 +43,7 @@ void fpsCap(Uint32 starting_tick) {
 }
 
 void updateSnake(Snake &s, double deltaTime, double limit) {
-    s.update(deltaTime, limit);
+    s.update(deltaTime);
 }
 
 std::pair<int, int> getRandomCoordinate() {

@@ -1,6 +1,6 @@
 #include "Snake.hpp"
 
-Snake::Snake(GUI *gui, int xPos, int yPos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color, int pid) {
+Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color, int pid, int speed) {
 
     this->m_renderer = gui->getRenderer();
     // this->m_snakeWidth = snakeWidth;
@@ -10,6 +10,8 @@ Snake::Snake(GUI *gui, int xPos, int yPos, Grid *grid, int snakeWidth, int snake
     this->m_gui = gui;
     m_color = color;
     m_pid = pid;
+    m_speed = speed;
+    m_speedLimit = 100.0f * m_speed;
 
     m_speedBoostRect.h = 15;
     m_speedBoostTimeLimit = 1500.0f;
@@ -27,9 +29,9 @@ Snake::Snake(GUI *gui, int xPos, int yPos, Grid *grid, int snakeWidth, int snake
     // m_textureSnakeHead = SDL_CreateTextureFromSurface(m_renderer, snakeHead);
 
     // SDL_FreeSurface(snakeHead);
-    Gridpoint *gp = m_grid->getPoint(xPos, yPos);
+    Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
     if(gp == nullptr) std::cerr << "Failed finding gridpoint";
-    Vector2 gridPos = Vector2(xPos, yPos);
+    Vector2 gridPos = Vector2(pos.x, pos.y);
     if(gp != nullptr) {
         Vector2 gridPos = gp->getGridPointPos();
     }
@@ -121,6 +123,7 @@ void Snake::onEvent(const SDL_Event& event) {
     }
 }
 
+// TODO: These could be moved to a separate src-file as well (SnakeEffects.cpp).
 void Snake::addEffect(std::unique_ptr<Effect> effect) {
     m_effects.emplace_back(std::move(effect));
 }
@@ -137,8 +140,9 @@ void Snake::updateEffects(float deltaTime) {
     }
 }
 
-void Snake::update(double deltaTime, float limit) {
+void Snake::update(double deltaTime) {
     m_limit += deltaTime;
+    double _speedLimit = m_speedLimit;
 
     updateEffects(deltaTime);
 
@@ -154,14 +158,15 @@ void Snake::update(double deltaTime, float limit) {
     // std::cout << m_speedBoostTime << std::endl;
     // std::cout << m_speedBoost << std::endl;
     // std::cout << m_speedBoostTimeout << std::endl;
+
     if (m_speedBoost && m_speedBoostTimeout < 0.1f && m_speedBoostTime > 0.1f) {
-        limit *= 0.5;
+        _speedLimit *= 0.75; // Modifier to base speed. Effects can also modify the value pre-update.
         m_speedBoostTime -= deltaTime;
     } else if (m_speedBoostTimeout < 0.1f && m_speedBoostTime < m_speedBoostTimeLimit) {
         m_speedBoostTime += deltaTime;
     }
-
-    if(m_limit < limit) return;
+    // std::cout << _speedLimit << std::endl;
+    if(m_limit < _speedLimit) return;
     m_limit = 0;
     m_snakeDirection = m_newSnakeDirection;
     m_degrees = m_newDegrees;
@@ -204,8 +209,21 @@ void Snake::grow(int xPos, int yPos) {
     snakeBlocks.push_back(Snakeblock(m_renderer, xPos, yPos, m_snakeWidth-2, m_snakeHeight-2, m_textureSnakeHead, m_degrees, m_color));
 }
 
+// TODO: These could be moved to a separate src-file as well (SnakeEffects.cpp).
 void Snake::invertControls() {
     m_invertControls = !m_invertControls;
+}
+
+void Snake::applySpeedBoost() {
+    m_speedLimit *= 0.5;
+}
+
+void Snake::removeSpeedBoost() {
+    m_speedLimit *= 2;
+}
+
+void Snake::setSpeed(int speed) {
+    m_speedLimit = m_speedLimitBase / speed;
 }
 
 void Snake::updatePos(int xPos, int yPos) {

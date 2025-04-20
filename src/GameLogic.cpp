@@ -52,6 +52,7 @@ void Game::handleEvent(std::vector<std::string> &event) {
 
         removeScore(Vector2(xPos, yPos));
         m_players[pid]->grow();
+        // m_players[pid]->addEffect(std::make_unique<SpeedBoostEffect>(*m_players[pid], 10000.0f));
         // m_players[pid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[pid], 5000.0f));
     }
 
@@ -93,8 +94,9 @@ void Game::addNewPlayer(std::vector<std::string> event) {
     int snakeSize = stoi(event[4]);
     int xPos = stoi(event[5]) * m_grid->getGridPointGranularityX();
     int yPos = stoi(event[6]) * m_grid->getGridPointGranularityY();
+    Vector2 pos = Vector2(xPos, yPos);
 
-    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), xPos, yPos, m_grid.get(), 40, 40, snakeSize, m_gui->getColor(color), m_players.size());
+    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), pos, m_grid.get(), 40, 40, snakeSize, m_gui->getColor(color), m_players.size(), 1);
     m_players[pid] = std::move(newPlayer);
 
     // Should always be true but just in case.
