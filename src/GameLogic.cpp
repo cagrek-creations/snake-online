@@ -52,7 +52,7 @@ void Game::handleEvent(std::vector<std::string> &event) {
 
         removeScore(Vector2(xPos, yPos));
         m_players[pid]->grow();
-        m_players[pid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[pid], 5000.0f));
+        // m_players[pid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[pid], 5000.0f));
     }
 
     if (command == "NEW_PLAYER") {
