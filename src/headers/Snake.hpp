@@ -57,16 +57,18 @@ class Snakeblock {
 class Snake : public Observer {
 
     public:
-        Snake(GUI *gui, int xPos, int yPos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color, int pid);
+        Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color, int pid, int speed);
         Snake() {
             
         }
         ~Snake();
 
         void render();
-        void update(double deltaTime, float limit);
+        void update(double deltaTime);
 
         void updatePos(int xPos, int yPos);
+
+        void setSpeed(int speed);
 
         void grow();
         void grow(int xPos, int yPos);
@@ -123,8 +125,11 @@ class Snake : public Observer {
         int m_degrees;
         int m_newDegrees;
         int m_pid;
+        int m_speed;
 
         double m_limit;
+        double m_speedLimit;
+        const double m_speedLimitBase = 100.0f;
 
         bool m_speedBoost = false;
         float m_speedBoostTime;
