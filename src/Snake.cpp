@@ -123,6 +123,7 @@ void Snake::onEvent(const SDL_Event& event) {
     }
 }
 
+// TODO: These could be moved to a separate src-file as well (SnakeEffects.cpp).
 void Snake::addEffect(std::unique_ptr<Effect> effect) {
     m_effects.emplace_back(std::move(effect));
 }
@@ -208,12 +209,21 @@ void Snake::grow(int xPos, int yPos) {
     snakeBlocks.push_back(Snakeblock(m_renderer, xPos, yPos, m_snakeWidth-2, m_snakeHeight-2, m_textureSnakeHead, m_degrees, m_color));
 }
 
+// TODO: These could be moved to a separate src-file as well (SnakeEffects.cpp).
 void Snake::invertControls() {
     m_invertControls = !m_invertControls;
 }
 
+void Snake::applySpeedBoost() {
+    m_speedLimit *= 0.5;
+}
+
+void Snake::removeSpeedBoost() {
+    m_speedLimit *= 2;
+}
+
 void Snake::setSpeed(int speed) {
-    m_speedLimit = m_speedLimitBase * speed;
+    m_speedLimit = m_speedLimitBase / speed;
 }
 
 void Snake::updatePos(int xPos, int yPos) {

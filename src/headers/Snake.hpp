@@ -115,6 +115,8 @@ class Snake : public Observer {
         void updateEffects(float deltaTime);
         void addEffect(std::unique_ptr<Effect> effect);
 
+        void applySpeedBoost();
+        void removeSpeedBoost();
         void invertControls();
 
 
