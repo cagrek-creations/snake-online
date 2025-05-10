@@ -27,7 +27,7 @@ void Game::update(double deltaTime) {
 
     if (m_state == GAME_PLAY) {
         auto player = m_players[m_myPid];
-        player->update(m_deltaTime, 100.f);
+        player->update(m_deltaTime);
         Vector2 pos = player->getPos();
         Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
 
@@ -63,7 +63,8 @@ void Game::createGrid(int width, int height) {
 }
 
 void Game::createPlayer() {
-    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y, m_grid.get(), 40, 40, 3, color::GREEN, m_players.size());
+    Vector2 initialPos = Vector2(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y);
+    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 40, 40, 3, color::GREEN, m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);
 }
@@ -71,7 +72,8 @@ void Game::createPlayer() {
 void Game::createPlayer(int size, int xPos, int yPos) {
     int xPosGrid = ((xPos) * (m_grid->getGridPointWidth()));
     int yPosGrid = ((yPos) * (m_grid->getGridPointHeight()));
-    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), xPosGrid, yPosGrid, m_grid.get(), 40, 40, size, m_gui->getColor(m_playerColor), m_players.size());
+    Vector2 initialPos = Vector2(xPosGrid, yPosGrid);
+    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 40, 40, size, m_gui->getColor(m_playerColor), m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);
 }
