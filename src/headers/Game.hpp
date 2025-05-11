@@ -50,7 +50,7 @@ class Game : public Observer{
         void createGrid(int width, int height); 
         void createPlayer();
         void createPlayer(int size, int xPos, int yPos);
-        void addPlayer();
+
 
         void update(double deltaTime);
         void render();
@@ -105,6 +105,7 @@ class Game : public Observer{
         // Game logic
         void setupFromServer(std::vector<std::string> event);
         void addNewPlayer(std::vector<std::string> event);
+        void addPlayer(std::vector<std::string> event);
         void updatePlayerPosition(std::vector<std::string> event);
 
         void addScore(Vector2 pos);

@@ -61,7 +61,7 @@ void Game::handleEvent(std::vector<std::string> &event) {
     }
 
     if (command == "PLAYER_INFO") {
-        addNewPlayer(event);
+        addPlayer(event);
     }
 
     if (command == "NEW_PLAYER_JOINED") {
@@ -83,7 +83,7 @@ void Game::updatePlayerPosition(std::vector<std::string> event) {
     int xPos = stoi(event[2]);
     int yPos = stoi(event[3]);
     if (m_players[pid]) {
-        m_players[pid]->updatePos(xPos * m_grid->getGridPointGranularityX(), yPos * m_grid->getGridPointGranularityY());
+        m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth(), yPos * m_grid->getGridPointHeight());
     }
 }
 
@@ -92,21 +92,32 @@ void Game::addNewPlayer(std::vector<std::string> event) {
     int pid = stoi(event[1]);
     std::string color = event[3];
     int snakeSize = stoi(event[4]);
-    int xPos = stoi(event[5]) * m_grid->getGridPointGranularityX();
-    int yPos = stoi(event[6]) * m_grid->getGridPointGranularityY();
+    int xPos = stoi(event[5]) * m_grid->getGridPointWidth();
+    int yPos = stoi(event[6]) * m_grid->getGridPointHeight();
     Vector2 pos = Vector2(xPos, yPos);
 
     std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), pos, m_grid.get(), 40, 40, snakeSize, m_gui->getColor(color), m_players.size(), 1);
     m_players[pid] = std::move(newPlayer);
+}
+
+void Game::addPlayer(std::vector<std::string> event) {
+    int eventsize = event.size();
+    int pid = stoi(event[1]);
+    std::string color = event[3];
+    int xPos = stoi(event[4]) * m_grid->getGridPointWidth();
+    int yPos = stoi(event[5]) * m_grid->getGridPointHeight();
+    Vector2 pos = Vector2(xPos, yPos);
+
+    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), pos, m_grid.get(), 40, 40, 1, m_gui->getColor(color), m_players.size(), 1);
+    m_players[pid] = std::move(newPlayer);
 
     // Should always be true but just in case.
-    for (int i = 7; i <= eventsize - 1; i += 2) {
+    for (int i = 6; i <= eventsize - 1; i += 2) {
         int _xPos = stoi(event[i]) * m_grid->getGridPointWidth();
         int _yPos = stoi(event[i + 1]) * m_grid->getGridPointHeight();
         std::cout << _xPos << ", " << _yPos << std::endl;
         m_players[pid]->grow(_xPos, _yPos);
     }
-    
 }
 
 void Game::setupFromServer(std::vector<std::string> event) {
