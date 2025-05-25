@@ -13,6 +13,7 @@
 #include "Snake.hpp"
 #include "Controller.hpp"
 #include "Vector2.hpp"
+#include "utils.hpp"
 
 #include "SnakeEffects.hpp"
 
