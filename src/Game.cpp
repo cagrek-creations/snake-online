@@ -108,15 +108,19 @@ void Game::setupGame() {
     m_gameController->sendMessage(firstCommand);
 
     // Wait for server response
-    // TODO: fix timeout
+    int timeout = 0;
     while (!m_serverSetupIsComplete) {
         std::vector<std::string> events = m_gameController->getServerEvents();
 
         handleEvents(events);
+        ++timeout;
+        if (timeout > 1000000) {
+            std::cout << "Reached timeout connecting to server, continuing..." << std::endl;
+            createGrid();
+            createPlayer();
+            break;
+        }
     }
-
-    // createGrid();
-    // createPlayer();
 }
 
 void Game::setupGui() {
@@ -124,7 +128,9 @@ void Game::setupGui() {
     m_state = START_MENU;
 
     m_gui = std::make_unique<GUI>("Snake", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FULLSCREEN);
-    m_gui->loadTexture("berry", "./textures/berry.png");
+    m_gui->loadTexture("berry", "./gfx/berry.png");
+    m_gui->loadTexture("speed", "./gfx/speed.png");
+    m_gui->loadTexture("swaparoo", "./gfx/swaparoo.png");
 
     m_startMenu =       std::make_unique<Menu>(m_gui->getRenderer(), 0, WINDOW_MIDDLE_X - (250 / 2), 
                                                     WINDOW_MIDDLE_Y - (200 / 2), 

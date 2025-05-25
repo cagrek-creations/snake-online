@@ -8,7 +8,7 @@
 
 class Score {
     public:
-        Score(SDL_Renderer *renderer, GUI *gui, int width, int height);
+        Score(SDL_Renderer *renderer, GUI *gui, int width, int height, const std::string type);
         ~Score();
 
         void render();

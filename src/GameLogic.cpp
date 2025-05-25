@@ -142,7 +142,7 @@ void Game::removeScore(Vector2 pos) {
 }
 
 void Game::addScore(Vector2 pos) {
-    std::shared_ptr<Score> score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth());
+    std::shared_ptr<Score> score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), "berry");
     pos.x = ((pos.x) * (m_grid->getGridPointWidth())) + 1;
     pos.y = ((pos.y) * (m_grid->getGridPointHeight())) + 1;
     Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
