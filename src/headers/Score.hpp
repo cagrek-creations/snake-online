@@ -6,6 +6,10 @@
 
 #include "Gui.hpp"
 
+#define BERRY 		0x0
+#define SPEED		0x1
+#define SWAPAROO	0x2
+
 class Score {
     public:
         Score(SDL_Renderer *renderer, GUI *gui, int width, int height, const std::string type);
@@ -34,3 +38,4 @@ class Score {
         GUI *m_gui;
 
 };
+
