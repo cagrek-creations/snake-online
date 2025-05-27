@@ -18,8 +18,14 @@
 // #include "Event.hpp"
 // #include "Client.hpp"
 
+#if defined(_WIN32)
 #include <windows.h>
 #include <winbase.h>
+#elif defined(__APPLE__)
+#include <mach-o/dyld.h>
+#elif defined(__linux__)
+#include <unistd.h>
+#endif
 
 typedef std::chrono::high_resolution_clock Clock;
 
