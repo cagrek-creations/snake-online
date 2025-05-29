@@ -48,9 +48,9 @@ class GUI : public Observer {
         int getWindowCenterY();
 
         SDL_Color getColor(std::string colorName);
-        SDL_Texture *loadTexture(std::string name, const std::string &filePath);
-        SDL_Texture *getTexture(const std::string &key);
-        void unloadTexture(const std::string &key);
+        SDL_Texture *loadTexture(int name, const std::string &filePath);
+        SDL_Texture *getTexture(int key);
+        void unloadTexture(int key);
 
         SDL_Renderer *getRenderer();
         TTF_Font *getFont();
@@ -69,7 +69,7 @@ class GUI : public Observer {
 
         TTF_Font *m_font;
 
-        std::unordered_map<std::string, SDL_Texture*> m_textureMap;
+        std::unordered_map<int, SDL_Texture*> m_textureMap;
         std::vector<std::unique_ptr<Menu>> menus;
 
 

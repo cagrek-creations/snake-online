@@ -1,7 +1,7 @@
 #include "Score.hpp"
 
 
-Score::Score(SDL_Renderer *renderer, GUI *gui, int width, int height, const std::string type) {
+Score::Score(SDL_Renderer *renderer, GUI *gui, int width, int height, int type) {
     // SDL_Surface* surface = IMG_Load("./textures/berry.png");
     // if (!surface) {
     //     std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
@@ -21,7 +21,8 @@ Score::Score(SDL_Renderer *renderer, GUI *gui, int width, int height, const std:
     m_yPos = 99999;
     m_height = height;
     m_gui = gui;
-    m_textureScore = m_gui->getTexture(type);
+    m_type = type;
+    m_textureScore = m_gui->getTexture(m_type);
     // std::cout << m_textureScore << std::endl;
 }
 

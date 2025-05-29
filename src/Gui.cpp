@@ -53,7 +53,7 @@ GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) 
 
 }
 
-SDL_Texture *GUI::loadTexture(std::string name, const std::string &filePath) {
+SDL_Texture *GUI::loadTexture(int name, const std::string &filePath) {
     SDL_Surface* surface = IMG_Load(filePath.c_str());
     if (!surface) {
         std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
@@ -71,7 +71,7 @@ SDL_Texture *GUI::loadTexture(std::string name, const std::string &filePath) {
     return texture;
 }
 
-SDL_Texture *GUI::getTexture(const std::string &key) {
+SDL_Texture *GUI::getTexture(int key) {
     // Retrieve the texture associated with the key
     auto it = m_textureMap.find(key);
     if (it != m_textureMap.end()) {
@@ -81,7 +81,7 @@ SDL_Texture *GUI::getTexture(const std::string &key) {
     return nullptr;  // Texture not found
 }
 
-void GUI::unloadTexture(const std::string &key) {
+void GUI::unloadTexture(int key) {
     // Unload the texture associated with the key
     auto it = m_textureMap.find(key);
     if (it != m_textureMap.end()) {
