@@ -130,9 +130,12 @@ void Game::setupGui() {
     std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
 
     m_gui = std::make_unique<GUI>("Snake", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FULLSCREEN);
-    m_gui->loadTexture("berry", (basePathGfx / "berry.png").string());
-    m_gui->loadTexture("speed", (basePathGfx / "speed.png").string());
-    m_gui->loadTexture("swaparoo", (basePathGfx / "swaparoo.png").string());
+    m_gui->loadTexture(ERR, (basePathGfx / "err.png").string());
+    m_gui->loadTexture(BERRY, (basePathGfx / "berry.png").string());
+    m_gui->loadTexture(SPEED, (basePathGfx / "speed.png").string());
+    m_gui->loadTexture(SPEED_O, (basePathGfx / "speed.png").string());
+    m_gui->loadTexture(SWAPAROO, (basePathGfx / "swaparoo.png").string());
+    m_gui->loadTexture(SWAPAROO_O, (basePathGfx / "swaparoo.png").string());
 
     m_startMenu =       std::make_unique<Menu>(m_gui->getRenderer(), 0, WINDOW_MIDDLE_X - (250 / 2), 
                                                     WINDOW_MIDDLE_Y - (200 / 2), 

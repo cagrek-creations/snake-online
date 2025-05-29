@@ -24,15 +24,17 @@ void Game::handleEvent(std::vector<std::string> &event) {
     }
 
     if (command == "ADD_SCORE") {
+        std::string type = event[1];
         int xPos = stoi(event[3]);
         int yPos = stoi(event[4]);
-        addScore(Vector2(xPos, yPos));
+        addScore(Vector2(xPos, yPos), type);
     }
 
     if (command == "BERRY_POSITION") {
         int xPos = stoi(event[1]);
         int yPos = stoi(event[2]);
-        addScore(Vector2(xPos, yPos));
+        // TODO: update
+        addScore(Vector2(xPos, yPos), "berry");
     }
 
     // if (command == "PLAYER_SCORE_COLLECTED") {
@@ -44,14 +46,18 @@ void Game::handleEvent(std::vector<std::string> &event) {
     //     playerGrow();
     // }
 
-    // SCORE_COLLECTED;0;berry;1;22;26
+    // SCORE_COLLECTED;0;berry;1;12;22
     if (command == "SCORE_COLLECTED") {
         int pid = stoi(event[1]);
+        std::string type = event[2];
         int xPos = stoi(event[4]) * m_grid->getGridPointWidth();
         int yPos = stoi(event[5]) * m_grid->getGridPointHeight();
 
         removeScore(Vector2(xPos, yPos));
         m_players[pid]->grow();
+
+        handleEffects(type, pid);
+
         // m_players[pid]->addEffect(std::make_unique<SpeedBoostEffect>(*m_players[pid], 10000.0f));
         // m_players[pid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[pid], 5000.0f));
     }
@@ -131,18 +137,20 @@ void Game::setupFromServer(std::vector<std::string> event) {
     createPlayer(6, stoi(event[2]), stoi(event[3]));
 }
 
-void Game::removeScore(Vector2 pos) {
-    Gridpoint *gp = m_grid->getPoint(pos.x + 1, pos.y + 1);
-    if(!(gp == nullptr)) {
-        gp->removeScore();
-        std::string key = std::to_string(gp->getGridPointX()) + "," + std::to_string(gp->getGridPointY());
-        std::cout << "key remove: " << key << std::endl;
-        m_scores.erase(key);
+void Game::addScore(Vector2 pos, const std::string &type) {
+    std::shared_ptr<Score> score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), ERR);
+    if (type == "berry") {
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), BERRY);
+    } else if (type == "inverse_self") {
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), SWAPAROO);
+    } else if (type == "inverse_other") {
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), SWAPAROO_O);
+    } else if (type == "speed_self") {
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), SPEED);
+    } else if (type == "speed_other") {
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), SPEED_O);
     }
-}
 
-void Game::addScore(Vector2 pos) {
-    std::shared_ptr<Score> score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), "berry");
     pos.x = ((pos.x) * (m_grid->getGridPointWidth())) + 1;
     pos.y = ((pos.y) * (m_grid->getGridPointHeight())) + 1;
     Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
@@ -157,4 +165,21 @@ void Game::addScore(Vector2 pos) {
 
 void Game::playerGrow() {
     m_players[m_myPid]->grow();
+}
+
+void Game::removeScore(Vector2 pos) {
+    Gridpoint *gp = m_grid->getPoint(pos.x + 1, pos.y + 1);
+    if(!(gp == nullptr)) {
+        gp->removeScore();
+        std::string key = std::to_string(gp->getGridPointX()) + "," + std::to_string(gp->getGridPointY());
+        std::cout << "key remove: " << key << std::endl;
+        m_scores.erase(key);
+    }
+}
+
+void Game::handleEffects(const std::string &type, int pid) {
+    std::cout << m_myPid;
+    if (type == "inverse_self" && pid == m_myPid) {
+        m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 5000.0f));
+    }
 }
