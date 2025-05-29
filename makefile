@@ -34,11 +34,20 @@ LIBSRC = ./src/cpp-lib
 all: snake
 
 install::
+	# Clone library
 	mkdir -p external
 	mkdir -p src/cpp-lib
 	git clone https://github.com/cagrek-creations/cpp-lib external/cpp-lib
 	cp external/cpp-lib/src/* src/cpp-lib
 	rm -rf external
+
+	# Setup bin
+	mkdir -p bin/
+	mkdir -p bin/gfx
+	mkdir -p bin/sfx
+	cp gfx/* bin/gfx
+	cp sfx/* bin/sfx
+	cp font.ttf bin/
 
 $(ODIR)/%.o: ./src/%.cpp $(DEPS)
 	$(CC) -c $(OPTIMIZATION) -o $@ $< -I./src/headers -I./src/cpp-lib
@@ -47,16 +56,16 @@ $(ODIR)/%.o: $(LIBSRC)/%.cpp
 	$(CC) -c $(OPTIMIZATION) -o $@ $< -I./src/cpp-lib
 
 snake: $(OBJ)
-	$(CC) $(OPTIMIZATION) -o ./debug/$@ $^ $(CFLAGS) 
+	$(CC) $(OPTIMIZATION) -o ./bin/$@ $^ $(CFLAGS)
 
 static: $(OBJ)
-	$(CC) $(OPTIMIZATION) -o ./debug/$@ $^ $(CFLAGS) $(LINKER_FLAGS) -mconsole
+	$(CC) $(OPTIMIZATION) -o ./bin/$@ $^ $(CFLAGS) $(LINKER_FLAGS) -mconsole
 
 run: snake
-	./debug/snake
+	./bin/snake
 
 clean: remove snake
 
 remove:
-	./remove.py
+	rm obj/*
 

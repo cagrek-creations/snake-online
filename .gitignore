@@ -49,4 +49,5 @@ src/SDL2
 # Python files
 *.py
 debug/*
+bin/*
 src/cpp-lib/*
