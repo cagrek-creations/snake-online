@@ -7,11 +7,12 @@ class Effect {
         virtual ~Effect() = default;
 
         bool isActive() const { return m_active; }
+        float getElapsed() const { return m_elapsed; }
+        float getDuration() const { return m_duration; }
 
         virtual void apply() = 0;
         virtual void expire() = 0;
         virtual void update(float dt) {
-
             if (!m_applied) {
                 apply();
                 m_applied = true;

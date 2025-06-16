@@ -61,6 +61,7 @@ void Snake::render() {
     if (m_pid == 0) {
         // std::cout << "Drawing bar" << std::endl;
         renderBoostBar();
+        renderEffectBars();
     }
 
 }
@@ -76,6 +77,24 @@ void Snake::renderBoostBar() {
 
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(m_renderer, &m_speedBoostRect);
+}
+
+SDL_Rect Snake::createEffectBar(float e, float d) {
+    SDL_Rect r;
+    r.x = m_effectBarXdefault /* + offset */;
+    r.y = m_effectBarYdefault /* + offset */;
+    r.w = m_effectBarWidth - m_effectBarWidth * (e / d);
+    r.h = m_effectBarHeight;
+    return r;
+}
+
+void Snake::renderEffectBars() {
+    for (auto &e : m_effects) {
+        // Create new instance of effect bar - TODO: Bad implementation? Will effects even last longer than this?
+        SDL_Rect er = createEffectBar(e->getElapsed(), e->getDuration());
+        SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+        SDL_RenderFillRect(m_renderer, &er);
+    }
 }
 
 bool operator!=(const direction& lhs, const direction& rhs) {

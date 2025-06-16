@@ -25,8 +25,8 @@ class InvertControlsEffect : public Effect {
 
 class SpeedBoostEffect : public Effect {
 
-    public: 
-    SpeedBoostEffect(Snake &target, float duration) : Effect(duration), m_target(target) {}
+    public:
+        SpeedBoostEffect(Snake &target, float duration) : Effect(duration), m_target(target) {}
 
         void apply() override {
             m_target.applySpeedBoost();
