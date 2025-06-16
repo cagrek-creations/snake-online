@@ -81,9 +81,20 @@ void Snake::renderBoostBar() {
 
 SDL_Rect Snake::createEffectBar(float e, float d) {
     SDL_Rect r;
-    r.x = m_effectBarXdefault /* + offset */;
-    r.y = m_effectBarYdefault /* + offset */;
+    r.x = m_effectBarXdefault /* + offset for effects.size() */;
+    r.y = m_effectBarYdefault /* + offset for effects.size() */;
     r.w = m_effectBarWidth - m_effectBarWidth * (e / d);
+    r.h = m_effectBarHeight;
+    return r;
+}
+
+SDL_Rect Snake::createEffectTextureRect() {
+    SDL_Rect r;
+    int textureXOffset = (m_effectBarHeight + 15);
+    int textureYOffset = 0;
+    r.x = m_effectBarXdefault /* + offset for effects.size() */ - textureXOffset;
+    r.y = m_effectBarYdefault /* + offset for effects.size() */ - textureYOffset;
+    r.w = m_effectBarHeight;
     r.h = m_effectBarHeight;
     return r;
 }
@@ -92,6 +103,10 @@ void Snake::renderEffectBars() {
     for (auto &e : m_effects) {
         // Create new instance of effect bar - TODO: Bad implementation? Will effects even last longer than this?
         SDL_Rect er = createEffectBar(e->getElapsed(), e->getDuration());
+        SDL_Rect et = createEffectTextureRect();
+
+        SDL_RenderCopy(m_renderer, m_gui->getTexture(e->getType()), nullptr, &et);
+
         SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
         SDL_RenderFillRect(m_renderer, &er);
     }

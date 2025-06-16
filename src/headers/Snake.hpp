@@ -8,6 +8,7 @@
 
 #include "Grid.hpp"
 #include "Gui.hpp"
+#include "Score.hpp"
 #include "Observer.hpp"
 #include "Effect.hpp"
 #include "Vector2.hpp"
@@ -155,6 +156,7 @@ class Snake : public Observer {
         void renderBoostBar();
         void renderEffectBars();
         SDL_Rect createEffectBar(float e, float d);
+        SDL_Rect createEffectTextureRect();
 
         int m_effectBarHeight = 10;
         int m_effectBarWidth = 50;

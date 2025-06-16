@@ -18,6 +18,10 @@ class InvertControlsEffect : public Effect {
             m_target.invertControls();
         }
 
+        int getType() override {
+            return SWAPAROO;
+        }
+
     private:
         Snake &m_target; // Should this be moved to another base class?
 
@@ -34,6 +38,10 @@ class SpeedBoostEffect : public Effect {
 
         void expire() override {
             m_target.removeSpeedBoost();
+        }
+
+        int getType() override {
+            return SPEED;
         }
 
     private:

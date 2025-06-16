@@ -25,6 +25,8 @@ class Effect {
             }
         }
 
+        virtual int getType() { return ERR; }
+
     protected:
         float m_elapsed;
         float m_duration;
