@@ -155,8 +155,8 @@ class Snake : public Observer {
 
         void renderBoostBar();
         void renderEffectBars();
-        SDL_Rect createEffectBar(float e, float d);
-        SDL_Rect createEffectTextureRect();
+        SDL_Rect createEffectBar(float e, float d, int i);
+        SDL_Rect createEffectTextureRect(int i);
 
         int m_effectBarHeight = 10;
         int m_effectBarWidth = 50;

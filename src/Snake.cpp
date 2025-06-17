@@ -79,19 +79,20 @@ void Snake::renderBoostBar() {
     SDL_RenderFillRect(m_renderer, &m_speedBoostRect);
 }
 
-SDL_Rect Snake::createEffectBar(float e, float d) {
+SDL_Rect Snake::createEffectBar(float e, float d, int i) {
     SDL_Rect r;
+    int textureYOffset = (i - 1) * 15;
     r.x = m_effectBarXdefault /* + offset for effects.size() */;
-    r.y = m_effectBarYdefault /* + offset for effects.size() */;
+    r.y = m_effectBarYdefault /* + offset for effects.size() */ - textureYOffset;
     r.w = m_effectBarWidth - m_effectBarWidth * (e / d);
     r.h = m_effectBarHeight;
     return r;
 }
 
-SDL_Rect Snake::createEffectTextureRect() {
+SDL_Rect Snake::createEffectTextureRect(int i) {
     SDL_Rect r;
     int textureXOffset = (m_effectBarHeight + 15);
-    int textureYOffset = 0;
+    int textureYOffset = (i - 1) * 15;
     r.x = m_effectBarXdefault /* + offset for effects.size() */ - textureXOffset;
     r.y = m_effectBarYdefault /* + offset for effects.size() */ - textureYOffset;
     r.w = m_effectBarHeight;
@@ -100,10 +101,13 @@ SDL_Rect Snake::createEffectTextureRect() {
 }
 
 void Snake::renderEffectBars() {
-    for (auto &e : m_effects) {
+
+    for (int i = 0; i < m_effects.size(); i++) {
+        auto &e = m_effects[i];
+
         // Create new instance of effect bar - TODO: Bad implementation? Will effects even last longer than this?
-        SDL_Rect er = createEffectBar(e->getElapsed(), e->getDuration());
-        SDL_Rect et = createEffectTextureRect();
+        SDL_Rect er = createEffectBar(e->getElapsed(), e->getDuration(), i);
+        SDL_Rect et = createEffectTextureRect(i);
 
         SDL_RenderCopy(m_renderer, m_gui->getTexture(e->getType()), nullptr, &et);
 
