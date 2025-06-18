@@ -1,5 +1,13 @@
 #include "Game.hpp"
 
+int WINDOW_FULLSCREEN = 0;
+
+int WINDOW_WIDTH = 800;
+int WINDOW_HEIGHT = 600;
+
+int WINDOW_MIDDLE_X (WINDOW_WIDTH / 2);
+int WINDOW_MIDDLE_Y (WINDOW_HEIGHT / 2);
+
 Game::Game() {
     setupSound();
 

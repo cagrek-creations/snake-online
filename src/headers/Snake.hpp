@@ -8,9 +8,11 @@
 
 #include "Grid.hpp"
 #include "Gui.hpp"
+#include "Score.hpp"
 #include "Observer.hpp"
 #include "Effect.hpp"
 #include "Vector2.hpp"
+#include "Common.hpp"
 
 struct direction {
     int x;
@@ -152,6 +154,14 @@ class Snake : public Observer {
         std::vector<Snakeblock> snakeBlocks;
 
         void renderBoostBar();
+        void renderEffectBars();
+        SDL_Rect createEffectBar(float e, float d, int i);
+        SDL_Rect createEffectTextureRect(int i);
+
+        int m_effectBarHeight = 10;
+        int m_effectBarWidth = 50;
+        int m_effectBarXdefault = 0 + ((WINDOW_WIDTH / 100) * 5);
+        int m_effectBarYdefault = WINDOW_HEIGHT - ((WINDOW_HEIGHT / 100) * 5);
 
         std::function<void(const std::string&)> signalCallback;
 

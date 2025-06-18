@@ -6,12 +6,13 @@
 
 #include "Gui.hpp"
 
-#define ERR         0x99
-#define BERRY 		0x00
-#define SPEED		0x10
-#define SPEED_O     0x11
-#define SWAPAROO	0x20
-#define SWAPAROO_O  0x22
+// TODO: Namespace?
+constexpr int ERR           = 0x99;
+constexpr int BERRY         = 0x00;
+constexpr int SPEED         = 0x10;
+constexpr int SPEED_O       = 0x11;
+constexpr int SWAPAROO      = 0x20;
+constexpr int SWAPAROO_O    = 0x22;
 
 class Score {
     public:
