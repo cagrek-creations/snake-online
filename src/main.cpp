@@ -104,14 +104,6 @@ void getColor(GUI &ui, SDL_Color &color, std::string &colorString) {
     } 
 }
 
-// struct Game {
-//     GUI gui = ...
-//     SoundManager = ..
-//     Snake =
-//     Grid = 
-// }
-
-
 int main(int argc, char **argv) {
 
     int pid = -1;

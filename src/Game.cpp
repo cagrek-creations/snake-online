@@ -11,7 +11,7 @@ int WINDOW_MIDDLE_Y (WINDOW_HEIGHT / 2);
 Game::Game() {
     setupSound();
 
-    setupGui();    
+    setupGui();
 
     setupController();
 

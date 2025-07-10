@@ -17,9 +17,9 @@ LINKER_FLAGS += -lbrotlicommon -lsharpyuv
 
 
 LIBS= -lmingw32 -lws2_32 -lSDL2main -lSDL2 -lSDL2_Image -lSDL2_TTF -lSDL2_Mixer
-CFLAGS= -I$(IDIR) $(LIBS) $(EXTRA_LIBS) 
 
 IDIR = ./src/headers
+CFLAGS= -I$(IDIR) $(LIBS) $(EXTRA_LIBS)
 # _DEPS = Gui.hpp Snake.hpp Grid.hpp Menu.hpp Score.hpp Controller.hpp Soundmanager.hpp comm_util.hpp Observer.hpp Game.hpp
 DEPS = $(wildcard $(IDIR)/*.hpp)
 

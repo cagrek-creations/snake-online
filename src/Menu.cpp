@@ -88,17 +88,10 @@ bool Menu::updateTextValue(Text &txt, const std::string newText, MenuItem &mi) {
     return true;
 }
 
-
-
-
 // template int Menu::addItem(std::string name, int type, float *reference_value);
-
 int Menu::addItem() {
     return m_items.size();
 }
-
-
-
 
 int Menu::addItemState(const std::string &name, int nextState) {
 
@@ -140,14 +133,11 @@ int Menu::addItemBar(std::string name, std::function<void()> refFuncL, std::func
     return 0;
 }
 
-
-
 void Menu::updateMenu() {
     
 }
 
 void Menu::onEvent(const SDL_Event& event) {
-    
     // Replace with game menu.
     if(event.type == SDL_USEREVENT) {
         if(event.user.code == 3) {
@@ -253,7 +243,6 @@ void Menu::onEvent(const SDL_Event& event) {
         }
     }
 }
-
 
 int Menu::update(double deltaTime, bool gameRunning) {
     m_limit += deltaTime;  

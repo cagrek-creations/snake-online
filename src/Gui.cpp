@@ -37,20 +37,6 @@ GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) 
         std::cerr << "Failed to load font! SDL_ttf Error: " << TTF_GetError() << std::endl;
     }
 
-    // Menu startMenu = Menu(m_renderer, m_font);
-    // startMenu.addItem("Hello");
-    // // startMenu.addItem("Test");
-    // //     std::cout << "here";
-    // // menus.push_back(startMenu);
-    // // menus.push_back(startMenu);
-
-    // // menus.emplace_back(std::make_shared<Menu>(startMenu));
-
-    // menus.emplace_back(std::make_unique<Menu>(m_renderer, 0, 0, 100, 100, m_font));
-    // int sound;
-    // menus[0]->addItem("Sound", MENU_OPTION, sound);
-    // menus[0]->addItem("Test", MENU_OPTION, sound);
-
 }
 
 SDL_Texture *GUI::loadTexture(int name, const std::string &filePath) {
@@ -126,23 +112,6 @@ SDL_Color GUI::getColor(std::string colorName) {
 
 
 void GUI::update() {
-
-    // while(SDL_PollEvent(&m_event)) {
-    //     switch (m_event.type) {
-    //         case SDL_QUIT :
-    //             m_windowClose = true;
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    // }
-
-
-    // for (auto &m : menus) {
-        
-    //     m->render();
-        
-    // }
 
 }
 

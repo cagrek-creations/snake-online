@@ -23,5 +23,6 @@ void Score::render() {
 }
 
 Score::~Score() {
+    // TODO: Why???
     // SDL_DestroyTexture(m_textureScore);
 }
