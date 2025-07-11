@@ -1,5 +1,7 @@
 #pragma once
 
+constexpr int ERR = 0x99;
+
 class Effect {
 
     public:

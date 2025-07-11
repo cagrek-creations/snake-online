@@ -100,5 +100,6 @@ Mix_Chunk* SoundManager::loadChunk(const char* filePath) {
     if (chunk == nullptr) {
         printf("Failed to load sound effect! SDL_mixer Error: %s\n", Mix_GetError());
     }
+
     return chunk;
 }

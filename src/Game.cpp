@@ -110,6 +110,7 @@ void Game::setupGame() {
     getName(m_playerName);
     getColor(m_playerColor);
 
+
     std::string firstCommand = "ADD_NEW_PLAYER;" + m_playerName + ";" + m_playerColor;
 
     m_gameController->connect(m_serverIp, m_serverPort);

@@ -7,7 +7,6 @@
 #include "Gui.hpp"
 
 // TODO: Namespace?
-constexpr int ERR           = 0x99;
 constexpr int BERRY         = 0x00;
 constexpr int SPEED         = 0x10;
 constexpr int SPEED_O       = 0x11;
