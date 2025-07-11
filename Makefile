@@ -66,6 +66,9 @@ run: snake
 
 clean: remove snake
 
+clangd:
+	compiledb make
+
 remove:
 	rm obj/*
 
