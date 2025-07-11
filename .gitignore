@@ -51,3 +51,8 @@ src/SDL2
 debug/*
 bin/*
 src/cpp-lib/*
+
+# Clangd
+.cache/
+compile_commands.json
+

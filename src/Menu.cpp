@@ -158,41 +158,41 @@ void Menu::onEvent(const SDL_Event& event) {
         }
 
         if (event.type == SDL_KEYDOWN) {
-          const Uint8 *key_state = SDL_GetKeyboardState(NULL);
-          if (m_items.size() > 0) {
-            if (key_state[SDL_SCANCODE_DOWN]) {
-              m_items[m_menuIndex]->reset();
-              if (m_menuIndex < m_items.size() - 1)
-                m_menuIndex++;
-              m_items[m_menuIndex]->update();
-            } else if (key_state[SDL_SCANCODE_UP]) {
-              m_items[m_menuIndex]->reset();
-              if (m_menuIndex > 0)
-                m_menuIndex--;
-              m_items[m_menuIndex]->update();
-            }
-            // if(key_state[SDL_SCANCODE_DOWN]) {
-            //     updateText(m_items[m_menuIndex]->getColor(), menuc::WHITE);
-            //     if(m_menuIndex < m_items.size()-1) m_menuIndex++;
-            //     updateText(m_items[m_menuIndex].menuText, menuc::RED);
-            // } else if (key_state[SDL_SCANCODE_UP]) {
-            //     updateText(m_items[m_menuIndex].menuText, menuc::WHITE);
-            //     if(m_menuIndex > 0) m_menuIndex--;
-            //     updateText(m_items[m_menuIndex].menuText, menuc::RED);
-            // }
+            const Uint8 *key_state = SDL_GetKeyboardState(NULL);
+            if (m_items.size() > 0) {
+                if (key_state[SDL_SCANCODE_DOWN]) {
+                    m_items[m_menuIndex]->reset();
+                    if (m_menuIndex < m_items.size() - 1)
+                    m_menuIndex++;
+                    m_items[m_menuIndex]->update();
+                } else if (key_state[SDL_SCANCODE_UP]) {
+                    m_items[m_menuIndex]->reset();
+                    if (m_menuIndex > 0)
+                    m_menuIndex--;
+                    m_items[m_menuIndex]->update();
+                }
+                // if(key_state[SDL_SCANCODE_DOWN]) {
+                //     updateText(m_items[m_menuIndex]->getColor(), menuc::WHITE);
+                //     if(m_menuIndex < m_items.size()-1) m_menuIndex++;
+                //     updateText(m_items[m_menuIndex].menuText, menuc::RED);
+                // } else if (key_state[SDL_SCANCODE_UP]) {
+                //     updateText(m_items[m_menuIndex].menuText, menuc::WHITE);
+                //     if(m_menuIndex > 0) m_menuIndex--;
+                //     updateText(m_items[m_menuIndex].menuText, menuc::RED);
+                // }
 
-            else if (key_state[SDL_SCANCODE_RIGHT]) {
-              m_items[m_menuIndex]->trigger(KEY_RIGHT);
-            }
+                else if (key_state[SDL_SCANCODE_RIGHT]) {
+                    m_items[m_menuIndex]->trigger(KEY_RIGHT);
+                }
 
-            else if (key_state[SDL_SCANCODE_LEFT]) {
-              m_items[m_menuIndex]->trigger(KEY_LEFT);
-            }
+                else if (key_state[SDL_SCANCODE_LEFT]) {
+                    m_items[m_menuIndex]->trigger(KEY_LEFT);
+                }
 
-            else if (key_state[SDL_SCANCODE_RETURN]) {
-              m_items[m_menuIndex]->trigger(-1);
+                else if (key_state[SDL_SCANCODE_RETURN]) {
+                    m_items[m_menuIndex]->trigger(-1);
+                }
             }
-          }
 
           // if(key_state[SDL_SCANCODE_RIGHT] && m_items[m_menuIndex].type ==
           // MENU_BAR) {
