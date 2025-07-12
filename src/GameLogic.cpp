@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "SnakeEffects.hpp"
 
 void Game::handleEvents(std::vector<std::string> serverEvents) {
     for (auto se : serverEvents) {
@@ -181,5 +182,8 @@ void Game::handleEffects(const std::string &type, int pid) {
     std::cout << m_myPid;
     if (type == "inverse_self" && pid == m_myPid) {
         m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 5000.0f));
+    }
+    if (type == "speed_self" && pid == m_myPid) {
+        m_players[m_myPid]->addEffect(std::make_unique<SpeedBoostEffect>(*m_players[m_myPid], 5000.0f));
     }
 }
