@@ -1,3 +1,5 @@
+// TODO: refactor this (move things to GUI if possible)
+
 #pragma once
 
 #include <iostream>
