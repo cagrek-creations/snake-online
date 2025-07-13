@@ -171,5 +171,4 @@ int Gridpoint::getGridPointHeight() {
     return m_gridHeight;
 }
 
-
 Gridpoint::~Gridpoint() {}

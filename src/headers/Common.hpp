@@ -1,3 +1,4 @@
+// TODO: What??? These things should be in the GUI and COMMS modules of the code?
 #pragma once
 
 extern int WINDOW_FULLSCREEN;
