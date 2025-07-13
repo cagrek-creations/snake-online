@@ -167,13 +167,13 @@ void Snake::addEffect(std::unique_ptr<Effect> effect) {
 }
 
 void Snake::updateEffects(float deltaTime) {
-    for (auto it = m_effects.begin(); it != m_effects.end(); ) {
-        (*it)->update(deltaTime);
+    for (auto effect = m_effects.begin(); effect != m_effects.end(); ) {
+        (*effect)->update(deltaTime);
 
-        if (!(*it)->isActive()) {
-            it = m_effects.erase(it); // Removes and deletes inactive effect
+        if (!(*effect)->isActive()) {
+            effect = m_effects.erase(effect);
         } else {
-            ++it;
+            ++effect;
         }
     }
 }
@@ -193,17 +193,14 @@ void Snake::update(double deltaTime) {
         m_speedBoostTime = 0;
     }
 
-    // std::cout << m_speedBoostTime << std::endl;
-    // std::cout << m_speedBoost << std::endl;
-    // std::cout << m_speedBoostTimeout << std::endl;
-
     if (m_speedBoost && m_speedBoostTimeout < 0.1f && m_speedBoostTime > 0.1f) {
-        _speedLimit *= 0.75; // Modifier to base speed. Effects can also modify the value pre-update.
+        // Modifier to base speed. Effects can also modify the value pre-update.
+        _speedLimit *= 0.75; 
         m_speedBoostTime -= deltaTime;
     } else if (m_speedBoostTimeout < 0.1f && m_speedBoostTime < m_speedBoostTimeLimit) {
         m_speedBoostTime += deltaTime;
     }
-    // std::cout << _speedLimit << std::endl;
+
     if(m_limit < _speedLimit) return;
     m_limit = 0;
     m_snakeDirection = m_newSnakeDirection;
@@ -217,6 +214,8 @@ void Snake::update(double deltaTime) {
     if(oldPoint != nullptr) oldPoint->setEmpty();
     if(newPoint != nullptr) {
         // std::string command = "PLAYER_UPDATE_POSITION;0;" + std::to_string(newPoint->getGridPointX() / m_grid->getGridPointWidth()) + ";" + std::to_string(newPoint->getGridPointY() / m_grid->getGridPointHeight()) + ";";
+        // TODO: This signaling is no longer used since the server does it all.
+        // Should it be removed or adapted for when a server is not used?
         // signalController(command);
         if(!newPoint->isEmpty()) {
             std::cout << "GAME OVER!" << std::endl;
