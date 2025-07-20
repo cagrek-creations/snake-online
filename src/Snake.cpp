@@ -24,9 +24,7 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight,
     m_snakeWidth = m_grid->getGridPointWidth(); // Retrieve from grid
     m_snakeHeight = m_grid->getGridPointHeight(); // Retrieve from grid 
 
-    // SDL_Surface *snakeHead = IMG_Load("./textures/head.png");
-
-    // m_textureSnakeHead = SDL_CreateTextureFromSurface(m_renderer, snakeHead);
+    m_textureSnakeHead = m_gui->getTexture(SNAKEHEAD);
 
     // SDL_FreeSurface(snakeHead);
     Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
@@ -126,28 +124,30 @@ void Snake::onEvent(const SDL_Event& event) {
     if(key_state[SDL_SCANCODE_S] || key_state[SDL_SCANCODE_DOWN]) {
         if((m_snakeDirection != DIR_UP) && (m_snakeDirection != DIR_DOWN)) {
             m_newSnakeDirection = m_invertControls ? DIR_UP : DIR_DOWN;
-            m_newDegrees = 90;
+            // TODO: bad 'hack' for resolving head direction being dependant on inverted controls
+            // Right side is 'correct'
+            m_newDegrees = m_invertControls ? -90 : 90;
         }
     }
 
     if(key_state[SDL_SCANCODE_W] || key_state[SDL_SCANCODE_UP]) {
         if((m_snakeDirection != DIR_DOWN) && (m_snakeDirection != DIR_UP)) {
             m_newSnakeDirection = m_invertControls ? DIR_DOWN : DIR_UP;
-            m_newDegrees = -90;
+            m_newDegrees = m_invertControls ? 90 : -90;
         }
     }
 
     if(key_state[SDL_SCANCODE_D] || key_state[SDL_SCANCODE_RIGHT]) {
         if((m_snakeDirection != DIR_LEFT) && (m_snakeDirection != DIR_RIGHT)) {
             m_newSnakeDirection = m_invertControls ? DIR_LEFT : DIR_RIGHT;
-            m_newDegrees = 0;
+            m_newDegrees = m_invertControls ? 180 : 0;
         }
     }
 
     if(key_state[SDL_SCANCODE_A] || key_state[SDL_SCANCODE_LEFT]) {
         if((m_snakeDirection != DIR_RIGHT) && (m_snakeDirection != DIR_LEFT)) {
             m_newSnakeDirection = m_invertControls ? DIR_RIGHT : DIR_LEFT;
-            m_newDegrees = 180;
+            m_newDegrees = m_invertControls ? 0 : 180;
         }
     }
 
@@ -316,6 +316,7 @@ Snakeblock::Snakeblock(SDL_Renderer *renderer, int snakeBlockXpos, int snakeBloc
     m_snakeblockOverlay.h = m_snakeBlockWidth - 4;
     m_snakeblockOverlay.x = m_snakeBlockPos.x + 2;
     m_snakeblockOverlay.y = m_snakeBlockPos.y + 2;
+    m_textureSnakeHeadDegreeOffset = 180;
 }
 
 void Snakeblock::render() {
@@ -330,13 +331,13 @@ void Snakeblock::render() {
 }
 
 void Snakeblock::renderHead() {
-    this->render();
-    // SDL_Rect tmp;
-    // tmp.w = m_snakeBlockWidth * 2;
-    // tmp.h = m_snakeBlockheight * 2;
-    // tmp.x = m_snakeBlockXpos - tmp.w / 4;
-    // tmp.y = m_snakeBlockYpos - tmp.h / 4;
-    // SDL_RenderCopyEx(m_renderer, m_textureSnakeHead, NULL, &tmp, m_degrees, NULL, SDL_FLIP_NONE);
+    // this->render();
+    SDL_Rect tmp;
+    tmp.w = m_snakeBlockWidth;
+    tmp.h = m_snakeBlockheight;
+    tmp.x = m_snakeBlockPos.x;
+    tmp.y = m_snakeBlockPos.y;
+    SDL_RenderCopyEx(m_renderer, m_textureSnakeHead, NULL, &tmp, m_textureSnakeHeadDegreeOffset + m_degrees, NULL, SDL_FLIP_NONE);
 }
 
 Vector2 Snakeblock::getPos() {

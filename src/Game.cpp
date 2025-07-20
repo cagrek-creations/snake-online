@@ -2,8 +2,8 @@
 
 int WINDOW_FULLSCREEN = 0;
 
-int WINDOW_WIDTH = 800;
-int WINDOW_HEIGHT = 600;
+int WINDOW_WIDTH = 1600;
+int WINDOW_HEIGHT = 1200;
 
 int WINDOW_MIDDLE_X (WINDOW_WIDTH / 2);
 int WINDOW_MIDDLE_Y (WINDOW_HEIGHT / 2);
@@ -52,6 +52,7 @@ void Game::update(double deltaTime) {
 void Game::render() {
     m_gui->clearRenderer();
     m_gui->update();
+    m_grid->render();
 
     renderState();
 
@@ -63,11 +64,11 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui->getRenderer(), WINDOW_WIDTH, WINDOW_HEIGHT, 40, 30);
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 40, 30);
 }
 
 void Game::createGrid(int width, int height) {
-    m_grid = std::make_unique<Grid>(m_gui->getRenderer(), WINDOW_WIDTH, WINDOW_HEIGHT, width, height);
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, width, height);
 }
 
 void Game::createPlayer() {
@@ -145,6 +146,8 @@ void Game::setupGui() {
     m_gui->loadTexture(SPEED_O, (basePathGfx / "speed.png").string());
     m_gui->loadTexture(SWAPAROO, (basePathGfx / "swaparoo.png").string());
     m_gui->loadTexture(SWAPAROO_O, (basePathGfx / "swaparoo.png").string());
+    m_gui->loadTexture(SNAKEHEAD, (basePathGfx / "snakehead.png").string());
+    m_gui->loadTexture(GRIDTILE, (basePathGfx / "gridtile.png").string());
 
     m_startMenu =       std::make_unique<Menu>(m_gui->getRenderer(), 0, WINDOW_MIDDLE_X - (250 / 2), 
                                                     WINDOW_MIDDLE_Y - (200 / 2), 

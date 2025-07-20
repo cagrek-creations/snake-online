@@ -24,6 +24,8 @@ struct direction {
 #define DIR_RIGHT   direction{ 1,  0}
 #define DIR_LEFT    direction{-1,  0}
 
+#define SNAKEHEAD 0x101
+
 class Snakeblock {
 
     public: 
@@ -53,6 +55,7 @@ class Snakeblock {
         SDL_Renderer *m_renderer;
 
         SDL_Texture *m_textureSnakeHead;
+        int m_textureSnakeHeadDegreeOffset;
 
 };
 
@@ -148,6 +151,7 @@ class Snake : public Observer {
 
         SDL_Renderer *m_renderer;
         SDL_Texture *m_textureSnakeHead;
+        int m_textureSnakeHeadDegreeOffset;
         SDL_Color m_color;
         SDL_Rect m_speedBoostRect = {0,0,0,0};
 
