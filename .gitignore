@@ -35,8 +35,14 @@
 .vscode
 
 # Images
-
 *.jpg
+
+# Python files
+*.py
+
+# Clangd
+.cache/
+compile_commands.json
 
 # Misc
 *.ttf
@@ -45,14 +51,9 @@ src/SDL2
 *.zip
 *.png
 *.mp4
-
-# Python files
-*.py
+assets/
+tmp/
 debug/*
 bin/*
 src/cpp-lib/*
-
-# Clangd
-.cache/
-compile_commands.json
 

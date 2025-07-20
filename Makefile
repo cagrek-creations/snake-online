@@ -33,22 +33,6 @@ LIBSRC = ./src/cpp-lib
 
 all: snake
 
-install::
-	# Clone library
-	mkdir -p external
-	mkdir -p src/cpp-lib
-	git clone https://github.com/cagrek-creations/cpp-lib external/cpp-lib
-	cp external/cpp-lib/src/* src/cpp-lib
-	rm -rf external
-
-	# Setup bin
-	mkdir -p bin/
-	mkdir -p bin/gfx
-	mkdir -p bin/sfx
-	cp gfx/* bin/gfx
-	cp sfx/* bin/sfx
-	cp font.ttf bin/
-
 $(ODIR)/%.o: ./src/%.cpp $(DEPS)
 	$(CC) -c $(OPTIMIZATION) -o $@ $< -I./src/headers -I./src/cpp-lib
 
@@ -72,3 +56,27 @@ clangd:
 remove:
 	rm obj/*
 
+install::
+	mkdir -p tmp
+	# Clone library
+	mkdir -p external
+	mkdir -p src/cpp-lib
+	git clone https://github.com/cagrek-creations/cpp-lib external/cpp-lib
+	cp external/cpp-lib/src/* src/cpp-lib
+	rm -rf external
+
+	# Clone assets
+	mkdir -p assets
+	git clone https://github.com/cagrek-creations/snake-assets.git tmp/snake-assets
+	cp tmp/snake-assets/* assets/
+
+	# Setup bin
+	mkdir -p bin/
+	mkdir -p bin/gfx
+	mkdir -p bin/sfx
+	cp gfx/* bin/gfx
+	cp sfx/* bin/sfx
+	cp font.ttf bin/
+
+	# Clean tmp
+	rm -rf tmp
