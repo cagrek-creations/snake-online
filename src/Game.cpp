@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "Snake.hpp"
 
 int WINDOW_FULLSCREEN = 0;
 
@@ -146,7 +147,10 @@ void Game::setupGui() {
     m_gui->loadTexture(SPEED_O, (basePathGfx / "speed.png").string());
     m_gui->loadTexture(SWAPAROO, (basePathGfx / "swaparoo.png").string());
     m_gui->loadTexture(SWAPAROO_O, (basePathGfx / "swaparoo.png").string());
-    m_gui->loadTexture(SNAKEHEAD, (basePathGfx / "snakehead.png").string());
+    m_gui->loadTexture(SNAKEHEAD, (basePathGfx / "y_s1.png").string());
+    m_gui->loadTexture(SNAKEBODY, (basePathGfx / "y_s2.png").string());
+    m_gui->loadTexture(SNAKECURVE, (basePathGfx / "y_s3.png").string());
+    m_gui->loadTexture(SNAKETAIL, (basePathGfx / "y_s4.png").string());
     m_gui->loadTexture(GRIDTILE, (basePathGfx / "gridtile.png").string());
 
     m_startMenu =       std::make_unique<Menu>(m_gui->getRenderer(), 0, WINDOW_MIDDLE_X - (250 / 2), 
