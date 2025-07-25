@@ -1,12 +1,12 @@
 #include "Grid.hpp"
 
-Grid::Grid(SDL_Renderer *renderer, int width, int height, int granularityX, int granularityY) {
+Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY) {
     m_gridWidth = width;
     m_gridHeight = height;
     // m_granularity = granularity;
     m_granularityX = granularityX;
     m_granularityY = granularityY;
-    m_renderer = renderer;
+    m_gui = gui;
 
     m_gridPointWidth = m_gridWidth / m_granularityX; // width / granularity;
     m_gridPointHeight = m_gridHeight / m_granularityY; // height / 15;
@@ -17,7 +17,7 @@ Grid::Grid(SDL_Renderer *renderer, int width, int height, int granularityX, int 
     // Wrong order here?
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            m_gridpoints.push_back(Gridpoint(m_renderer, i * m_gridPointWidth, j * m_gridPointHeight, m_gridPointWidth, m_gridPointHeight));
+            m_gridpoints.push_back(Gridpoint(m_gui, i * m_gridPointWidth, j * m_gridPointHeight, m_gridPointWidth, m_gridPointHeight));
         }
     }
 }
@@ -31,7 +31,7 @@ void Grid::setSize(int width, int height) {
     // Wrong order here?
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            m_gridpoints.push_back(Gridpoint(m_renderer, i * m_gridPointWidth, j * m_gridPointHeight, m_gridPointWidth, m_gridPointHeight));
+            m_gridpoints.push_back(Gridpoint(m_gui, i * m_gridPointWidth, j * m_gridPointHeight, m_gridPointWidth, m_gridPointHeight));
         }
     }
 
@@ -39,7 +39,8 @@ void Grid::setSize(int width, int height) {
 
 void Grid::render() {
     for(auto &gp : m_gridpoints) {
-        gp.render();
+        // gp.render();
+        gp.renderTexture();
     }
 }
 
@@ -81,12 +82,15 @@ Gridpoint *Grid::getPoint(int x, int y) {
 Grid::~Grid() {}
 
 
-Gridpoint::Gridpoint(SDL_Renderer *renderer, int xPos, int yPos, int width, int height) {
-    this->m_renderer = renderer;
+Gridpoint::Gridpoint(GUI *gui, int xPos, int yPos, int width, int height) {
+    this->m_gui = gui;
     this->m_gridPointX = xPos;
     this->m_gridPointY = yPos;
     this->m_gridWidth = width;
     this->m_gridHeight = height;
+    m_texture = m_gui->getTexture(GRIDTILE);
+
+    m_destRect = {m_gridPointX, m_gridPointY, m_gridWidth, m_gridHeight};
 }
 
 void Gridpoint::render() {
@@ -110,13 +114,16 @@ void Gridpoint::render() {
     if(m_gridPointHasScore) {
         SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
     }
-    
 
     SDL_RenderDrawRect(m_renderer, &gpL);
     SDL_RenderFillRect(m_renderer, &gpL);
     
     SDL_RenderDrawRect(m_renderer, &gpR);
     SDL_RenderFillRect(m_renderer, &gpR);    
+}
+
+void Gridpoint::renderTexture() {
+    SDL_RenderCopy(m_gui->getRenderer(), m_texture, NULL, &m_destRect);
 }
 
 bool Gridpoint::contains(int x, int y) {
