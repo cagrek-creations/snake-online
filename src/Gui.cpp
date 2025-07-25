@@ -37,6 +37,10 @@ GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) 
         std::cerr << "Failed to load font! SDL_ttf Error: " << TTF_GetError() << std::endl;
     }
 
+    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG) {
+        printf("SDL_image could not initialize PNG support! SDL_image Error: %s\n", IMG_GetError());
+    }
+
 }
 
 SDL_Texture *GUI::loadTexture(int name, const std::string &filePath) {
@@ -47,6 +51,29 @@ SDL_Texture *GUI::loadTexture(int name, const std::string &filePath) {
 
     SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
     SDL_FreeSurface(surface);
+
+    SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+
+    if (!texture) {
+        std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
+    }
+
+    m_textureMap[name] = texture;
+
+    return texture;
+}
+
+SDL_Texture *GUI::loadTextureAlpha(int name, const std::string &filePath, int alpha) {
+    SDL_Surface* surface = IMG_Load(filePath.c_str());
+    if (!surface) {
+        std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
+    }
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+    SDL_FreeSurface(surface);
+
+    SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+    SDL_SetTextureAlphaMod(texture, alpha);
 
     if (!texture) {
         std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
@@ -114,8 +141,6 @@ SDL_Color GUI::getColor(std::string colorName) {
 void GUI::update() {
 
 }
-
-
 
 void GUI::render() {
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);

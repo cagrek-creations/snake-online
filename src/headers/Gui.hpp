@@ -49,6 +49,7 @@ class GUI : public Observer {
 
         SDL_Color getColor(std::string colorName);
         SDL_Texture *loadTexture(int name, const std::string &filePath);
+        SDL_Texture *loadTextureAlpha(int name, const std::string &filePath, int alpha);
         SDL_Texture *getTexture(int key);
         void unloadTexture(int key);
 

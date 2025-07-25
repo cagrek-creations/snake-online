@@ -8,8 +8,8 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY) 
     m_granularityY = granularityY;
     m_gui = gui;
 
-    m_gridPointWidth = m_gridWidth / m_granularityX; // width / granularity;
-    m_gridPointHeight = m_gridHeight / m_granularityY; // height / 15;
+    m_gridPointWidth = 64;
+    m_gridPointHeight = 64;
 
     int rows = m_granularityX;
     int cols = m_granularityY;
