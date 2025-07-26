@@ -75,6 +75,4 @@ class GUI : public Observer {
 
         std::unordered_map<int, SDL_Texture*> m_textureMap;
         std::vector<std::unique_ptr<Menu>> menus;
-
-
 };
