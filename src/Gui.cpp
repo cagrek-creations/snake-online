@@ -1,4 +1,5 @@
 #include "Gui.hpp"
+#include <SDL2/SDL_render.h>
 
 GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) {
     int flags = 0;
@@ -44,12 +45,13 @@ GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) 
 }
 
 SDL_Texture *GUI::loadTexture(int name, const std::string &filePath) {
-    SDL_Surface* surface = IMG_Load(filePath.c_str());
+    std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
+    SDL_Surface *surface = IMG_Load((basePathGfx / filePath).string().c_str());
     if (!surface) {
         std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
     }
 
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(m_renderer, surface);
     SDL_FreeSurface(surface);
 
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
@@ -63,13 +65,14 @@ SDL_Texture *GUI::loadTexture(int name, const std::string &filePath) {
     return texture;
 }
 
-SDL_Texture *GUI::loadTextureAlpha(int name, const std::string &filePath, int alpha) {
-    SDL_Surface* surface = IMG_Load(filePath.c_str());
+SDL_Texture *GUI::loadTextureAlpha(int name, const std::string &filePath, int alpha, bool cache) {
+    std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
+    SDL_Surface *surface = IMG_Load((basePathGfx / filePath).string().c_str());
     if (!surface) {
         std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
     }
 
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(m_renderer, surface);
     SDL_FreeSurface(surface);
 
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
@@ -78,10 +81,50 @@ SDL_Texture *GUI::loadTextureAlpha(int name, const std::string &filePath, int al
     if (!texture) {
         std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
     }
-
-    m_textureMap[name] = texture;
+    if (cache) {
+        m_textureMap[name] = texture;
+    }
 
     return texture;
+}
+
+SDL_Texture *GUI::copyTexture(int key) {
+    int w, h;
+    Uint32 format;
+    int access;
+
+    SDL_Texture *source = getTexture(key);
+    if (source == nullptr) {
+        return nullptr;
+    }
+
+    // Get texture info
+    if (SDL_QueryTexture(source, &format, &access, &w, &h) != 0) {
+        SDL_Log("SDL_QueryTexture failed: %s", SDL_GetError());
+        return nullptr;
+    }
+
+    // Create new texture as a render target
+    SDL_Texture* copy = SDL_CreateTexture(m_renderer, format, SDL_TEXTUREACCESS_TARGET, w, h);
+    if (!copy) {
+        SDL_Log("SDL_CreateTexture failed: %s", SDL_GetError());
+        return nullptr;
+    }
+
+    SDL_SetTextureBlendMode(copy, SDL_BLENDMODE_BLEND);
+
+    SDL_Texture* oldTarget = SDL_GetRenderTarget(m_renderer);
+
+    SDL_SetRenderTarget(m_renderer, copy);
+
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 0);
+    SDL_RenderClear(m_renderer);
+
+    SDL_RenderCopy(m_renderer, source, nullptr, nullptr);
+
+    SDL_SetRenderTarget(m_renderer, oldTarget);
+
+    return copy;
 }
 
 SDL_Texture *GUI::getTexture(int key) {

@@ -170,7 +170,11 @@ class Snake : public Observer {
         GUI *m_gui;
 
         SDL_Renderer *m_renderer;
+        // TODO: Turn into a list?
         SDL_Texture *m_textureSnakeHead;
+        SDL_Texture *m_textureSnakeBody;
+        SDL_Texture *m_textureSnakeCurve;
+        SDL_Texture *m_textureSnakeTail;
         int m_textureSnakeHeadDegreeOffset;
         SDL_Color m_color;
         SDL_Rect m_speedBoostRect = {0,0,0,0};

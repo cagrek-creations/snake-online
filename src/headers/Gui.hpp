@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL2/SDL_render.h>
 #include <iostream>
 
 #include <SDL2/SDL.h>
@@ -12,6 +13,7 @@
 #include <thread>
 
 #include "Menu.hpp"
+#include "utils.hpp"
 
 
 namespace color {
@@ -49,8 +51,9 @@ class GUI : public Observer {
 
         SDL_Color getColor(std::string colorName);
         SDL_Texture *loadTexture(int name, const std::string &filePath);
-        SDL_Texture *loadTextureAlpha(int name, const std::string &filePath, int alpha);
+        SDL_Texture *loadTextureAlpha(int name, const std::string &filePath, int alpha, bool cache);
         SDL_Texture *getTexture(int key);
+        SDL_Texture *copyTexture(int key);
         void unloadTexture(int key);
 
         SDL_Renderer *getRenderer();
