@@ -64,7 +64,7 @@ class Gridpoint {
 class Grid {
 
     public:
-        Grid(GUI *gui, int width, int height, int granularityX, int granularityY);
+        Grid(GUI *gui, int width, int height, int granularityX, int granularityY, int rows, int columns);
         ~Grid();
 
         void render();

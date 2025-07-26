@@ -1,6 +1,6 @@
 #include "Grid.hpp"
 
-Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY) {
+Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, int rows, int columns) {
     m_gridWidth = width;
     m_gridHeight = height;
     // m_granularity = granularity;
@@ -8,15 +8,15 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY) 
     m_granularityY = granularityY;
     m_gui = gui;
 
-    m_gridPointWidth = 64;
-    m_gridPointHeight = 64;
+    m_gridPointWidth = granularityX;
+    m_gridPointHeight = granularityY;
 
-    int rows = m_granularityX;
-    int cols = m_granularityY;
+    int rows1 = width / granularityX;
+    int columns1 = height / granularityY;
 
     // Wrong order here?
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
+    for (int i = 0; i < rows1; i++) {
+        for (int j = 0; j < columns1; j++) {
             m_gridpoints.push_back(Gridpoint(m_gui, i * m_gridPointWidth, j * m_gridPointHeight, m_gridPointWidth, m_gridPointHeight));
         }
     }
@@ -88,7 +88,7 @@ Gridpoint::Gridpoint(GUI *gui, int xPos, int yPos, int width, int height) {
     this->m_gridPointY = yPos;
     this->m_gridWidth = width;
     this->m_gridHeight = height;
-    m_texture = m_gui->getTexture(GRIDTILE);
+    m_texture = m_gui->getTexture(TextureID::GRIDTILE);
 
     m_destRect = {m_gridPointX, m_gridPointY, m_gridWidth, m_gridHeight};
 }

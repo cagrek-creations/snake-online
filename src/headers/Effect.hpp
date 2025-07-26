@@ -1,6 +1,6 @@
 #pragma once
 
-constexpr int ERR = 0x99;
+#include "Gui.hpp"
 
 class Effect {
 
@@ -12,8 +12,8 @@ class Effect {
         float getElapsed() const { return m_elapsed; }
         float getDuration() const { return m_duration; }
 
-        virtual void apply() = 0;
-        virtual void expire() = 0;
+        virtual void apply() {};
+        virtual void expire() {};
         virtual void update(float dt) {
             if (!m_applied) {
                 apply();
@@ -21,13 +21,17 @@ class Effect {
             }
 
             m_elapsed += dt;
-            if (m_elapsed >= m_duration) {
+            if (m_elapsed >= m_duration && m_duration != -1) {
                 expire();
                 m_active = false;
             }
         }
 
-        virtual int getType() { return ERR; }
+        virtual TextureID getType() { return TextureID::ERR; }
+
+        virtual void render() {};
+
+        virtual void move(int xPos, int yPos) {};
 
     protected:
         float m_elapsed;

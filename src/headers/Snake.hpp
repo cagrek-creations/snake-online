@@ -25,11 +25,6 @@ struct direction {
 #define DIR_RIGHT   direction{ 1,  0}
 #define DIR_LEFT    direction{-1,  0}
 
-#define SNAKEHEAD   0x101
-#define SNAKEBODY   0x102
-#define SNAKECURVE  0x103
-#define SNAKETAIL   0x104
-
 constexpr bool operator==(const direction& lhs, const direction& rhs) {
     return lhs.x == rhs.x && lhs.y == rhs.y;
 }

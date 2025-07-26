@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "Snake.hpp"
+#include "headers/Gui.hpp"
 
 int WINDOW_FULLSCREEN = 0;
 
@@ -35,6 +36,11 @@ void Game::update(double deltaTime) {
     handleEvents(m_gameController->getLocalEvents());
 
     if (m_state == GAME_PLAY) {
+
+        for (auto &s : m_scores) {
+            s.second->update(deltaTime);
+        }
+
         auto player = m_players[m_myPid];
         player->update(m_deltaTime);
         Vector2 pos = player->getPos();
@@ -56,7 +62,7 @@ void Game::render() {
     m_grid->render();
 
     SDL_Rect dstRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-    SDL_RenderCopy(m_gui->getRenderer(), m_gui->getTexture(0x0000), NULL, &dstRect);
+    SDL_RenderCopy(m_gui->getRenderer(), m_gui->getTexture(TextureID::VINJETTE), NULL, &dstRect);
 
     renderState();
 
@@ -68,11 +74,11 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 40, 40);
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, 100, 75);
 }
 
 void Game::createGrid(int width, int height) {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, width, height);
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, width, height);
 }
 
 void Game::createPlayer() {
@@ -144,18 +150,19 @@ void Game::setupGui() {
     std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
 
     m_gui = std::make_unique<GUI>("Snake", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FULLSCREEN);
-    m_gui->loadTexture(ERR, "err.png");
-    m_gui->loadTexture(BERRY, "berry.png");
-    m_gui->loadTexture(SPEED, "speed.png");
-    m_gui->loadTexture(SPEED_O, "speed.png");
-    m_gui->loadTexture(SWAPAROO, "swaparoo.png");
-    m_gui->loadTexture(SWAPAROO_O, "swaparoo.png");
-    m_gui->loadTextureAlpha(SNAKEHEAD, "y_s1.png", 255, true);
-    m_gui->loadTextureAlpha(SNAKEBODY, "y_s2.png", 255, true);
-    m_gui->loadTextureAlpha(SNAKECURVE, "y_s3.png", 255, true);
-    m_gui->loadTextureAlpha(SNAKETAIL, "y_s4.png", 255, true);
-    m_gui->loadTexture(GRIDTILE, "gridtile.png");
-    m_gui->loadTextureAlpha(0x0000, "vinjette.png", 64, true);
+    m_gui->loadTexture(TextureID::ERR, "err.png");
+    m_gui->loadTexture(TextureID::BERRY, "berry.png");
+    m_gui->loadTexture(TextureID::SPEED, "speed.png");
+    m_gui->loadTexture(TextureID::SPEED_O, "speed.png");
+    m_gui->loadTexture(TextureID::SWAPAROO, "swaparoo.png");
+    m_gui->loadTexture(TextureID::SWAPAROO_O, "swaparoo.png");
+    m_gui->loadTextureAlpha(TextureID::SNAKEHEAD, "y_s1.png", 255, true);
+    m_gui->loadTextureAlpha(TextureID::SNAKEBODY, "y_s2.png", 255, true);
+    m_gui->loadTextureAlpha(TextureID::SNAKECURVE, "y_s3.png", 255, true);
+    m_gui->loadTextureAlpha(TextureID::SNAKETAIL, "y_s4.png", 255, true);
+    m_gui->loadTexture(TextureID::GRIDTILE, "gridtile.png");
+    m_gui->loadTextureAlpha(TextureID::BERRY_GLOW, "shiny.png", 255, true);
+    m_gui->loadTextureAlpha(TextureID::VINJETTE, "vinjette.png", 64, true);
 
     m_startMenu =       std::make_unique<Menu>(m_gui->getRenderer(), 0, WINDOW_MIDDLE_X - (250 / 2), 
                                                     WINDOW_MIDDLE_Y - (200 / 2), 
