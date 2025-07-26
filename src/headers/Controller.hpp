@@ -168,4 +168,3 @@ class Controller {
         std::mutex m_mutexServerEvents;
 
 };
-

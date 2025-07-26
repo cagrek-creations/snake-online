@@ -5,6 +5,7 @@
 #include <filesystem>
 
 #if defined(_WIN32)
+#include <winsock2.h>
 #include <windows.h>
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
