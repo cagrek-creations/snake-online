@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "SnakeEffects.hpp"
+#include "headers/Gui.hpp"
 
 void Game::handleEvents(std::vector<std::string> serverEvents) {
     for (auto se : serverEvents) {
@@ -139,17 +140,21 @@ void Game::setupFromServer(std::vector<std::string> event) {
 }
 
 void Game::addScore(Vector2 pos, const std::string &type) {
-    std::shared_ptr<Score> score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), ERR);
+    std::shared_ptr<Score> score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), TextureID::ERR);
     if (type == "berry") {
-        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), BERRY);
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), TextureID::BERRY);
     } else if (type == "inverse_self") {
-        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), SWAPAROO);
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), TextureID::SWAPAROO);
     } else if (type == "inverse_other") {
-        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), SWAPAROO_O);
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), TextureID::SWAPAROO_O);
     } else if (type == "speed_self") {
-        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), SPEED);
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), TextureID::SPEED);
     } else if (type == "speed_other") {
-        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), SPEED_O);
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), TextureID::SPEED_O);
+    } else if (type == "golden_berry") {
+        score = std::make_shared<Score>(m_gui->getRenderer(), m_gui.get(), m_grid->getGridPointWidth(), m_grid->getGridPointWidth(), TextureID::GOLDEN_BERRY);
+        SDL_Rect target{-99, -99, m_grid->getGridPointWidth(), m_grid->getGridPointWidth()};
+        score->addEffect(std::make_unique<GlowEffect>(-1, m_gui->getTexture(TextureID::BERRY_GLOW), m_gui->getRenderer(), target));
     }
 
     pos.x = ((pos.x) * (m_grid->getGridPointWidth())) + 1;

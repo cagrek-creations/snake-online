@@ -4,6 +4,7 @@
 #include <memory>
 #include <chrono>
 
+#include "Controller.hpp"
 #include "Common.hpp"
 #include "Snake.hpp"
 #include "Grid.hpp"
@@ -12,7 +13,6 @@
 #include "Soundmanager.hpp"
 #include "Gui.hpp"
 #include "Snake.hpp"
-#include "Controller.hpp"
 #include "Vector2.hpp"
 #include "utils.hpp"
 
