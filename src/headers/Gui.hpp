@@ -8,11 +8,13 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 
+#include <unordered_map>
 #include <vector>
 #include <memory>
 #include <thread>
 
 #include "Menu.hpp"
+#include "Spritesheet.hpp"
 #include "utils.hpp"
 
 
@@ -39,6 +41,7 @@ enum class TextureID {
     VINJETTE,
     BERRY_GLOW,
     GOLDEN_BERRY,
+    A_YELLOW_SNAKE,
 };
 
 class GUI : public Observer {
@@ -73,6 +76,9 @@ class GUI : public Observer {
         SDL_Texture *copyTexture(TextureID key);
         void unloadTexture(TextureID key);
 
+        SpriteSheet *loadAtlas(TextureID name, const std::string &filePath, int frameWidth, int frameHeight, int numFrames);
+        SpriteSheet *getAtlas(TextureID key);
+
         SDL_Renderer *getRenderer();
         TTF_Font *getFont();
 
@@ -91,5 +97,6 @@ class GUI : public Observer {
         TTF_Font *m_font;
 
         std::unordered_map<TextureID, SDL_Texture*> m_textureMap;
+        std::unordered_map<TextureID, std::unique_ptr<SpriteSheet>> m_atlasMap;
         std::vector<std::unique_ptr<Menu>> menus;
 };

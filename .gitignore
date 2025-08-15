@@ -51,6 +51,7 @@ src/SDL2
 *.zip
 *.png
 *.mp4
+*.mp3
 assets/
 tmp/
 debug/*
