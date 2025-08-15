@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL_render.h>
 #include <iostream>
+#include <memory>
 #include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -32,7 +33,8 @@ constexpr bool operator==(const direction& lhs, const direction& rhs) {
 class Snakeblock {
 
     public: 
-        Snakeblock(SDL_Renderer *renderer, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, SDL_Texture *texture, int degrees, SDL_Color color, direction dir);
+        Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, SDL_Texture *texture, int degrees, SDL_Color color, direction dir);
+        Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, std::shared_ptr<Sprite> sprite, int degrees, SDL_Color color, direction dir);
         ~Snakeblock();
 
         void render(); 
@@ -44,6 +46,7 @@ class Snakeblock {
         int getPosY();
 
         void setTexture(SDL_Texture *texture);
+        void setSprite(std::shared_ptr<Sprite> sprite);
         void rotateTexture(int degrees);
 
         void setDegrees(int degrees);
@@ -64,6 +67,9 @@ class Snakeblock {
         SDL_Rect m_snakeblock;
         SDL_Rect m_snakeblockOverlay;
         SDL_Renderer *m_renderer;
+        GUI *m_gui;
+
+        std::shared_ptr<Sprite> m_sprite;
 
         SDL_Texture *m_texture;
         int m_textureDegreeOffset;
@@ -170,6 +176,12 @@ class Snake : public Observer {
         SDL_Texture *m_textureSnakeBody;
         SDL_Texture *m_textureSnakeCurve;
         SDL_Texture *m_textureSnakeTail;
+
+        std::shared_ptr<Sprite> m_spriteSnakeHead;
+        std::shared_ptr<Sprite> m_spriteSnakeBody;
+        std::shared_ptr<Sprite> m_spriteSnakeCurve;
+        std::shared_ptr<Sprite> m_spriteSnakeTail;
+
         int m_textureSnakeHeadDegreeOffset;
         SDL_Color m_color;
         SDL_Rect m_speedBoostRect = {0,0,0,0};

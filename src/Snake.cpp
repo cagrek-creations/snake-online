@@ -1,4 +1,7 @@
 #include "Snake.hpp"
+#include "Gui.hpp"
+#include "headers/Sprite.hpp"
+#include <memory>
 
 Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color, int pid, int speed) {
 
@@ -18,16 +21,23 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight,
     m_speedBoostTime = m_speedBoostTimeLimit;
     m_speedBoostTimeout = 0.0f;
 
+    SpriteSheet *atlas = m_gui->getAtlas(TextureID::A_YELLOW_SNAKE);
+    m_spriteSnakeHead = std::make_shared<Sprite>(atlas->getTexture(), atlas->getClip(0));
+    m_spriteSnakeBody = std::make_shared<Sprite>(atlas->getTexture(), atlas->getClip(1));
+    m_spriteSnakeCurve = std::make_shared<Sprite>(atlas->getTexture(), atlas->getClip(2));
+    m_spriteSnakeTail = std::make_shared<Sprite>(atlas->getTexture(), atlas->getClip(3));
+    
+
     m_snakeDirection = DIR_RIGHT;
     m_newSnakeDirection = m_snakeDirection;
 
     m_snakeWidth = m_grid->getGridPointWidth(); // Retrieve from grid
     m_snakeHeight = m_grid->getGridPointHeight(); // Retrieve from grid 
 
-    m_textureSnakeHead = m_gui->copyTexture(TextureID::SNAKEHEAD);
-    m_textureSnakeBody = m_gui->copyTexture(TextureID::SNAKEBODY);
-    m_textureSnakeCurve = m_gui->copyTexture(TextureID::SNAKECURVE);
-    m_textureSnakeTail = m_gui->copyTexture(TextureID::SNAKETAIL);
+    // m_textureSnakeHead = m_gui->copyTexture(TextureID::SNAKEHEAD);
+    // m_textureSnakeBody = m_gui->copyTexture(TextureID::SNAKEBODY);
+    // m_textureSnakeCurve = m_gui->copyTexture(TextureID::SNAKECURVE);
+    // m_textureSnakeTail = m_gui->copyTexture(TextureID::SNAKETAIL);
 
     // SDL_FreeSurface(snakeHead);
     Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
@@ -38,11 +48,11 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight,
     }
     if(gp == nullptr) std::cout << "WHAT";
     for (int i = 0; i < snakeSize; i++) {
-        snakeBlocks.push_back(Snakeblock(m_renderer, gridPos.x, gridPos.y, m_snakeWidth, m_snakeHeight, m_textureSnakeBody, m_degrees, m_color, m_snakeDirection));
+        snakeBlocks.push_back(Snakeblock(m_gui, gridPos.x, gridPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeBody, m_degrees, m_color, m_snakeDirection));
     }
 
-    snakeBlocks.back().setTexture(m_textureSnakeTail);
-    snakeBlocks.begin()->setTexture(m_textureSnakeHead);
+    snakeBlocks.back().setSprite(m_spriteSnakeTail);
+    snakeBlocks.begin()->setSprite(m_spriteSnakeHead);
 }
 
 Snake::~Snake() {
@@ -256,33 +266,33 @@ int Snake::calculateBodyOffset(direction dir1, direction dir2) {
 void Snake::updateSnakePos(Gridpoint *gp) {
     snakeBlocks.pop_back();
     Vector2 newPos = gp->getGridPointPos() + Vector2(2, 2);
-    Snakeblock newSnakeBlock = Snakeblock(m_renderer, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection);
+    Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
     snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
 
-    snakeBlocks.back().setTexture(m_textureSnakeTail);
+    snakeBlocks.back().setSprite(m_spriteSnakeTail);
     auto head = &snakeBlocks[0];
     auto neck = &snakeBlocks[1];
     auto tail = &snakeBlocks[snakeBlocks.size() - 1];
     auto tailneck = &snakeBlocks[snakeBlocks.size() - 2];
-    neck->setTexture(m_textureSnakeBody);
+    neck->setSprite(m_spriteSnakeBody);
     tail->setDegrees(tailneck->getDegrees());
     tail->rotateTexture(180);
 
     // Logic for calculating neck.
     if (head->getDirection() != neck->getDirection()) {
         // Direction has changed, set texture to curve and calculate offset
-        neck->setTexture(m_gui->getTexture(TextureID::SNAKECURVE));
+        neck->setSprite(m_spriteSnakeCurve);
         neck->rotateTexture(calculateBodyOffset(head->getDirection(), neck->getDirection()) - neck->getDegrees());
     }
 
 }
 
 void Snake::grow() {
-    snakeBlocks.push_back(Snakeblock(m_renderer, -99, -99, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection));
+    snakeBlocks.push_back(Snakeblock(m_gui, -99, -99, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection));
 }
 
 void Snake::grow(int xPos, int yPos) {
-    snakeBlocks.push_back(Snakeblock(m_renderer, xPos, yPos, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection));
+    snakeBlocks.push_back(Snakeblock(m_gui, xPos, yPos, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection));
 }
 
 // TODO: These could be moved to a separate src-file as well (SnakeEffects.cpp).
@@ -330,20 +340,45 @@ void Snake::updatePos(int xPos, int yPos) {
         // TODO: Replace with: updateSnakePos(newPoint);
         snakeBlocks.pop_back();
         Vector2 newPos = newPoint->getGridPointPos() + Vector2(2, 2);
-        Snakeblock newSnakeBlock = Snakeblock(m_renderer, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection);
+        Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
         snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
     } else {
         return;
     }
 }
 
-Snakeblock::Snakeblock(SDL_Renderer *renderer, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, SDL_Texture *texture, int degrees, SDL_Color color, direction dir) {
+Snakeblock::Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, SDL_Texture *texture, int degrees, SDL_Color color, direction dir) {
 
     m_snakeBlockPos = Vector2(snakeBlockXpos, snakeBlockYpos);
     this->m_snakeBlockWidth = snakeBlockWidth;
     this->m_snakeBlockheight = snakeBlockHeight;
-    this->m_renderer = renderer;
+    // this->m_renderer = renderer;
+    m_gui = gui;
     this->m_texture = texture;
+    this->m_degrees = degrees;
+    m_snakeBlockDirection = dir;
+    m_color = color;
+
+    m_snakeblock.w = m_snakeBlockWidth;
+    m_snakeblock.h = m_snakeBlockheight;
+    m_snakeblock.x = m_snakeBlockPos.x;
+    m_snakeblock.y = m_snakeBlockPos.y;
+
+    m_snakeblockOverlay.w = m_snakeBlockWidth /* -4 */;
+    m_snakeblockOverlay.h = m_snakeBlockWidth /* -4 */;
+    m_snakeblockOverlay.x = m_snakeBlockPos.x;
+    m_snakeblockOverlay.y = m_snakeBlockPos.y;
+    m_textureDegreeOffset = 180;
+}
+
+Snakeblock::Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, std::shared_ptr<Sprite> sprite, int degrees, SDL_Color color, direction dir) 
+    : m_sprite(sprite) {
+
+    m_snakeBlockPos = Vector2(snakeBlockXpos, snakeBlockYpos);
+    this->m_snakeBlockWidth = snakeBlockWidth;
+    this->m_snakeBlockheight = snakeBlockHeight;
+    // this->m_renderer = renderer;
+    m_gui = gui;
     this->m_degrees = degrees;
     m_snakeBlockDirection = dir;
     m_color = color;
@@ -366,7 +401,9 @@ void Snakeblock::render() {
     tmp.h = m_snakeBlockheight;
     tmp.x = m_snakeBlockPos.x;
     tmp.y = m_snakeBlockPos.y;
-    SDL_RenderCopyEx(m_renderer, m_texture, NULL, &tmp, m_textureDegreeOffset + m_degrees, NULL, SDL_FLIP_NONE);
+    
+    SDL_RenderCopyEx(m_gui->getRenderer(), m_sprite->getTexture(), &m_sprite->getRect(), &tmp, m_textureDegreeOffset + m_degrees, NULL, SDL_FLIP_NONE);
+    // SDL_RenderCopyEx(m_gui->getRenderer(), m_texture, NULL, &tmp, m_textureDegreeOffset + m_degrees, NULL, SDL_FLIP_NONE)
 }
 
 void Snakeblock::renderHead() {
@@ -377,12 +414,16 @@ void Snakeblock::renderHead() {
     tmp.x = m_snakeBlockPos.x;
     tmp.y = m_snakeBlockPos.y;
     SDL_SetTextureAlphaMod(m_texture, 64);
-    SDL_RenderCopyEx(m_renderer, m_texture, NULL, &tmp, m_textureDegreeOffset + m_degrees, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(m_gui->getRenderer(), m_texture, NULL, &tmp, m_textureDegreeOffset + m_degrees, NULL, SDL_FLIP_NONE);
     SDL_SetTextureAlphaMod(m_texture, 255);
 }
 
 void Snakeblock::setTexture(SDL_Texture *texture) {
     m_texture = texture;
+}
+
+void Snakeblock::setSprite(std::shared_ptr<Sprite> sprite) {
+    m_sprite = sprite;
 }
 
 void Snakeblock::rotateTexture(int degrees) {

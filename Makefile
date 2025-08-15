@@ -24,7 +24,7 @@ CFLAGS= -I$(IDIR) $(LIBS) $(EXTRA_LIBS)
 DEPS = $(wildcard $(IDIR)/*.hpp)
 
 ODIR = ./obj
-_OBJ =  Gui.o Snake.o Grid.o main.o Menu.o Score.o Soundmanager.o comm_util.o Game.o GameLogic.o Controller.o Vector2.o Spritesheet.o
+_OBJ =  Gui.o Snake.o Grid.o main.o Menu.o Score.o Soundmanager.o comm_util.o Game.o GameLogic.o Controller.o Vector2.o Sprite.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 LIBSRC = ./src/cpp-lib

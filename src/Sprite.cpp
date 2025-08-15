@@ -1,4 +1,9 @@
-#include "Spritesheet.hpp"
+#include "Sprite.hpp"
+#include <SDL2/SDL_render.h>
+
+Sprite::~Sprite() {
+    
+}
 
 SpriteSheet::SpriteSheet(SDL_Renderer *renderer, const std::string& path, int frameWidth, int frameHeight, int numFrames) : m_texture(nullptr) {
     SDL_Surface* surface = IMG_Load(path.c_str());
@@ -11,7 +16,7 @@ SpriteSheet::SpriteSheet(SDL_Renderer *renderer, const std::string& path, int fr
     if (!m_texture) {
         std::cerr << "SDL_CreateTextureFromSurface failed: " << SDL_GetError() << std::endl;
     }
-    
+
     SDL_SetTextureBlendMode(m_texture, SDL_BLENDMODE_BLEND);
 
     int sheetWidth = surface->w;
@@ -44,3 +49,6 @@ const SDL_Rect &SpriteSheet::getClip(int index) const {
     return m_clips[index];
 }
 
+SDL_Texture *SpriteSheet::getTexture() const { 
+    return m_texture; 
+}

@@ -14,7 +14,7 @@
 #include <thread>
 
 #include "Menu.hpp"
-#include "Spritesheet.hpp"
+#include "Sprite.hpp"
 #include "utils.hpp"
 
 

@@ -1,5 +1,4 @@
 #include "Gui.hpp"
-#include "Spritesheet.hpp"
 #include <SDL2/SDL_render.h>
 
 GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) {
