@@ -9,7 +9,7 @@
 
 class TcpCommunication {
     public:
-        TcpCommunication(const char *ip, int port) : m_clientSocket(-1) {
+        TcpCommunication(const char *ip, int port) : m_clientSocket(INVALID_SOCKET) {
             if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
                 std::cerr << "Failed to initialize Winsock\n";
             }
@@ -39,8 +39,6 @@ class TcpCommunication {
             std::string input;
             while (true) {
                 // Example: Receiving a response from the server
-                
-
                 // resp = receive(input);
                 input = receiveChar(1024);
                 if(input == "false") return;
@@ -60,7 +58,7 @@ class TcpCommunication {
 
         std::string receiveChar(size_t bufferSize) {
             
-            if (m_clientSocket == -1) {
+            if (m_clientSocket == INVALID_SOCKET) {
                 std::cerr << "Not connected to a server\n";
                 m_isConnected = false;
                 return "false";
@@ -84,7 +82,7 @@ class TcpCommunication {
         }
 
         bool receive(std::string& receivedData) {
-            if (m_clientSocket == -1) {
+            if (m_clientSocket == INVALID_SOCKET) {
                 std::cerr << "Not connected to a server\n";
                 return false;
             }
@@ -110,7 +108,7 @@ class TcpCommunication {
         }
 
         bool send(const char* data, size_t size) {
-            if (m_clientSocket == -1) {
+            if (m_clientSocket == INVALID_SOCKET) {
                 std::cerr << "Not connected to a server\n";
                 m_isConnected = false;
                 return false;
@@ -128,13 +126,13 @@ class TcpCommunication {
 
         // Move to comm_util?
         void closeConnection() {
-            if (m_clientSocket != -1) {
+            if (m_clientSocket != INVALID_SOCKET) {
                 #ifdef _WIN32
                 closesocket(m_clientSocket);
                 #else
                 close(m_clientSocket);
                 #endif
-                m_clientSocket = -1;
+                m_clientSocket = INVALID_SOCKET;
                 std::cout << "Connection closed\n";
             }
         }
@@ -152,7 +150,7 @@ class TcpCommunication {
         SOCKET m_clientSocket;
         WSADATA wsaData;
 
-        bool m_isConnected = true;
+        bool m_isConnected = false;
 
         bool connectToServer() {
             

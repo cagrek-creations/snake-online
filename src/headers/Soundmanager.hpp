@@ -5,8 +5,10 @@
 
 #include <unordered_map>
 #include <string>
+#include <filesystem>
 
 #include "Observer.hpp"
+#include "utils.hpp"
 
 
 class SoundManager : public Observer {
@@ -35,7 +37,7 @@ private:
     int m_loops;
 
     int m_volumeMax = 128;
-    int m_volumeMin = 0; 
+    int m_volumeMin = 0;
 
     Mix_Chunk* loadChunk(const char* filePath);
     void onEvent(const SDL_Event& event) override;

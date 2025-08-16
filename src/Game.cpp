@@ -5,7 +5,7 @@
 int WINDOW_FULLSCREEN = 0;
 
 int WINDOW_WIDTH = 1600;
-int WINDOW_HEIGHT = 1200;
+int WINDOW_HEIGHT = 1024;
 
 int WINDOW_MIDDLE_X (WINDOW_WIDTH / 2);
 int WINDOW_MIDDLE_Y (WINDOW_HEIGHT / 2);
@@ -83,7 +83,7 @@ void Game::createGrid(int width, int height) {
 
 void Game::createPlayer() {
     Vector2 initialPos = Vector2(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y);
-    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 20, 20, 6, color::GREEN, m_players.size(), 1);
+    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 6, color::GREEN, m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);
 }
@@ -92,7 +92,7 @@ void Game::createPlayer(int size, int xPos, int yPos) {
     int xPosGrid = ((xPos) * (m_grid->getGridPointWidth()));
     int yPosGrid = ((yPos) * (m_grid->getGridPointHeight()));
     Vector2 initialPos = Vector2(xPosGrid, yPosGrid);
-    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 40, 40, size, m_gui->getColor(m_playerColor), m_players.size(), 1);
+    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), size, m_gui->getColor(m_playerColor), m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);
 }
@@ -156,14 +156,10 @@ void Game::setupGui() {
     m_gui->loadTexture(TextureID::SPEED_O, "speed.png");
     m_gui->loadTexture(TextureID::SWAPAROO, "swaparoo.png");
     m_gui->loadTexture(TextureID::SWAPAROO_O, "swaparoo.png");
-    m_gui->loadTextureAlpha(TextureID::SNAKEHEAD, "y_s1.png", 255, true);
-    m_gui->loadTextureAlpha(TextureID::SNAKEBODY, "y_s2.png", 255, true);
-    m_gui->loadTextureAlpha(TextureID::SNAKECURVE, "y_s3.png", 255, true);
-    m_gui->loadTextureAlpha(TextureID::SNAKETAIL, "y_s4.png", 255, true);
-    m_gui->loadAtlas(TextureID::A_YELLOW_SNAKE, "y_s.png", 16, 16, 4);
     m_gui->loadTexture(TextureID::GRIDTILE, "gridtile.png");
     m_gui->loadTextureAlpha(TextureID::BERRY_GLOW, "shiny.png", 255, true);
     m_gui->loadTextureAlpha(TextureID::VINJETTE, "vinjette.png", 64, true);
+    m_gui->loadAtlas(TextureID::A_YELLOW_SNAKE, "y_s.png", 16, 16, 4);
 
     m_startMenu =       std::make_unique<Menu>(m_gui->getRenderer(), 0, WINDOW_MIDDLE_X - (250 / 2), 
                                                     WINDOW_MIDDLE_Y - (200 / 2), 
@@ -191,7 +187,8 @@ void Game::setupSound() {
     m_volume = 64;
     m_playSound = 1;
     m_sound = std::make_unique<SoundManager>(m_volume, m_playSound);
-    m_sound->loadSound("./debug/sfx/MegaSnake.mp3", "MegaSnake");
+    
+    m_sound->loadSound("MegaSnake.mp3", "MegaSnake");
     m_sound->setVolume("MegaSnake", m_volume); // 50%
     m_sound->playSound("MegaSnake", -1);
 }

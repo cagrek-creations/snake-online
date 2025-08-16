@@ -79,7 +79,7 @@ class Snakeblock {
 class Snake : public Observer {
 
     public:
-        Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color, int pid, int speed);
+        Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, int pid, int speed);
         Snake() {
             
         }

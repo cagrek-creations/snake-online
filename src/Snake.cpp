@@ -3,7 +3,7 @@
 #include "headers/Sprite.hpp"
 #include <memory>
 
-Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight, int snakeSize, SDL_Color color, int pid, int speed) {
+Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, int pid, int speed) {
 
     this->m_renderer = gui->getRenderer();
     // this->m_snakeWidth = snakeWidth;
@@ -30,6 +30,7 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight,
 
     m_snakeDirection = DIR_RIGHT;
     m_newSnakeDirection = m_snakeDirection;
+    m_newDegrees = 0;
 
     m_snakeWidth = m_grid->getGridPointWidth(); // Retrieve from grid
     m_snakeHeight = m_grid->getGridPointHeight(); // Retrieve from grid 
