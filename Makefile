@@ -3,7 +3,7 @@ OBJS = ./src/*.cpp
 
 CC=g++
 
-OPTIMIZATION= #-O3
+OPTIMIZATION= #-O2
 
 STATIC= -static -static-libgcc -static-libstdc++ 
 
