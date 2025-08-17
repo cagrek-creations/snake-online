@@ -24,7 +24,10 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight,
     m_snakeWidth = m_grid->getGridPointWidth(); // Retrieve from grid
     m_snakeHeight = m_grid->getGridPointHeight(); // Retrieve from grid 
 
-    m_textureSnakeHead = m_gui->getTexture(SNAKEHEAD);
+    m_textureSnakeHead = m_gui->copyTexture(SNAKEHEAD);
+    m_textureSnakeBody = m_gui->copyTexture(SNAKEBODY);
+    m_textureSnakeCurve = m_gui->copyTexture(SNAKECURVE);
+    m_textureSnakeTail = m_gui->copyTexture(SNAKETAIL);
 
     // SDL_FreeSurface(snakeHead);
     Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
@@ -35,11 +38,11 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight,
     }
     if(gp == nullptr) std::cout << "WHAT";
     for (int i = 0; i < snakeSize; i++) {
-        snakeBlocks.push_back(Snakeblock(m_renderer, gridPos.x, gridPos.y, m_snakeWidth-2, m_snakeHeight-2, m_gui->getTexture(SNAKEBODY), m_degrees, m_color, m_snakeDirection));
+        snakeBlocks.push_back(Snakeblock(m_renderer, gridPos.x, gridPos.y, m_snakeWidth, m_snakeHeight, m_textureSnakeBody, m_degrees, m_color, m_snakeDirection));
     }
 
-    snakeBlocks.back().setTexture(m_gui->getTexture(SNAKETAIL));
-    snakeBlocks.begin()->setTexture(m_gui->getTexture(SNAKEHEAD));
+    snakeBlocks.back().setTexture(m_textureSnakeTail);
+    snakeBlocks.begin()->setTexture(m_textureSnakeHead);
 }
 
 Snake::~Snake() {
@@ -52,11 +55,7 @@ void Snake::render() {
     // SDL_RenderPresent(m_renderer);
 
     for (int i = 0; i < snakeBlocks.size(); i++) {
-        if(i == 0) {
-            snakeBlocks[i].renderHead();
-        } else {
-            snakeBlocks[i].render();
-        }
+        snakeBlocks[i].render();
     }
 
     if (m_pid == 0) {
@@ -225,7 +224,7 @@ void Snake::update(double deltaTime) {
         }
 
         if(newPoint->hasScore()) {
-            // snakeBlocks.push_back(Snakeblock(m_renderer, (snakeBlocks.size()-1)*m_snakeWidth, 1, m_snakeWidth-2, m_snakeHeight-2, m_textureSnakeHead, m_degrees, m_color));
+            // snakeBlocks.push_back(Snakeblock(m_renderer, (snakeBlocks.size()-1)*m_snakeWidth, 1, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color));
             // newPoint->removeScore();
             std::string command = "PLAYER_SCORE_COLLECTED;" + std::to_string(newPoint->getGridPointX()) + ";" + std::to_string(newPoint->getGridPointY());
             signalController(command);
@@ -257,15 +256,15 @@ int Snake::calculateBodyOffset(direction dir1, direction dir2) {
 void Snake::updateSnakePos(Gridpoint *gp) {
     snakeBlocks.pop_back();
     Vector2 newPos = gp->getGridPointPos() + Vector2(2, 2);
-    Snakeblock newSnakeBlock = Snakeblock(m_renderer, newPos.x, newPos.y, m_snakeWidth - 2, m_snakeHeight - 2, m_gui->getTexture(SNAKEHEAD), m_degrees, m_color, m_snakeDirection);
+    Snakeblock newSnakeBlock = Snakeblock(m_renderer, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection);
     snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
 
-    snakeBlocks.back().setTexture(m_gui->getTexture(SNAKETAIL));
+    snakeBlocks.back().setTexture(m_textureSnakeTail);
     auto head = &snakeBlocks[0];
     auto neck = &snakeBlocks[1];
     auto tail = &snakeBlocks[snakeBlocks.size() - 1];
     auto tailneck = &snakeBlocks[snakeBlocks.size() - 2];
-    neck->setTexture(m_gui->getTexture(SNAKEBODY));
+    neck->setTexture(m_textureSnakeBody);
     tail->setDegrees(tailneck->getDegrees());
     tail->rotateTexture(180);
 
@@ -279,11 +278,11 @@ void Snake::updateSnakePos(Gridpoint *gp) {
 }
 
 void Snake::grow() {
-    snakeBlocks.push_back(Snakeblock(m_renderer, -99, -99, m_snakeWidth-2, m_snakeHeight-2, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection));
+    snakeBlocks.push_back(Snakeblock(m_renderer, -99, -99, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection));
 }
 
 void Snake::grow(int xPos, int yPos) {
-    snakeBlocks.push_back(Snakeblock(m_renderer, xPos, yPos, m_snakeWidth-2, m_snakeHeight-2, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection));
+    snakeBlocks.push_back(Snakeblock(m_renderer, xPos, yPos, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection));
 }
 
 // TODO: These could be moved to a separate src-file as well (SnakeEffects.cpp).
@@ -322,7 +321,7 @@ void Snake::updatePos(int xPos, int yPos) {
         }
 
         // if(newPoint->hasScore()) {
-        //     snakeBlocks.push_back(Snakeblock(m_renderer, (snakeBlocks.size()-1)*m_snakeWidth, 1, m_snakeWidth-2, m_snakeHeight-2, m_textureSnakeHead, m_degrees, m_color));
+        //     snakeBlocks.push_back(Snakeblock(m_renderer, (snakeBlocks.size()-1)*m_snakeWidth, 1, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color));
         //     newPoint->removeScore();
         // }
         
@@ -331,7 +330,7 @@ void Snake::updatePos(int xPos, int yPos) {
         // TODO: Replace with: updateSnakePos(newPoint);
         snakeBlocks.pop_back();
         Vector2 newPos = newPoint->getGridPointPos() + Vector2(2, 2);
-        Snakeblock newSnakeBlock = Snakeblock(m_renderer, newPos.x, newPos.y, m_snakeWidth - 2, m_snakeHeight - 2, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection);
+        Snakeblock newSnakeBlock = Snakeblock(m_renderer, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color, m_snakeDirection);
         snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
     } else {
         return;
@@ -354,10 +353,10 @@ Snakeblock::Snakeblock(SDL_Renderer *renderer, int snakeBlockXpos, int snakeBloc
     m_snakeblock.x = m_snakeBlockPos.x;
     m_snakeblock.y = m_snakeBlockPos.y;
 
-    m_snakeblockOverlay.w = m_snakeBlockWidth - 4;
-    m_snakeblockOverlay.h = m_snakeBlockWidth - 4;
-    m_snakeblockOverlay.x = m_snakeBlockPos.x + 2;
-    m_snakeblockOverlay.y = m_snakeBlockPos.y + 2;
+    m_snakeblockOverlay.w = m_snakeBlockWidth /* -4 */;
+    m_snakeblockOverlay.h = m_snakeBlockWidth /* -4 */;
+    m_snakeblockOverlay.x = m_snakeBlockPos.x;
+    m_snakeblockOverlay.y = m_snakeBlockPos.y;
     m_textureDegreeOffset = 180;
 }
 
@@ -377,7 +376,9 @@ void Snakeblock::renderHead() {
     tmp.h = m_snakeBlockheight;
     tmp.x = m_snakeBlockPos.x;
     tmp.y = m_snakeBlockPos.y;
+    SDL_SetTextureAlphaMod(m_texture, 64);
     SDL_RenderCopyEx(m_renderer, m_texture, NULL, &tmp, m_textureDegreeOffset + m_degrees, NULL, SDL_FLIP_NONE);
+    SDL_SetTextureAlphaMod(m_texture, 255);
 }
 
 void Snakeblock::setTexture(SDL_Texture *texture) {

@@ -55,6 +55,9 @@ void Game::render() {
     m_gui->update();
     m_grid->render();
 
+    SDL_Rect dstRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+    SDL_RenderCopy(m_gui->getRenderer(), m_gui->getTexture(0x0000), NULL, &dstRect);
+
     renderState();
 
     m_gui->render();
@@ -65,7 +68,7 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 40, 30);
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 40, 40);
 }
 
 void Game::createGrid(int width, int height) {
@@ -74,7 +77,7 @@ void Game::createGrid(int width, int height) {
 
 void Game::createPlayer() {
     Vector2 initialPos = Vector2(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y);
-    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 40, 40, 3, color::GREEN, m_players.size(), 1);
+    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 20, 20, 6, color::GREEN, m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);
 }
@@ -141,17 +144,18 @@ void Game::setupGui() {
     std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
 
     m_gui = std::make_unique<GUI>("Snake", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FULLSCREEN);
-    m_gui->loadTexture(ERR, (basePathGfx / "err.png").string());
-    m_gui->loadTexture(BERRY, (basePathGfx / "berry.png").string());
-    m_gui->loadTexture(SPEED, (basePathGfx / "speed.png").string());
-    m_gui->loadTexture(SPEED_O, (basePathGfx / "speed.png").string());
-    m_gui->loadTexture(SWAPAROO, (basePathGfx / "swaparoo.png").string());
-    m_gui->loadTexture(SWAPAROO_O, (basePathGfx / "swaparoo.png").string());
-    m_gui->loadTexture(SNAKEHEAD, (basePathGfx / "y_s1.png").string());
-    m_gui->loadTexture(SNAKEBODY, (basePathGfx / "y_s2.png").string());
-    m_gui->loadTexture(SNAKECURVE, (basePathGfx / "y_s3.png").string());
-    m_gui->loadTexture(SNAKETAIL, (basePathGfx / "y_s4.png").string());
-    m_gui->loadTexture(GRIDTILE, (basePathGfx / "gridtile.png").string());
+    m_gui->loadTexture(ERR, "err.png");
+    m_gui->loadTexture(BERRY, "berry.png");
+    m_gui->loadTexture(SPEED, "speed.png");
+    m_gui->loadTexture(SPEED_O, "speed.png");
+    m_gui->loadTexture(SWAPAROO, "swaparoo.png");
+    m_gui->loadTexture(SWAPAROO_O, "swaparoo.png");
+    m_gui->loadTextureAlpha(SNAKEHEAD, "y_s1.png", 255, true);
+    m_gui->loadTextureAlpha(SNAKEBODY, "y_s2.png", 255, true);
+    m_gui->loadTextureAlpha(SNAKECURVE, "y_s3.png", 255, true);
+    m_gui->loadTextureAlpha(SNAKETAIL, "y_s4.png", 255, true);
+    m_gui->loadTexture(GRIDTILE, "gridtile.png");
+    m_gui->loadTextureAlpha(0x0000, "vinjette.png", 64, true);
 
     m_startMenu =       std::make_unique<Menu>(m_gui->getRenderer(), 0, WINDOW_MIDDLE_X - (250 / 2), 
                                                     WINDOW_MIDDLE_Y - (200 / 2), 
