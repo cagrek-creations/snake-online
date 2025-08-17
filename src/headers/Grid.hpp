@@ -9,12 +9,10 @@
 #include "Vector2.hpp"
 #include "Gui.hpp"
 
-constexpr int GRIDTILE =    0x201;
-
 class Gridpoint {
 
-    public: 
-        Gridpoint(GUI *gui, int xPos, int yPos, int width, int height);
+    public:
+        Gridpoint(GUI *gui, Vector2 pos, int width, int height);
         ~Gridpoint();
 
         bool operator==(const Gridpoint& other) const {
@@ -58,13 +56,15 @@ class Gridpoint {
 
         SDL_Texture *m_texture;
         SDL_Rect m_destRect;
+
+        Vector2 m_pos;
     
 };
 
 class Grid {
 
     public:
-        Grid(GUI *gui, int width, int height, int granularityX, int granularityY, int rows, int columns);
+        Grid(GUI *gui, int width, int height, int granularityX, int granularityY, int rows, int columns, Vector2 pos);
         ~Grid();
 
         void render();
@@ -94,6 +94,8 @@ class Grid {
         int m_granularityY;
         int m_gridPointWidth;
         int m_gridPointHeight;
+
+        Vector2 m_pos;
 
         std::vector<Gridpoint> m_gridpoints;
 };

@@ -1,6 +1,7 @@
 #include "Grid.hpp"
+#include "Vector2.hpp"
 
-Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, int rows, int columns) {
+Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, int rows, int columns, Vector2 pos) {
     m_gridWidth = width;
     m_gridHeight = height;
     // m_granularity = granularity;
@@ -11,13 +12,17 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, 
     m_gridPointWidth = granularityX;
     m_gridPointHeight = granularityY;
 
-    int rows1 = width / granularityX;
-    int columns1 = height / granularityY;
+    int r = width / granularityX;
+    int c = height / granularityY;
+
+    m_pos = pos;
 
     // Wrong order here?
-    for (int i = 0; i < rows1; i++) {
-        for (int j = 0; j < columns1; j++) {
-            m_gridpoints.push_back(Gridpoint(m_gui, i * m_gridPointWidth, j * m_gridPointHeight, m_gridPointWidth, m_gridPointHeight));
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            int _x = i * m_gridPointWidth + m_pos.x;
+            int _y = j * m_gridPointHeight + m_pos.y;
+            m_gridpoints.push_back(Gridpoint(m_gui, Vector2(_x, _y), m_gridPointWidth, m_gridPointHeight));
         }
     }
 }
@@ -31,10 +36,11 @@ void Grid::setSize(int width, int height) {
     // Wrong order here?
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            m_gridpoints.push_back(Gridpoint(m_gui, i * m_gridPointWidth, j * m_gridPointHeight, m_gridPointWidth, m_gridPointHeight));
+            int _x = i * m_gridPointWidth + m_pos.x;
+            int _y = j * m_gridPointHeight + m_pos.y;
+            m_gridpoints.push_back(Gridpoint(m_gui, Vector2(_x, _y), m_gridPointWidth, m_gridPointHeight));
         }
     }
-
 }
 
 void Grid::render() {
@@ -82,10 +88,10 @@ Gridpoint *Grid::getPoint(int x, int y) {
 Grid::~Grid() {}
 
 
-Gridpoint::Gridpoint(GUI *gui, int xPos, int yPos, int width, int height) {
+Gridpoint::Gridpoint(GUI *gui, Vector2 pos, int width, int height) {
     this->m_gui = gui;
-    this->m_gridPointX = xPos;
-    this->m_gridPointY = yPos;
+    this->m_gridPointX = pos.x;
+    this->m_gridPointY = pos.y;
     this->m_gridWidth = width;
     this->m_gridHeight = height;
     m_texture = m_gui->getTexture(TextureID::GRIDTILE);

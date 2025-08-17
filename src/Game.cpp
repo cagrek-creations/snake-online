@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "Snake.hpp"
+#include "Vector2.hpp"
 #include "headers/Gui.hpp"
 
 int WINDOW_FULLSCREEN = 0;
@@ -61,6 +62,7 @@ void Game::render() {
     m_gui->update();
     m_grid->render();
 
+    // TODO: Update this to only render over the grid instead of the screen.
     SDL_Rect dstRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
     SDL_RenderCopy(m_gui->getRenderer(), m_gui->getTexture(TextureID::VINJETTE), NULL, &dstRect);
 
@@ -74,11 +76,11 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, 100, 75);
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 16, 16, 50, 50, Vector2(100, 100));
 }
 
 void Game::createGrid(int width, int height) {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, width, height);
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, width, height, Vector2(0,0));
 }
 
 void Game::createPlayer() {
