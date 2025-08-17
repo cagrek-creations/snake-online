@@ -65,6 +65,29 @@ SDL_Texture *GUI::loadTexture(TextureID name, const std::string &filePath) {
     return texture;
 }
 
+SpriteSheet *GUI::loadAtlas(TextureID name, const std::string &filePath, int frameWidth, int frameHeight, int numFrames) {
+    std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
+    auto sheet = std::make_unique<SpriteSheet>(
+        m_renderer,
+        (basePathGfx / filePath).string(),
+        frameWidth,
+        frameHeight,
+        numFrames
+    );
+
+    SpriteSheet *sheetPtr = sheet.get();
+    m_atlasMap[name] = std::move(sheet);
+    return sheetPtr;
+}
+
+SpriteSheet *GUI::getAtlas(TextureID id) {
+    auto it = m_atlasMap.find(id);
+    if (it != m_atlasMap.end()) {
+        return it->second.get();
+    }
+    return nullptr;
+}
+
 SDL_Texture *GUI::loadTextureAlpha(TextureID name, const std::string &filePath, int alpha, bool cache) {
     std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
     SDL_Surface *surface = IMG_Load((basePathGfx / filePath).string().c_str());

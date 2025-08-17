@@ -160,6 +160,7 @@ void Game::setupGui() {
     m_gui->loadTextureAlpha(TextureID::SNAKEBODY, "y_s2.png", 255, true);
     m_gui->loadTextureAlpha(TextureID::SNAKECURVE, "y_s3.png", 255, true);
     m_gui->loadTextureAlpha(TextureID::SNAKETAIL, "y_s4.png", 255, true);
+    m_gui->loadAtlas(TextureID::A_YELLOW_SNAKE, "y_s.png", 16, 16, 4);
     m_gui->loadTexture(TextureID::GRIDTILE, "gridtile.png");
     m_gui->loadTextureAlpha(TextureID::BERRY_GLOW, "shiny.png", 255, true);
     m_gui->loadTextureAlpha(TextureID::VINJETTE, "vinjette.png", 64, true);
