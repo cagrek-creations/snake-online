@@ -1,5 +1,6 @@
 #include "Soundmanager.hpp"
 
+
 SoundManager::SoundManager(int &volume, int &playSound) {
     m_volume = &volume;
     m_playSound = &playSound;
@@ -13,6 +14,7 @@ SoundManager::SoundManager(int &volume, int &playSound) {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
         printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
     }
+
 }
 
 SoundManager::~SoundManager() {
@@ -40,7 +42,8 @@ void SoundManager::onEvent(const SDL_Event& event) {
 }
 
 bool SoundManager::loadSound(const char* filePath, const char* soundKey) {
-    Mix_Chunk* chunk = loadChunk(filePath);
+    std::filesystem::path basePathSfx = getExecutableDir() / "sfx";
+    Mix_Chunk* chunk = loadChunk((basePathSfx / filePath).string().c_str());
     if (chunk == nullptr) {
         return false;
     }

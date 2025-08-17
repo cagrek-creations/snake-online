@@ -36,4 +36,3 @@ class SpriteSheet {
         std::vector<SDL_Rect> m_clips;
 
 };
-
