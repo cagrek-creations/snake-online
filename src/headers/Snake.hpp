@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL2/SDL_render.h>
 #include <iostream>
 #include <vector>
 #include <SDL2/SDL.h>
@@ -24,10 +25,19 @@ struct direction {
 #define DIR_RIGHT   direction{ 1,  0}
 #define DIR_LEFT    direction{-1,  0}
 
+#define SNAKEHEAD   0x101
+#define SNAKEBODY   0x102
+#define SNAKECURVE  0x103
+#define SNAKETAIL   0x104
+
+constexpr bool operator==(const direction& lhs, const direction& rhs) {
+    return lhs.x == rhs.x && lhs.y == rhs.y;
+}
+
 class Snakeblock {
 
     public: 
-        Snakeblock(SDL_Renderer *renderer, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, SDL_Texture *textureSnakeHead, int degrees, SDL_Color color);
+        Snakeblock(SDL_Renderer *renderer, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, SDL_Texture *texture, int degrees, SDL_Color color, direction dir);
         ~Snakeblock();
 
         void render(); 
@@ -38,11 +48,19 @@ class Snakeblock {
         int getPosX();
         int getPosY();
 
+        void setTexture(SDL_Texture *texture);
+        void rotateTexture(int degrees);
+
+        void setDegrees(int degrees);
+        int getDegrees();
+        direction getDirection();
+
     private:
         int m_snakeBlockWidth;
         int m_snakeBlockheight;
 
         Vector2 m_snakeBlockPos;
+        direction m_snakeBlockDirection;
         int m_snakeBlockXpos;
         int m_snakeBlockYpos;
         int m_degrees;
@@ -52,7 +70,8 @@ class Snakeblock {
         SDL_Rect m_snakeblockOverlay;
         SDL_Renderer *m_renderer;
 
-        SDL_Texture *m_textureSnakeHead;
+        SDL_Texture *m_texture;
+        int m_textureDegreeOffset;
 
 };
 
@@ -123,6 +142,10 @@ class Snake : public Observer {
 
 
     private:
+
+        void updateSnakePos(Gridpoint *gp);
+        int calculateBodyOffset(direction dir1, direction dir2);
+
         int m_snakeSize;
         int m_snakeWidth;
         int m_snakeHeight;
@@ -148,6 +171,7 @@ class Snake : public Observer {
 
         SDL_Renderer *m_renderer;
         SDL_Texture *m_textureSnakeHead;
+        int m_textureSnakeHeadDegreeOffset;
         SDL_Color m_color;
         SDL_Rect m_speedBoostRect = {0,0,0,0};
 

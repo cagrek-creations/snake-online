@@ -1,16 +1,20 @@
 #pragma once
 
+#include <SDL2/SDL_render.h>
 #include <iostream>
 #include <vector>
 
 #include <SDL2/SDL.h>
 
 #include "Vector2.hpp"
+#include "Gui.hpp"
+
+constexpr int GRIDTILE =    0x201;
 
 class Gridpoint {
 
     public: 
-        Gridpoint(SDL_Renderer *renderer, int xPos, int yPos, int width, int height);
+        Gridpoint(GUI *gui, int xPos, int yPos, int width, int height);
         ~Gridpoint();
 
         bool operator==(const Gridpoint& other) const {
@@ -18,6 +22,7 @@ class Gridpoint {
         }
 
         void render();
+        void renderTexture();
 
         bool contains(int x, int y);
 
@@ -42,6 +47,7 @@ class Gridpoint {
 
     private:
         SDL_Renderer *m_renderer;
+        GUI *m_gui;
 
         int m_gridPointX;
         int m_gridPointY;
@@ -49,13 +55,16 @@ class Gridpoint {
         int m_gridHeight;
         bool m_gridPointIsEmpty = true;
         bool m_gridPointHasScore = false;
+
+        SDL_Texture *m_texture;
+        SDL_Rect m_destRect;
     
 };
 
 class Grid {
 
     public:
-        Grid(SDL_Renderer *renderer, int width, int height, int granularityX, int granularityY);
+        Grid(GUI *gui, int width, int height, int granularityX, int granularityY);
         ~Grid();
 
         void render();
@@ -76,6 +85,7 @@ class Grid {
 
     private: 
         SDL_Renderer *m_renderer;
+        GUI *m_gui;
 
         int m_gridWidth;
         int m_gridHeight;
