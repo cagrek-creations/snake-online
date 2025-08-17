@@ -18,8 +18,8 @@ class InvertControlsEffect : public Effect {
             m_target.invertControls();
         }
 
-        int getType() override {
-            return SWAPAROO;
+        TextureID getType() override {
+            return TextureID::SWAPAROO;
         }
 
     private:
@@ -40,8 +40,8 @@ class SpeedBoostEffect : public Effect {
             m_target.removeSpeedBoost();
         }
 
-        int getType() override {
-            return SPEED;
+        TextureID getType() override {
+            return TextureID::SPEED;
         }
 
     private:

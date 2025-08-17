@@ -24,10 +24,10 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeWidth, int snakeHeight,
     m_snakeWidth = m_grid->getGridPointWidth(); // Retrieve from grid
     m_snakeHeight = m_grid->getGridPointHeight(); // Retrieve from grid 
 
-    m_textureSnakeHead = m_gui->copyTexture(SNAKEHEAD);
-    m_textureSnakeBody = m_gui->copyTexture(SNAKEBODY);
-    m_textureSnakeCurve = m_gui->copyTexture(SNAKECURVE);
-    m_textureSnakeTail = m_gui->copyTexture(SNAKETAIL);
+    m_textureSnakeHead = m_gui->copyTexture(TextureID::SNAKEHEAD);
+    m_textureSnakeBody = m_gui->copyTexture(TextureID::SNAKEBODY);
+    m_textureSnakeCurve = m_gui->copyTexture(TextureID::SNAKECURVE);
+    m_textureSnakeTail = m_gui->copyTexture(TextureID::SNAKETAIL);
 
     // SDL_FreeSurface(snakeHead);
     Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
@@ -271,7 +271,7 @@ void Snake::updateSnakePos(Gridpoint *gp) {
     // Logic for calculating neck.
     if (head->getDirection() != neck->getDirection()) {
         // Direction has changed, set texture to curve and calculate offset
-        neck->setTexture(m_gui->getTexture(SNAKECURVE));
+        neck->setTexture(m_gui->getTexture(TextureID::SNAKECURVE));
         neck->rotateTexture(calculateBodyOffset(head->getDirection(), neck->getDirection()) - neck->getDegrees());
     }
 

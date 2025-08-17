@@ -24,6 +24,23 @@ namespace color {
     const SDL_Color WHITE   = {255, 255, 255, 255};
 }
 
+enum class TextureID {
+    ERR,
+    BERRY,
+    SPEED,
+    SPEED_O,
+    SWAPAROO,
+    SWAPAROO_O,
+    SNAKEHEAD,
+    SNAKEBODY,
+    SNAKECURVE,
+    SNAKETAIL,
+    GRIDTILE,
+    VINJETTE,
+    BERRY_GLOW,
+    GOLDEN_BERRY,
+};
+
 class GUI : public Observer {
 
     public:
@@ -50,11 +67,11 @@ class GUI : public Observer {
         int getWindowCenterY();
 
         SDL_Color getColor(std::string colorName);
-        SDL_Texture *loadTexture(int name, const std::string &filePath);
-        SDL_Texture *loadTextureAlpha(int name, const std::string &filePath, int alpha, bool cache);
-        SDL_Texture *getTexture(int key);
-        SDL_Texture *copyTexture(int key);
-        void unloadTexture(int key);
+        SDL_Texture *loadTexture(TextureID name, const std::string &filePath);
+        SDL_Texture *loadTextureAlpha(TextureID name, const std::string &filePath, int alpha, bool cache);
+        SDL_Texture *getTexture(TextureID key);
+        SDL_Texture *copyTexture(TextureID key);
+        void unloadTexture(TextureID key);
 
         SDL_Renderer *getRenderer();
         TTF_Font *getFont();
@@ -73,6 +90,6 @@ class GUI : public Observer {
 
         TTF_Font *m_font;
 
-        std::unordered_map<int, SDL_Texture*> m_textureMap;
+        std::unordered_map<TextureID, SDL_Texture*> m_textureMap;
         std::vector<std::unique_ptr<Menu>> menus;
 };

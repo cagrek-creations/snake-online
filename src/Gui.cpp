@@ -44,7 +44,7 @@ GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) 
 
 }
 
-SDL_Texture *GUI::loadTexture(int name, const std::string &filePath) {
+SDL_Texture *GUI::loadTexture(TextureID name, const std::string &filePath) {
     std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
     SDL_Surface *surface = IMG_Load((basePathGfx / filePath).string().c_str());
     if (!surface) {
@@ -65,7 +65,7 @@ SDL_Texture *GUI::loadTexture(int name, const std::string &filePath) {
     return texture;
 }
 
-SDL_Texture *GUI::loadTextureAlpha(int name, const std::string &filePath, int alpha, bool cache) {
+SDL_Texture *GUI::loadTextureAlpha(TextureID name, const std::string &filePath, int alpha, bool cache) {
     std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
     SDL_Surface *surface = IMG_Load((basePathGfx / filePath).string().c_str());
     if (!surface) {
@@ -88,7 +88,7 @@ SDL_Texture *GUI::loadTextureAlpha(int name, const std::string &filePath, int al
     return texture;
 }
 
-SDL_Texture *GUI::copyTexture(int key) {
+SDL_Texture *GUI::copyTexture(TextureID key) {
     int w, h;
     Uint32 format;
     int access;
@@ -127,7 +127,7 @@ SDL_Texture *GUI::copyTexture(int key) {
     return copy;
 }
 
-SDL_Texture *GUI::getTexture(int key) {
+SDL_Texture *GUI::getTexture(TextureID key) {
     // Retrieve the texture associated with the key
     auto it = m_textureMap.find(key);
     if (it != m_textureMap.end()) {
@@ -137,7 +137,7 @@ SDL_Texture *GUI::getTexture(int key) {
     return nullptr;  // Texture not found
 }
 
-void GUI::unloadTexture(int key) {
+void GUI::unloadTexture(TextureID key) {
     // Unload the texture associated with the key
     auto it = m_textureMap.find(key);
     if (it != m_textureMap.end()) {
