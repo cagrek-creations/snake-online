@@ -57,6 +57,8 @@ remove:
 	rm obj/*
 
 install::
+	# Clean tmp
+	rm -rf tmp
 	mkdir -p tmp
 	# Clone library
 	mkdir -p external
@@ -68,7 +70,6 @@ install::
 	# Clone assets
 	mkdir -p assets
 	git clone https://github.com/cagrek-creations/snake-assets.git tmp/snake-assets
-	cp tmp/snake-assets/* assets/
 
 	# Setup bin
 	mkdir -p bin/
@@ -78,5 +79,3 @@ install::
 	cp sfx/* bin/sfx
 	cp font.ttf bin/
 
-	# Clean tmp
-	rm -rf tmp
