@@ -16,6 +16,7 @@
 #include "Vector2.hpp"
 #include "Common.hpp"
 
+// TODO: Replace this with Vector2?
 struct direction {
     int x;
     int y;
@@ -165,12 +166,14 @@ class Snake : public Observer {
         GUI *m_gui;
 
         SDL_Renderer *m_renderer;
-        // TODO: Turn into a list?
+
+        // TODO: Remove
         SDL_Texture *m_textureSnakeHead;
         SDL_Texture *m_textureSnakeBody;
         SDL_Texture *m_textureSnakeCurve;
         SDL_Texture *m_textureSnakeTail;
 
+        // TODO: Turn into a list?
         std::shared_ptr<Sprite> m_spriteSnakeHead;
         std::shared_ptr<Sprite> m_spriteSnakeBody;
         std::shared_ptr<Sprite> m_spriteSnakeCurve;
