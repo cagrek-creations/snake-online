@@ -37,7 +37,8 @@ class Snakeblock {
         Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, std::shared_ptr<Sprite> sprite, int degrees, SDL_Color color, direction dir);
         ~Snakeblock();
 
-        void render(); 
+        void render();
+        void renderWithAlpha(int alpha);
         void renderHead();
 
         Vector2 getPos();
@@ -99,20 +100,8 @@ class Snake : public Observer {
             return snakeBlocks[0].getPos();
         }
 
-        // int getPosX() {
-        //     return snakeBlocks[0].getPosX();
-        // }
-
-        // int getPosY() {
-        //     return snakeBlocks[0].getPosY();
-        // }
-
         int getSize() {
             return snakeBlocks.size();
-        }
-
-        bool isHead(int xPos, int yPos) {
-            return (snakeBlocks[0].getPosX() == xPos) && (snakeBlocks[0].getPosY() == yPos);
         }
 
         void getPositions() {
@@ -140,7 +129,12 @@ class Snake : public Observer {
         void applySpeedBoost();
         void removeSpeedBoost();
         void invertControls();
-
+        void becomeGhost();
+        void removeGhost();
+        void applySlowBoost();
+        void removeSlowBoost();
+        void freeze();
+        void unfreeze();
 
     private:
 
@@ -202,6 +196,8 @@ class Snake : public Observer {
 
         // Effects
         bool m_invertControls = false;
+        int m_isGhost = 0;
+        int m_freeze = 0;
 
         std::vector<std::unique_ptr<Effect>> m_effects;
 

@@ -37,6 +37,9 @@ enum class TextureID {
     VINJETTE,
     BERRY_GLOW,
     GOLDEN_BERRY,
+    GHOST,
+    SLOW,
+    FREEZE,
     A_YELLOW_SNAKE,
 };
 

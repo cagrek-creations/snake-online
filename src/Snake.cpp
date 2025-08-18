@@ -35,18 +35,15 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, 
     m_snakeWidth = m_grid->getGridPointWidth(); // Retrieve from grid
     m_snakeHeight = m_grid->getGridPointHeight(); // Retrieve from grid 
 
-    // m_textureSnakeHead = m_gui->copyTexture(TextureID::SNAKEHEAD);
-    // m_textureSnakeBody = m_gui->copyTexture(TextureID::SNAKEBODY);
-    // m_textureSnakeCurve = m_gui->copyTexture(TextureID::SNAKECURVE);
-    // m_textureSnakeTail = m_gui->copyTexture(TextureID::SNAKETAIL);
-
     // SDL_FreeSurface(snakeHead);
     Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
     if(gp == nullptr) std::cerr << "Failed finding gridpoint";
     Vector2 gridPos = Vector2(pos.x, pos.y);
     if(gp != nullptr) {
-        Vector2 gridPos = gp->getGridPointPos();
+        std::cout << "Found gridpos";
+        gridPos = gp->getGridPointPos();
     }
+    std::cout << gridPos.x;
     if(gp == nullptr) std::cout << "WHAT";
     for (int i = 0; i < snakeSize; i++) {
         snakeBlocks.push_back(Snakeblock(m_gui, gridPos.x, gridPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeBody, m_degrees, m_color, m_snakeDirection));
@@ -62,11 +59,12 @@ Snake::~Snake() {
 
 void Snake::render() {
 
-
-    // SDL_RenderPresent(m_renderer);
-
     for (int i = 0; i < snakeBlocks.size(); i++) {
-        snakeBlocks[i].render();
+        if (m_isGhost > 0) {
+            snakeBlocks[i].renderWithAlpha(64);
+        } else {
+            snakeBlocks[i].render();
+        }
     }
 
     if (m_pid == 0) {
@@ -231,6 +229,7 @@ void Snake::update(double deltaTime) {
         // Should it be removed or adapted for when a server is not used?
         // signalController(command);
         if(!newPoint->isEmpty()) {
+            // TODO: Handle freeze
             std::cout << "GAME OVER!" << std::endl;
         }
 
@@ -241,9 +240,9 @@ void Snake::update(double deltaTime) {
             signalController(command);
         }
         newPoint->setNotEmpty();
-
-        updateSnakePos(newPoint);
-
+        if (!m_freeze) {
+            updateSnakePos(newPoint);
+        }
     } else {
         return;
     }
@@ -266,7 +265,7 @@ int Snake::calculateBodyOffset(direction dir1, direction dir2) {
 
 void Snake::updateSnakePos(Gridpoint *gp) {
     snakeBlocks.pop_back();
-    Vector2 newPos = gp->getGridPointPos() + Vector2(2, 2);
+    Vector2 newPos = gp->getGridPointPos(); //+ Vector2(2, 2);
     Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
     snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
 
@@ -301,12 +300,36 @@ void Snake::invertControls() {
     m_invertControls = !m_invertControls;
 }
 
+void Snake::becomeGhost() {
+    m_isGhost++;
+}
+
+void Snake::removeGhost() {
+    if (m_isGhost > 0) m_isGhost--;
+}
+
+void Snake::freeze() {
+    m_freeze++;
+}
+
+void Snake::unfreeze() {
+    if (m_freeze > 0) m_freeze--;
+}
+
 void Snake::applySpeedBoost() {
     m_speedLimit *= 0.5;
 }
 
 void Snake::removeSpeedBoost() {
     m_speedLimit *= 2;
+}
+
+void Snake::applySlowBoost() {
+    m_speedLimit *= 2;
+}
+
+void Snake::removeSlowBoost() {
+    m_speedLimit *= 0.5;
 }
 
 void Snake::setSpeed(int speed) {
@@ -397,14 +420,20 @@ Snakeblock::Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int sna
 }
 
 void Snakeblock::render() {
+    // TODO: Optimize this.
     SDL_Rect tmp;
     tmp.w = m_snakeBlockWidth;
     tmp.h = m_snakeBlockheight;
     tmp.x = m_snakeBlockPos.x;
     tmp.y = m_snakeBlockPos.y;
-    
     SDL_RenderCopyEx(m_gui->getRenderer(), m_sprite->getTexture(), &m_sprite->getRect(), &tmp, m_textureDegreeOffset + m_degrees, NULL, SDL_FLIP_NONE);
     // SDL_RenderCopyEx(m_gui->getRenderer(), m_texture, NULL, &tmp, m_textureDegreeOffset + m_degrees, NULL, SDL_FLIP_NONE)
+}
+
+void Snakeblock::renderWithAlpha(int alpha) {
+    SDL_SetTextureAlphaMod(m_sprite->getTexture(), alpha);
+    render();
+    SDL_SetTextureAlphaMod(m_sprite->getTexture(), 255);
 }
 
 void Snakeblock::renderHead() {

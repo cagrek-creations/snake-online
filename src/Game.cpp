@@ -76,7 +76,7 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 16, 16, 50, 50, Vector2(100, 100));
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, 25, 25, Vector2(100, 100));
 }
 
 void Game::createGrid(int width, int height) {
@@ -159,6 +159,9 @@ void Game::setupGui() {
     m_gui->loadTexture(TextureID::SWAPAROO, "swaparoo.png");
     m_gui->loadTexture(TextureID::SWAPAROO_O, "swaparoo.png");
     m_gui->loadTexture(TextureID::GRIDTILE, "gridtile.png");
+    m_gui->loadTexture(TextureID::GHOST, "scores/SnakePowerGhost.png");
+    m_gui->loadTexture(TextureID::SLOW, "scores/SnakePowerSlow.png");
+    m_gui->loadTexture(TextureID::FREEZE, "scores/SnakePowerFreeze.png");
     m_gui->loadTextureAlpha(TextureID::BERRY_GLOW, "shiny.png", 255, true);
     m_gui->loadTextureAlpha(TextureID::VINJETTE, "vinjette.png", 64, true);
     m_gui->loadAtlas(TextureID::A_YELLOW_SNAKE, "y_s.png", 16, 16, 4);

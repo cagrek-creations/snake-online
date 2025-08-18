@@ -92,6 +92,7 @@ Gridpoint::Gridpoint(GUI *gui, Vector2 pos, int width, int height) {
     this->m_gui = gui;
     this->m_gridPointX = pos.x;
     this->m_gridPointY = pos.y;
+    m_pos = pos;
     this->m_gridWidth = width;
     this->m_gridHeight = height;
     m_texture = m_gui->getTexture(TextureID::GRIDTILE);
@@ -165,7 +166,7 @@ bool Gridpoint::isEmpty() {
 }
 
 Vector2 Gridpoint::getGridPointPos() {
-    return Vector2(m_gridPointX, m_gridPointY);
+    return m_pos;
 }
 
 int Gridpoint::getGridPointX() {
