@@ -165,6 +165,9 @@ void Game::setupGui() {
     m_gui->loadTextureAlpha(TextureID::BERRY_GLOW, "shiny.png", 255, true);
     m_gui->loadTextureAlpha(TextureID::VINJETTE, "vinjette.png", 64, true);
     m_gui->loadAtlas(TextureID::A_YELLOW_SNAKE, "y_s.png", 16, 16, 4);
+    m_gui->loadAtlas(TextureID::A_PURPLE_SNAKE, "p_s.png", 16, 16, 4);
+    m_gui->loadAtlas(TextureID::A_GREEN_SNAKE, "g_s.png", 16, 16, 4);
+    m_gui->loadAtlas(TextureID::A_RED_SNAKE, "r_s.png", 16, 16, 4);
 
     m_startMenu =       std::make_unique<Menu>(m_gui->getRenderer(), 0, WINDOW_MIDDLE_X - (250 / 2), 
                                                     WINDOW_MIDDLE_Y - (200 / 2), 
