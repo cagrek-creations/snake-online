@@ -1,14 +1,32 @@
 #pragma once
 
+#include <SDL2/SDL_render.h>
 #include <iostream>
+#include <vector>
 
 #include "Effect.hpp"
 #include "Snake.hpp"
+#include "Gui.hpp"
 
-class InvertControlsEffect : public Effect {
+inline const std::vector<TextureID> snakeEffectTextures = {
+    TextureID::FREEZE,
+    TextureID::GHOST,
+    TextureID::SPEED,
+    TextureID::SLOW,
+    TextureID::RAGE,
+};
+
+class SnakeEffect : public Effect {
+    public:
+        SnakeEffect(Snake &target, float duration) : Effect(duration), m_target(target) {}
+    protected:
+        Snake &m_target;
+};
+
+class InvertControlsEffect : public SnakeEffect {
 
     public: 
-        InvertControlsEffect(Snake &target, float duration) : Effect(duration), m_target(target) {}
+        InvertControlsEffect(Snake &target, float duration) : SnakeEffect(target, duration) {}
 
         void apply() override {
             m_target.invertControls();
@@ -22,15 +40,16 @@ class InvertControlsEffect : public Effect {
             return TextureID::SWAPAROO;
         }
 
-    private:
-        Snake &m_target; // Should this be moved to another base class?
+        SDL_Color getColor() override {
+            return color::DEFAULT;
+        }
 
 };
 
-class SpeedBoostEffect : public Effect {
+class SpeedBoostEffect : public SnakeEffect {
 
     public:
-        SpeedBoostEffect(Snake &target, float duration) : Effect(duration), m_target(target) {}
+        SpeedBoostEffect(Snake &target, float duration) : SnakeEffect(target, duration) {}
 
         void apply() override {
             m_target.applySpeedBoost();
@@ -44,15 +63,16 @@ class SpeedBoostEffect : public Effect {
             return TextureID::SPEED;
         }
 
-    private:
-        Snake &m_target; // Should this be moved to another base class?
+        SDL_Color getColor() override {
+            return color::ORANGE;
+        }
 
 };
 
-class SlowBoostEffect : public Effect {
+class SlowBoostEffect : public SnakeEffect {
 
     public:
-        SlowBoostEffect(Snake &target, float duration) : Effect(duration), m_target(target) {}
+        SlowBoostEffect(Snake &target, float duration) : SnakeEffect(target, duration) {}
 
         void apply() override {
             m_target.applySlowBoost();
@@ -66,15 +86,16 @@ class SlowBoostEffect : public Effect {
             return TextureID::SLOW;
         }
 
-    private:
-        Snake &m_target; // Should this be moved to another base class?
+        SDL_Color getColor() override {
+            return color::LIGHTBLUE;
+        }
 
 };
 
-class GhostEffect : public Effect {
+class GhostEffect : public SnakeEffect {
 
     public:
-        GhostEffect(Snake &target, float duration) : Effect(duration), m_target(target) {}
+        GhostEffect(Snake &target, float duration) : SnakeEffect(target, duration) {}
 
         void apply() override {
             m_target.becomeGhost();
@@ -88,15 +109,16 @@ class GhostEffect : public Effect {
             return TextureID::GHOST;
         }
 
-    private:
-        Snake &m_target; // Should this be moved to another base class?
+        SDL_Color getColor() override {
+            return color::LIGHTGRAY;
+        }
 
 };
 
-class FreezeEffect : public Effect {
+class FreezeEffect : public SnakeEffect {
 
     public:
-        FreezeEffect(Snake &target, float duration) : Effect(duration), m_target(target) {}
+        FreezeEffect(Snake &target, float duration) : SnakeEffect(target, duration) {}
 
         void apply() override {
             m_target.freeze();
@@ -106,11 +128,13 @@ class FreezeEffect : public Effect {
             m_target.unfreeze();
         }
 
+        // TODO: Change function name
         TextureID getType() override {
             return TextureID::FREEZE;
         }
 
-    private:
-        Snake &m_target; // Should this be moved to another base class?
+        SDL_Color getColor() override {
+            return color::BLUE;
+        }
 
 };

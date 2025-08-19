@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 #include <iostream>
 
@@ -19,11 +20,15 @@
 
 
 namespace color {
-    const SDL_Color DEFAULT = {0,   255, 0,   255};
-    const SDL_Color RED     = {255, 0,   0,   255};
-    const SDL_Color GREEN   = {0,   255, 0,   255};
-    const SDL_Color BLUE    = {0,   0,   255, 255};
-    const SDL_Color WHITE   = {255, 255, 255, 255};
+    const SDL_Color DEFAULT     = {0,   255, 0,   255};
+    const SDL_Color RED         = {255, 0,   0,   255};
+    const SDL_Color GREEN       = {0,   255, 0,   255};
+    const SDL_Color BLUE        = {0,   0,   255, 255};
+    const SDL_Color WHITE       = {255, 255, 255, 255};
+    const SDL_Color LIGHTGRAY   = {200, 200, 200, 255};
+    const SDL_Color DARKGRAY    = {64,  64,  64,  255};
+    const SDL_Color ORANGE      = {255, 165, 0,   255};
+    const SDL_Color LIGHTBLUE   = {173, 216, 230, 255};
 }
 
 enum class TextureID {
@@ -40,6 +45,7 @@ enum class TextureID {
     GHOST,
     SLOW,
     FREEZE,
+    RAGE,
     A_PURPLE_SNAKE,
     A_YELLOW_SNAKE,
     A_GREEN_SNAKE,
@@ -71,6 +77,7 @@ class GUI : public Observer {
         int getWindowCenterX();
         int getWindowCenterY();
 
+        SDL_Rect createRect(int x, int y, int w, int h);
         SDL_Color getColor(std::string colorName);
         SDL_Texture *loadTexture(TextureID name, const std::string &filePath);
         SDL_Texture *loadTextureAlpha(TextureID name, const std::string &filePath, int alpha, bool cache);

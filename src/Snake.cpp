@@ -1,7 +1,37 @@
 #include "Snake.hpp"
-#include "Gui.hpp"
-#include "headers/Sprite.hpp"
-#include <memory>
+#include "SnakeEffects.hpp"
+#include "Vector2.hpp"
+#include "headers/Gui.hpp"
+
+void Snake::createEffectUi() {
+    int rows = 2;
+    int NUMBER_OF_EFFECTS = m_snakeEffects.size();
+
+    int columns = (NUMBER_OF_EFFECTS + rows - 1) / rows;
+    int barHeight = WINDOW_HEIGHT / 15;
+    int barWidth = WINDOW_WIDTH / (columns * 3);
+
+    for (int i = 0; i < NUMBER_OF_EFFECTS; i++) {
+        int row = i / columns;
+        int col = i % columns;
+
+        int padding = 2;
+        int barsInRow = std::min(columns, NUMBER_OF_EFFECTS - row * columns);
+        int rowWidth = barsInRow * barWidth + (barsInRow - 1) * padding;
+        int startX = WINDOW_MIDDLE_X - rowWidth / 2;
+
+        m_effectUIs[m_snakeEffects[i]->getType()] = (std::make_unique<UIElementSnakeEffect>(UIElementSnakeEffect(
+            m_gui->getRenderer(), 
+            m_gui->getTexture(m_snakeEffects[i]->getType()), 
+            m_snakeEffects[i]->getColor(), 
+            Vector2(startX + col * (barWidth + padding), WINDOW_HEIGHT - 200 + row * (barHeight + 5)), 
+            barWidth, 
+            barHeight, 
+            0.35)
+        ));
+
+    }
+}
 
 Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, int pid, int speed) {
 
@@ -51,6 +81,15 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, 
 
     snakeBlocks.back().setSprite(m_spriteSnakeTail);
     snakeBlocks.begin()->setSprite(m_spriteSnakeHead);
+
+    m_snakeEffects.push_back(std::make_unique<InvertControlsEffect>(*this, 0));
+    m_snakeEffects.push_back(std::make_unique<SpeedBoostEffect>(*this, 0));
+    m_snakeEffects.push_back(std::make_unique<SlowBoostEffect>(*this, 0));
+    m_snakeEffects.push_back(std::make_unique<GhostEffect>(*this, 0));
+    m_snakeEffects.push_back(std::make_unique<FreezeEffect>(*this, 0));
+
+    createEffectUi();
+
 }
 
 Snake::~Snake() {
@@ -58,6 +97,10 @@ Snake::~Snake() {
 }
 
 void Snake::render() {
+
+    for (const auto& pair : m_effectUIs) {
+         pair.second->render();
+    }
 
     for (int i = 0; i < snakeBlocks.size(); i++) {
         if (m_isGhost > 0) {
@@ -180,6 +223,11 @@ void Snake::addEffect(std::unique_ptr<Effect> effect) {
 void Snake::updateEffects(float deltaTime) {
     for (auto effect = m_effects.begin(); effect != m_effects.end(); ) {
         (*effect)->update(deltaTime);
+
+        m_effectUIs[(*effect)->getType()]->update(
+            (*effect)->getElapsed(), 
+            (*effect)->getDuration()
+        );
 
         if (!(*effect)->isActive()) {
             effect = m_effects.erase(effect);
@@ -485,5 +533,46 @@ direction Snakeblock::getDirection() {
 }
 
 Snakeblock::~Snakeblock() {
+
+}
+
+UIElementSnakeEffect::UIElementSnakeEffect(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Color color, Vector2 pos, int width, int height, float scale) {
+    m_renderer = renderer;
+    m_texture = texture;
+    m_width = width;
+    m_height = height;
+    m_pos = pos;
+    m_color = color;
+
+    float m_scale = scale;
+
+    int barWidth = 0;
+    int m_barWidth = 0;
+    int m_barWidthMax = width * (0.95 - scale); // 95% for padding
+
+
+    int textureWidth = static_cast<int>(width * 0.35);
+    m_textureRect = SDL_Rect {pos.x, pos.y, textureWidth, height};
+    
+    m_barPos = pos + Vector2(textureWidth * 1.1, 0); // 10% padding from width
+    m_barBackgroundLayer = SDL_Rect {m_barPos.x, m_barPos.y + height / 2, m_barWidthMax, static_cast<int>(height * 0.20)};
+    m_effectDurationBar = SDL_Rect {m_barPos.x, m_barPos.y + height / 2, 0, static_cast<int>(height * 0.20)};
+
+}
+
+void UIElementSnakeEffect::update(float e, float d) {
+    float _width = 100.0f * (1.0f - e / d);
+    m_barWidth = _width;
+    m_effectDurationBar.w = m_barWidth;
+}
+
+void UIElementSnakeEffect::render() {
+    SDL_RenderCopy(m_renderer, m_texture, nullptr, &m_textureRect);
+
+    SDL_SetRenderDrawColor(m_renderer, color::DARKGRAY.r, color::DARKGRAY.g, color::DARKGRAY.b, color::DARKGRAY.a);
+    SDL_RenderFillRect(m_renderer, &m_barBackgroundLayer);
+
+    SDL_SetRenderDrawColor(m_renderer, m_color.r, m_color.g, m_color.b, m_color.a);
+    SDL_RenderFillRect(m_renderer, &m_effectDurationBar);
 
 }
