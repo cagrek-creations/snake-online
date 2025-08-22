@@ -62,7 +62,7 @@ void Game::handleEvent(std::vector<std::string> &event) {
 
         // m_players[pid]->addEffect(std::make_unique<SpeedBoostEffect>(*m_players[pid], 10000.0f));
         // m_players[pid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[pid], 5000.0f));
-        m_players[pid]->addEffect(std::make_unique<FreezeEffect>(*m_players[pid], 50000.0f));
+        // m_players[pid]->addEffect(std::make_unique<FreezeEffect>(*m_players[pid], 50000.0f));
     }
 
     if (command == "NEW_PLAYER") {

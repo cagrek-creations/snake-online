@@ -57,6 +57,9 @@ class Game : public Observer{
         
     private:
         double m_deltaTime = 0;
+        float m_fps = 0;
+        float m_fpsCounter = 0;
+        std::string m_fpsString = "fps: 0";
         int m_myPid = -1;
         int m_state = START_MENU;
         bool m_isRunning = true;

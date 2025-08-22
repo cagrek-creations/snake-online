@@ -6,8 +6,8 @@
 
 int WINDOW_FULLSCREEN = 0;
 
-int WINDOW_WIDTH = 800;
-int WINDOW_HEIGHT = 600;
+int WINDOW_WIDTH = 1024;
+int WINDOW_HEIGHT = 800;
 
 int WINDOW_MIDDLE_X (WINDOW_WIDTH / 2);
 int WINDOW_MIDDLE_Y (WINDOW_HEIGHT / 2);
@@ -24,6 +24,9 @@ Game::Game() {
 
 void Game::update(double deltaTime) {
     m_deltaTime = deltaTime;
+    m_fps = 1.0f / (m_deltaTime / 1000.f);
+    m_fpsCounter += deltaTime;
+
     m_gameController->update();
 
     // Change name to controller events?
@@ -61,6 +64,14 @@ void Game::update(double deltaTime) {
 void Game::render() {
     m_gui->clearRenderer();
     m_gui->update();
+    
+    if (m_fpsCounter > 500.f) {
+        m_fpsCounter = 0;
+        m_fpsString = "fps: " + std::to_string((int)m_fps);
+    }
+    
+    m_gui->renderText(WINDOW_WIDTH - 100, 100, m_fpsString);
+
     m_grid->render();
 
     // TODO: Update this to only render over the grid instead of the screen.
@@ -89,8 +100,8 @@ void Game::createPlayer() {
     std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 6, color::GREEN, m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);
-    m_players[m_myPid]->addEffect(std::make_unique<FreezeEffect>(*m_players[m_myPid], 50000.0f));
-    m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 15000.0f));
+    // m_players[m_myPid]->addEffect(std::make_unique<FreezeEffect>(*m_players[m_myPid], 50000.0f));
+    // m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 15000.0f));
 }
 
 void Game::createPlayer(int size, int xPos, int yPos) {
