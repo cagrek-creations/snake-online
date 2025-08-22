@@ -111,6 +111,15 @@ SDL_Texture *GUI::loadTextureAlpha(TextureID name, const std::string &filePath, 
     return texture;
 }
 
+SDL_Rect GUI::createRect(int x, int y, int w, int h)  {
+    SDL_Rect rect;
+    rect.x = x;
+    rect.y = y;
+    rect.w = w;
+    rect.h = h;
+    return rect;
+}
+
 SDL_Texture *GUI::copyTexture(TextureID key) {
     int w, h;
     Uint32 format;

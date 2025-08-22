@@ -28,6 +28,7 @@ class Effect {
         }
 
         virtual TextureID getType() { return TextureID::ERR; }
+        virtual SDL_Color getColor() { return color::DEFAULT; }
 
         virtual void render() {};
 
