@@ -1,3 +1,4 @@
+UNAME := $(shell uname -s)
 
 OBJS = ./src/*.cpp
 
@@ -15,8 +16,13 @@ LINKER_FLAGS += `pkg-config --libs --static SDL2_Image`
 LINKER_FLAGS += `pkg-config --libs --static SDL2_Mixer`
 LINKER_FLAGS += -lbrotlicommon -lsharpyuv
 
-
+ifeq ($(UNAME), Windows_NT)
 LIBS= -lmingw32 -lws2_32 -lSDL2main -lSDL2 -lSDL2_Image -lSDL2_TTF -lSDL2_Mixer
+endif
+
+ifeq ($(UNAME), Linux)
+LIBS= -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+endif
 
 IDIR = ./src/headers
 CFLAGS= -I$(IDIR) $(LIBS) $(EXTRA_LIBS)
@@ -68,14 +74,14 @@ install::
 	# Clone assets
 	mkdir -p assets
 	git clone https://github.com/cagrek-creations/snake-assets.git tmp/snake-assets
-	cp tmp/snake-assets/* assets/
+	cp -r tmp/snake-assets/* assets/
 
 	# Setup bin
 	mkdir -p bin/
 	mkdir -p bin/gfx
 	mkdir -p bin/sfx
-	cp gfx/* bin/gfx
-	cp sfx/* bin/sfx
+	cp -r gfx/* bin/gfx
+	cp -r sfx/* bin/sfx
 	cp font.ttf bin/
 
 	# Clean tmp

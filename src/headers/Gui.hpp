@@ -37,7 +37,14 @@ enum class TextureID {
     VINJETTE,
     BERRY_GLOW,
     GOLDEN_BERRY,
+    GHOST,
+    SLOW,
+    FREEZE,
+    RAGE,
+    A_PURPLE_SNAKE,
     A_YELLOW_SNAKE,
+    A_GREEN_SNAKE,
+    A_RED_SNAKE,
 };
 
 class GUI : public Observer {
