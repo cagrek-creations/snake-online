@@ -63,6 +63,8 @@ remove:
 	rm obj/*
 
 install::
+	# Clean tmp
+	rm -rf tmp
 	mkdir -p tmp
 	# Clone library
 	mkdir -p external
@@ -84,5 +86,3 @@ install::
 	cp -r sfx/* bin/sfx
 	cp font.ttf bin/
 
-	# Clean tmp
-	rm -rf tmp
