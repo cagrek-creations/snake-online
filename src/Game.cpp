@@ -2,7 +2,6 @@
 #include "Snake.hpp"
 #include "SnakeEffects.hpp"
 #include "Vector2.hpp"
-#include "headers/Gui.hpp"
 
 int WINDOW_FULLSCREEN = 0;
 

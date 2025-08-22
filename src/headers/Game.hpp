@@ -51,15 +51,22 @@ class Game : public Observer{
 
         void renderState();
 
-        void onEvent(const SDL_Event& event) override;
+        void onEvent(const SDL_Event &event) override;
 
         bool isRunning();
         
     private:
         double m_deltaTime = 0;
+        // FPS
         float m_fps = 0;
         float m_fpsCounter = 0;
         std::string m_fpsString = "fps: 0";
+
+        // Ping
+        float m_ping = 0;
+        float m_pingCounter = 0;
+        std::string m_pingString = "ping: 0";
+
         int m_myPid = -1;
         int m_state = START_MENU;
         bool m_isRunning = true;
