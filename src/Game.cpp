@@ -5,8 +5,8 @@
 
 int WINDOW_FULLSCREEN = 0;
 
-int WINDOW_WIDTH = 1600;
-int WINDOW_HEIGHT = 1024;
+int WINDOW_WIDTH = 800;
+int WINDOW_HEIGHT = 600;
 
 int WINDOW_MIDDLE_X (WINDOW_WIDTH / 2);
 int WINDOW_MIDDLE_Y (WINDOW_HEIGHT / 2);
@@ -159,9 +159,16 @@ void Game::setupGui() {
     m_gui->loadTexture(TextureID::SWAPAROO, "swaparoo.png");
     m_gui->loadTexture(TextureID::SWAPAROO_O, "swaparoo.png");
     m_gui->loadTexture(TextureID::GRIDTILE, "gridtile.png");
-    m_gui->loadTextureAlpha(TextureID::BERRY_GLOW, "shiny.png", 255, true);
-    m_gui->loadTextureAlpha(TextureID::VINJETTE, "vinjette.png", 64, true);
-    m_gui->loadAtlas(TextureID::A_YELLOW_SNAKE, "y_s.png", 16, 16, 4);
+    m_gui->loadTexture(TextureID::GHOST, "scores/SnakePowerGhost.png");
+    m_gui->loadTexture(TextureID::SLOW, "scores/SnakePowerSlow.png");
+    m_gui->loadTexture(TextureID::FREEZE, "scores/SnakePowerFreeze.png");
+    m_gui->loadTexture(TextureID::RAGE, "scores/SnakePowerRage.png");
+    // m_gui->loadTextureAlpha(TextureID::BERRY_GLOW, "shiny.png", 255, true);
+    // m_gui->loadTextureAlpha(TextureID::VINJETTE, "vinjette.png", 64, true);
+    m_gui->loadAtlas(TextureID::A_YELLOW_SNAKE, "snakes/y_s.png", 16, 16, 4);
+    m_gui->loadAtlas(TextureID::A_PURPLE_SNAKE, "snakes/p_s.png", 16, 16, 4);
+    m_gui->loadAtlas(TextureID::A_GREEN_SNAKE, "snakes/g_s.png", 16, 16, 4);
+    m_gui->loadAtlas(TextureID::A_RED_SNAKE, "snakes/r_s.png", 16, 16, 4); 
 
     m_startMenu =       std::make_unique<Menu>(m_gui->getRenderer(), 0, WINDOW_MIDDLE_X - (250 / 2), 
                                                     WINDOW_MIDDLE_Y - (200 / 2), 

@@ -7,17 +7,31 @@
 #include <sstream>
 #include <vector>
 
+#ifdef _WIN32
+    typedef SOCKET socket_t;
+    #define INVALID_SOCKET_VALUE INVALID_SOCKET_VALUE
+    #define SOCKET_ERROR_VALUE SOCKET_ERROR
+#else
+    typedef int socket_t;
+    #define INVALID_SOCKET_VALUE -1
+    #define SOCKET_ERROR_VALUE -1
+#endif
+
 class TcpCommunication {
     public:
-        TcpCommunication(const char *ip, int port) : m_clientSocket(INVALID_SOCKET) {
+        TcpCommunication(const char *ip, int port) : m_clientSocket(INVALID_SOCKET_VALUE) {
+            #ifdef _WIN32
             if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
                 std::cerr << "Failed to initialize Winsock\n";
             }
+            #endif
 
             m_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
-            if (m_clientSocket == INVALID_SOCKET) {
+            if (m_clientSocket == INVALID_SOCKET_VALUE) {
                 std::cerr << "Error creating socket\n";
+                #ifdef _WIN32
                 WSACleanup();
+                #endif
             }
 
             m_ip = ip;
@@ -58,7 +72,7 @@ class TcpCommunication {
 
         std::string receiveChar(size_t bufferSize) {
             
-            if (m_clientSocket == INVALID_SOCKET) {
+            if (m_clientSocket == INVALID_SOCKET_VALUE) {
                 std::cerr << "Not connected to a server\n";
                 m_isConnected = false;
                 return "false";
@@ -82,7 +96,7 @@ class TcpCommunication {
         }
 
         bool receive(std::string& receivedData) {
-            if (m_clientSocket == INVALID_SOCKET) {
+            if (m_clientSocket == INVALID_SOCKET_VALUE) {
                 std::cerr << "Not connected to a server\n";
                 return false;
             }
@@ -108,7 +122,7 @@ class TcpCommunication {
         }
 
         bool send(const char* data, size_t size) {
-            if (m_clientSocket == INVALID_SOCKET) {
+            if (m_clientSocket == INVALID_SOCKET_VALUE) {
                 std::cerr << "Not connected to a server\n";
                 m_isConnected = false;
                 return false;
@@ -126,13 +140,13 @@ class TcpCommunication {
 
         // Move to comm_util?
         void closeConnection() {
-            if (m_clientSocket != INVALID_SOCKET) {
+            if (m_clientSocket != INVALID_SOCKET_VALUE) {
                 #ifdef _WIN32
                 closesocket(m_clientSocket);
                 #else
                 close(m_clientSocket);
                 #endif
-                m_clientSocket = INVALID_SOCKET;
+                m_clientSocket = INVALID_SOCKET_VALUE;
                 std::cout << "Connection closed\n";
             }
         }
@@ -147,8 +161,10 @@ class TcpCommunication {
         const char *m_ip;
         int m_port;
 
-        SOCKET m_clientSocket;
+        socket_t m_clientSocket;
+        #ifdef _WIN32
         WSADATA wsaData;
+        #endif
 
         bool m_isConnected = false;
 
@@ -161,13 +177,17 @@ class TcpCommunication {
             serverAddr.sin_addr.s_addr = inet_addr(m_ip);  // Use the server's IP address
 
             // Connect to the server
-            if (connect(m_clientSocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)) == SOCKET_ERROR) {
+            if (connect(m_clientSocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)) == SOCKET_ERROR_VALUE) {
                 std::cerr << "Error connecting to server\n";
                 m_isConnected = false;
-                closesocket(m_clientSocket);
-                std::cout << "Closed socket" << std::endl;
-                WSACleanup();
-                std::cout << "WSA cleaned up" << std::endl;
+                std::cout << "Closing socket" << std::endl;
+                #ifdef _WIN32
+                    closesocket(m_clientSocket);
+                    WSACleanup();
+                    std::cout << "WSA cleaned up" << std::endl;
+                #else
+                    close(m_clientSocket);
+                #endif
                 return false;
             }
 
