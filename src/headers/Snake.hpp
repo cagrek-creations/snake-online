@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <memory>
@@ -7,15 +8,20 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <functional>
+#include <map>
+#include <cmath>
 
 #include "Grid.hpp"
 #include "Gui.hpp"
 #include "Score.hpp"
+#include "Sprite.hpp"
 #include "Observer.hpp"
 #include "Effect.hpp"
 #include "Vector2.hpp"
 #include "Common.hpp"
 
+
+// TODO: Replace this with Vector2?
 struct direction {
     int x;
     int y;
@@ -30,6 +36,35 @@ constexpr bool operator==(const direction& lhs, const direction& rhs) {
     return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
+class UIElementSnakeEffect {
+    public:
+        UIElementSnakeEffect(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Color color, Vector2 pos, int width, int height, float scale);
+
+        void render();
+        void update(float e, float d);
+
+    private:
+        SDL_Rect m_barBackgroundLayer;
+        SDL_Rect m_effectDurationBar;
+        SDL_Rect m_textureRect;
+        SDL_Texture *m_texture;
+        SDL_Renderer *m_renderer;
+
+        SDL_Color m_color;
+        
+        Vector2 m_pos;
+        Vector2 m_barPos;
+
+        int m_width;
+        int m_height;
+
+        int barHeight;
+        int m_barWidthMax;
+        int m_barWidth;
+
+        // float duration;
+};
+
 class Snakeblock {
 
     public: 
@@ -37,7 +72,8 @@ class Snakeblock {
         Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, std::shared_ptr<Sprite> sprite, int degrees, SDL_Color color, direction dir);
         ~Snakeblock();
 
-        void render(); 
+        void render();
+        void renderWithAlpha(int alpha);
         void renderHead();
 
         Vector2 getPos();
@@ -99,20 +135,8 @@ class Snake : public Observer {
             return snakeBlocks[0].getPos();
         }
 
-        // int getPosX() {
-        //     return snakeBlocks[0].getPosX();
-        // }
-
-        // int getPosY() {
-        //     return snakeBlocks[0].getPosY();
-        // }
-
         int getSize() {
             return snakeBlocks.size();
-        }
-
-        bool isHead(int xPos, int yPos) {
-            return (snakeBlocks[0].getPosX() == xPos) && (snakeBlocks[0].getPosY() == yPos);
         }
 
         void getPositions() {
@@ -140,7 +164,12 @@ class Snake : public Observer {
         void applySpeedBoost();
         void removeSpeedBoost();
         void invertControls();
-
+        void becomeGhost();
+        void removeGhost();
+        void applySlowBoost();
+        void removeSlowBoost();
+        void freeze();
+        void unfreeze();
 
     private:
 
@@ -171,12 +200,14 @@ class Snake : public Observer {
         GUI *m_gui;
 
         SDL_Renderer *m_renderer;
-        // TODO: Turn into a list?
+
+        // TODO: Remove
         SDL_Texture *m_textureSnakeHead;
         SDL_Texture *m_textureSnakeBody;
         SDL_Texture *m_textureSnakeCurve;
         SDL_Texture *m_textureSnakeTail;
 
+        // TODO: Turn into a list?
         std::shared_ptr<Sprite> m_spriteSnakeHead;
         std::shared_ptr<Sprite> m_spriteSnakeBody;
         std::shared_ptr<Sprite> m_spriteSnakeCurve;
@@ -192,6 +223,7 @@ class Snake : public Observer {
         void renderEffectBars();
         SDL_Rect createEffectBar(float e, float d, int i);
         SDL_Rect createEffectTextureRect(int i);
+        void createEffectUi();
 
         int m_effectBarHeight = 10;
         int m_effectBarWidth = 50;
@@ -202,8 +234,12 @@ class Snake : public Observer {
 
         // Effects
         bool m_invertControls = false;
+        int m_isGhost = 0;
+        int m_freeze = 0;
 
         std::vector<std::unique_ptr<Effect>> m_effects;
+        std::unordered_map<TextureID, std::unique_ptr<UIElementSnakeEffect>> m_effectUIs;
+        std::vector<std::unique_ptr<Effect>> m_snakeEffects;
 
 };
 
