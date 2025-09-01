@@ -27,13 +27,18 @@ class Controller {
             // delete m_client;
         }
 
+        // TODO: Update to pass a vector as a reference / parameter here to avoid the copy.
         std::vector<std::string> getServerEvents() {
-            std::lock_guard<std::mutex> lock(m_mutexServerEvents);
+            std::vector<std::string> m_serverEventsCopy;
+            {
+                std::lock_guard<std::mutex> lock(m_mutexServerEvents);
+
+                m_serverEventsCopy = std::move(m_serverEvents);
+                m_serverEvents.clear();
+            }
             for (auto e : m_serverEvents) {
                 std::cout << "Event: " << e << std::endl;
             }
-            std::vector<std::string> m_serverEventsCopy = m_serverEvents;
-            m_serverEvents.clear();
             return m_serverEventsCopy;
         }
 

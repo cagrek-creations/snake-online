@@ -6,7 +6,6 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #pragma comment(lib, "ws2_32.lib")
-#include <iostream>
 #include <cstring>
 #else
 #include <unistd.h>
@@ -15,6 +14,7 @@
 #include <cerrno>
 #endif
 
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -43,3 +43,4 @@ std::unordered_map<std::string, std::string> getConfiguration(const std::string&
 std::vector<std::string> splitString(const std::string& input, char delimiter);
 
 #endif
+
