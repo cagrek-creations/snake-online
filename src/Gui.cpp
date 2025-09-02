@@ -1,4 +1,6 @@
 #include "Gui.hpp"
+#include "Vector2.hpp"
+#include "headers/GuiElements.hpp"
 #include <SDL2/SDL_render.h>
 
 GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) {
@@ -239,9 +241,34 @@ TTF_Font *GUI::getFont() {
     return m_font;
 }
 
+bool GUI::loadFont(std::string name, std::string path, int f_size) {
+    // Check if the font is already loaded
+        if (m_fonts.find(name) != m_fonts.end()) {
+            // Font with the same key already exists
+            return false;
+        }
+
+        // Load the font using SDL_ttf
+        TTF_Font* font = TTF_OpenFont(path.c_str(), f_size);
+        if (!font) {
+            // Failed to load the font
+            std::cout << "Failed to load font" << std::endl;
+            return false;
+        }
+
+        // Add the loaded font to the map
+        m_fonts[name] = font;
+
+        return true;
+}
+
 GUI::~GUI() {
     TTF_CloseFont(m_font);
     TTF_Quit();
     Mix_Quit();
     SDL_Quit();
+}
+
+void GUIElement::updatePos(Vector2 newPos) {
+    m_pos = newPos;
 }

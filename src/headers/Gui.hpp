@@ -18,6 +18,7 @@
 #include "Sprite.hpp"
 #include "utils.hpp"
 
+#include "GuiElements.hpp"
 
 namespace color {
     const SDL_Color DEFAULT     = {0,   255, 0,   255};
@@ -89,7 +90,9 @@ class GUI : public Observer {
         SpriteSheet *getAtlas(TextureID key);
 
         SDL_Renderer *getRenderer();
+
         TTF_Font *getFont();
+        bool loadFont(std::string name, std::string path, int f_size);
 
     private:
         int m_windowWidth; 
@@ -107,5 +110,6 @@ class GUI : public Observer {
 
         std::unordered_map<TextureID, SDL_Texture*> m_textureMap;
         std::unordered_map<TextureID, std::unique_ptr<SpriteSheet>> m_atlasMap;
+        std::unordered_map<std::string, TTF_Font*> m_fonts;
         std::vector<std::unique_ptr<Menu>> menus;
 };
