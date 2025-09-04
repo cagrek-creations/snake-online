@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_render.h>
 #include <iostream>
 #include <memory>
 
@@ -12,7 +14,10 @@
 #include <thread>
 #include <functional>
 
+#include "GuiElements.hpp"
 #include "Observer.hpp"
+#include "Gui.hpp"
+#include "Vector2.hpp"
 
 #define MENU_STATE      0x0
 #define MENU_OPTION     0x1
@@ -50,6 +55,38 @@ struct Text {
     }
 };
 
+class GMenuItem {
+    public:
+        GMenuItem(Vector2 pos, std::shared_ptr<GText> &text) : m_pos(pos), m_text(text) {}
+
+        void render() {
+            m_text->render();
+        }
+
+    private:
+        Vector2 m_pos;
+        std::shared_ptr<GText> m_text;
+};
+
+class GMenu : public Observer {
+
+    public:
+        GMenu(Vector2 pos) {}
+
+        void addMenuItem(std::shared_ptr<GMenuItem> mi) {
+            m_menuItems.push_back(mi);
+        }
+
+        void render() {
+            for (auto &m : m_menuItems) {
+                m->render();
+            }
+        }
+
+    private:
+        std::vector<std::shared_ptr<GMenuItem>> m_menuItems;
+
+};
 
 class MenuItem;
 
@@ -215,10 +252,6 @@ class MenuItem {
             SDL_FreeSurface(textSurface);
             return textInfo;
         }
-
-
-
-
 
 };
 

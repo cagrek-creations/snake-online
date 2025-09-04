@@ -1,8 +1,11 @@
 #include "Game.hpp"
+#include "GuiElements.hpp"
 #include "Snake.hpp"
 #include "SnakeEffects.hpp"
 #include "Vector2.hpp"
 #include "headers/Gui.hpp"
+#include "headers/Menu.hpp"
+#include <memory>
 
 int WINDOW_FULLSCREEN = 0;
 
@@ -61,13 +64,16 @@ void Game::update(double deltaTime) {
 void Game::render() {
     m_gui->clearRenderer();
     m_gui->update();
-    m_grid->render();
+    // m_grid->render();
+
 
     // TODO: Update this to only render over the grid instead of the screen.
     SDL_Rect dstRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+    SDL_RenderCopy(m_gui->getRenderer(), m_gui->getTexture(TextureID::FREEZE), NULL, &dstRect);
     SDL_RenderCopy(m_gui->getRenderer(), m_gui->getTexture(TextureID::VINJETTE), NULL, &dstRect);
 
     renderState();
+
 
     m_gui->render();
 }
@@ -103,8 +109,11 @@ void Game::createPlayer(int size, int xPos, int yPos) {
 }
 
 void Game::renderState() {
+
     if (m_state == START_MENU) {
         m_startMenu->render();
+        // t->render();
+        testMenu->render();
     } else if (m_state == OPTIONS) {
         m_optionsMenu->render();
     } else if (m_state == GAME_PLAY) {
@@ -193,6 +202,13 @@ void Game::setupGui() {
     std::function<void()> funcR = bindMemberFunction(m_sound, &SoundManager::increaseVolume);
     m_optionsMenu->addItemBar("sound", funcL, funcR);
     m_optionsMenu->addItemState("asd", 1);
+
+    m_gui->loadFont("default", "font.ttf", 128);
+
+    testMenu = std::make_unique<GMenu>(Vector2(0, 0));
+    t = m_gui->createText(Vector2(150, 0), "test test", "default");
+    // std::make_shared<GText>(m_gui->createText(Vector2(150, 0), "test test", "default"));
+    testMenu->addMenuItem(std::make_shared<GMenuItem>(Vector2(0, 0), t));
 }
 
 void Game::setupSound() {

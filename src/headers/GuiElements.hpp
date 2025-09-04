@@ -9,25 +9,32 @@
 
 class GUIElement {
     public:
-        GUIElement(SDL_Renderer *renderer, Vector2 pos);
-        ~GUIElement();
+        GUIElement(SDL_Renderer *renderer, Vector2 pos, SDL_Texture *texture) : m_renderer(renderer), m_pos(pos), m_texture(texture) {}
+        virtual ~GUIElement() {
+            if (m_texture) SDL_DestroyTexture(m_texture);
+            std::cout << "GUIElement destructor" << std::endl;
+        }
 
-        void render();
+        virtual void render() = 0;
         void updatePos(Vector2 newPos);
 
-    private:
+    protected:
         SDL_Texture *m_texture;
         SDL_Renderer *m_renderer;
+        SDL_Rect m_dest;
         Vector2 m_pos;
 };
 
 class GText : GUIElement {
 
     public:
-        GText();
+        GText(SDL_Renderer *renderer, Vector2 pos, Vector2 dim, std::string content, TTF_Font *font, SDL_Texture *texture);
         ~GText();
 
+        void render() override;
+
     private:
+        std::string m_content;
         TTF_Font *m_font;
 
 };

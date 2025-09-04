@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
 #include <iostream>
 
 #include <SDL2/SDL.h>
@@ -14,9 +15,10 @@
 #include <memory>
 #include <thread>
 
-#include "Menu.hpp"
+// #include "Menu.hpp"
 #include "Sprite.hpp"
 #include "utils.hpp"
+#include "Observer.hpp"
 
 #include "GuiElements.hpp"
 
@@ -52,6 +54,13 @@ enum class TextureID {
     A_GREEN_SNAKE,
     A_RED_SNAKE,
 };
+
+SDL_Surface *m_loadSurface(const std::string &path);
+
+SDL_Surface *m_createTTFSurface(TTF_Font *font, std::string content, SDL_Color color);
+
+// TODO: Make this part of the GUI and remove renderer paremeter.
+SDL_Texture *m_createTextureFromSurface(SDL_Renderer *renderer, SDL_Surface *surface);
 
 class GUI : public Observer {
 
@@ -94,6 +103,8 @@ class GUI : public Observer {
         TTF_Font *getFont();
         bool loadFont(std::string name, std::string path, int f_size);
 
+        std::shared_ptr<GText> createText(Vector2 pos, const std::string &content, std::string font);
+
     private:
         int m_windowWidth; 
         int m_windowHeight;
@@ -111,5 +122,5 @@ class GUI : public Observer {
         std::unordered_map<TextureID, SDL_Texture*> m_textureMap;
         std::unordered_map<TextureID, std::unique_ptr<SpriteSheet>> m_atlasMap;
         std::unordered_map<std::string, TTF_Font*> m_fonts;
-        std::vector<std::unique_ptr<Menu>> menus;
+        // std::vector<std::unique_ptr<Menu>> menus;
 };

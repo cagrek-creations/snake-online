@@ -6,6 +6,7 @@
 
 #include "Controller.hpp"
 #include "Common.hpp"
+#include "GuiElements.hpp"
 #include "Snake.hpp"
 #include "Grid.hpp"
 #include "Menu.hpp"
@@ -77,6 +78,9 @@ class Game : public Observer{
 
         std::unique_ptr<Menu> m_startMenu;
         std::unique_ptr<Menu> m_optionsMenu;
+
+        std::unique_ptr<GMenu> testMenu;
+        std::shared_ptr<GText> t;
 
         std::unique_ptr<Controller> m_gameController;
 
