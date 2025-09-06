@@ -64,7 +64,7 @@ void Game::update(double deltaTime) {
 void Game::render() {
     m_gui->clearRenderer();
     m_gui->update();
-    // m_grid->render();
+    m_grid->render();
 
 
     // TODO: Update this to only render over the grid instead of the screen.
