@@ -69,7 +69,6 @@ void Game::render() {
 
     // TODO: Update this to only render over the grid instead of the screen.
     SDL_Rect dstRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-    SDL_RenderCopy(m_gui->getRenderer(), m_gui->getTexture(TextureID::FREEZE), NULL, &dstRect);
     SDL_RenderCopy(m_gui->getRenderer(), m_gui->getTexture(TextureID::VINJETTE), NULL, &dstRect);
 
     renderState();
@@ -82,7 +81,6 @@ void Game::onEvent(const SDL_Event& event) {
     if (m_myPid != -1) m_players[m_myPid]->onEvent(event);
 
     
-
 }
 
 void Game::createGrid() {
@@ -212,9 +210,11 @@ void Game::setupGui() {
 
     m_gui->loadFont("default", "font.ttf", 128);
 
-    testMenu = std::make_unique<GMenu>(Vector2(0, 0));
-    // t = m_gui->createText(Vector2(150, 0), "test test", "default");
+        // t = m_gui->createText(Vector2(150, 0), "test test", "default");
     // std::make_shared<GText>(m_gui->createText(Vector2(150, 0), "test test", "default"));
+
+    testMenu = std::make_unique<GMenu>(Vector2(0, 0));
+
     auto s = std::make_shared<GMenuItemText>(m_gui.get(), Vector2(0, 0), "Menu text", "default", color::WHITE, color::RED);
     s->bind([this]() {
         this->changeState(gameState::OPTIONS);

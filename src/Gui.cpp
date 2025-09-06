@@ -267,13 +267,14 @@ TTF_Font *GUI::getFont() {
 }
 
 bool GUI::loadFont(std::string name, std::string path, int f_size) {
+    std::filesystem::path basePathFonts = getExecutableDir() / "fonts";
 
     // See if font with same name already exists.
     if (m_fonts.find(name) != m_fonts.end()) {
         return false;
     }
 
-    TTF_Font *font = TTF_OpenFont("./font.ttf", f_size);
+    TTF_Font *font = TTF_OpenFont((basePathFonts / path).string().c_str(), f_size);
     if (!font) {
         std::cout << "Failed to load font" << std::endl;
         return false;
