@@ -96,8 +96,8 @@ void Game::createPlayer() {
     std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 6, color::GREEN, m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);
-    m_players[m_myPid]->addEffect(std::make_unique<FreezeEffect>(*m_players[m_myPid], 50000.0f));
-    m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 15000.0f));
+    // m_players[m_myPid]->addEffect(std::make_unique<FreezeEffect>(*m_players[m_myPid], 50000.0f));
+    // m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 15000.0f));
 }
 
 void Game::createPlayer(int size, int xPos, int yPos) {
