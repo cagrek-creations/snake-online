@@ -80,6 +80,9 @@ void Game::render() {
 
 void Game::onEvent(const SDL_Event& event) {
     if (m_myPid != -1) m_players[m_myPid]->onEvent(event);
+
+    
+
 }
 
 void Game::createGrid() {
@@ -127,6 +130,10 @@ void Game::renderState() {
     } else if (m_state == GAME_QUIT) {
         m_isRunning = false;
     }
+}
+
+void Game::changeState(gameState gis) {
+    m_state = gis;
 }
 
 void Game::setupGame() {
@@ -206,9 +213,24 @@ void Game::setupGui() {
     m_gui->loadFont("default", "font.ttf", 128);
 
     testMenu = std::make_unique<GMenu>(Vector2(0, 0));
-    t = m_gui->createText(Vector2(150, 0), "test test", "default");
+    // t = m_gui->createText(Vector2(150, 0), "test test", "default");
     // std::make_shared<GText>(m_gui->createText(Vector2(150, 0), "test test", "default"));
-    testMenu->addMenuItem(std::make_shared<GMenuItem>(Vector2(0, 0), t));
+    auto s = std::make_shared<GMenuItemText>(m_gui.get(), Vector2(0, 0), "Menu text", "default", color::WHITE, color::RED);
+    s->bind([this]() {
+        this->changeState(gameState::OPTIONS);
+    });
+
+    auto a = std::make_shared<GMenuItemBar>(m_gui.get(), Vector2(0, 400), "Menu text", "default", color::WHITE, color::RED);
+    a->bind([this]() {
+        m_sound->decreaseVolume();
+    }, [this]() {
+        m_sound->increaseVolume();
+    });
+
+    testMenu->addMenuItem(Vector2(0, 0), s);
+    testMenu->addMenuItem(Vector2(0, 2), a);
+    testMenu->addMenuItem(Vector2(0, 1), std::make_shared<GMenuItemText>(m_gui.get(), Vector2(0, 200), "aaaaa", "default", color::WHITE, color::RED));
+    // testMenu->addMenuItem(Vector2(1, 0), std::make_shared<GMenuItemText>(m_gui.get(), Vector2(200, 200), "aaaaa", "default", color::WHITE, color::RED));
 }
 
 void Game::setupSound() {
@@ -225,8 +247,9 @@ void Game::setupController() {
     m_gameController = std::make_unique<Controller>();
     m_gameController->attachObserver(m_gui.get());
     m_gameController->attachObserver(m_sound.get());
-    m_gameController->attachObserver(m_startMenu.get());
+    // m_gameController->attachObserver(m_startMenu.get());
     m_gameController->attachObserver(m_optionsMenu.get());
+    m_gameController->attachObserver(testMenu.get());
 }
 
 bool Game::isRunning() {

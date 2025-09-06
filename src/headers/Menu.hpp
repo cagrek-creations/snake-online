@@ -2,17 +2,21 @@
 
 #pragma once
 
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_scancode.h>
 #include <iostream>
 #include <memory>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include <psdk_inc/_ip_types.h>
 #include <vector>
 #include <thread>
 #include <functional>
+#include <unordered_map>
 
 #include "GuiElements.hpp"
 #include "Observer.hpp"
@@ -38,6 +42,11 @@ namespace menuc {
     const SDL_Color WHITE   = {255, 255, 255, 255};
 }
 
+enum class MenuItemType {
+    M_BAR,
+    M_TEXT,
+};
+
 struct Text {
     int width;
     int height;
@@ -55,36 +64,163 @@ struct Text {
     }
 };
 
+
 class GMenuItem {
     public:
-        GMenuItem(Vector2 pos, std::shared_ptr<GText> &text) : m_pos(pos), m_text(text) {}
+        GMenuItem(Vector2 pos, SDL_Color color) : m_pos(pos), m_color(color) {}
 
-        void render() {
+        virtual void render() = 0;
+        virtual void renderHighlighted() = 0;
+        virtual void bind(std::function<void()> f) {};
+        virtual void bind(std::function<void()> l, std::function<void()> r) {};
+        virtual void trigger() {}
+        virtual void triggerLeft() {}
+        virtual void triggerRight() {}
+        // TODO: Move the triggering to the menu items and let them choose based on events.
+        virtual void update() {}
+        virtual MenuItemType type() = 0;
+
+    protected:
+        Vector2 m_pos;
+        SDL_Color m_color;
+
+};
+
+class GMenuItemText : public GMenuItem {
+    public:
+        GMenuItemText(GUI *gui, Vector2 pos, std::string content, std::string font, SDL_Color color, SDL_Color highlighted) : GMenuItem(pos, color) {
+            m_text = gui->createText(m_pos, content, font, color);
+            m_highlighted = highlighted;
+        }
+
+        void render() override {
             m_text->render();
         }
 
+        void renderHighlighted() override {
+            m_text->renderColor(m_highlighted);
+        }
+
+        void bind(std::function<void()> f) override {
+            m_select = f;
+        }
+
+        void trigger() override {
+            if(m_select) m_select();
+        }
+
+        MenuItemType type() override {
+            return MenuItemType::M_TEXT;
+        }
+
     private:
-        Vector2 m_pos;
         std::shared_ptr<GText> m_text;
+        std::function<void()> m_select;
+        SDL_Color m_highlighted;
+};
+
+class GMenuItemBar : public GMenuItem {
+    public:
+        GMenuItemBar(GUI *gui, Vector2 pos, std::string content, std::string font, SDL_Color color, SDL_Color highlighted) : GMenuItem(pos, color) {
+            m_text = gui->createText(m_pos, content, font, color);
+            m_highlighted = highlighted;
+        }
+
+        void render() override {
+            m_text->render();
+        }
+
+        void renderHighlighted() override {
+            m_text->renderColor(m_highlighted);
+        }
+
+        void bind(std::function<void()> l, std::function<void()> r) override {
+            m_left = l;
+            m_right = r;
+        }
+
+        void triggerLeft() override {
+            if (m_left) m_left();
+        }
+
+        void triggerRight() override {
+            if (m_right) m_right();
+        }
+
+        MenuItemType type() override {
+            return MenuItemType::M_BAR;
+        }
+
+    private:
+        // TODO: 2D menus would break the functionality of moving a bar right / left with the keyboard.
+        // Could implement this so that you have to 'select' the bar before changing its values?
+        SDL_Color m_highlighted;
+        SDL_Rect m_bar;
+
+        std::shared_ptr<GText> m_text;
+        std::function<void()> m_left;
+        std::function<void()> m_right;
 };
 
 class GMenu : public Observer {
 
     public:
-        GMenu(Vector2 pos) {}
+        GMenu(Vector2 pos) {
+            m_indexXMax = 0;
+            m_indexYMax = 0;
+        }
 
-        void addMenuItem(std::shared_ptr<GMenuItem> mi) {
-            m_menuItems.push_back(mi);
+        void addMenuItem(Vector2 pos, std::shared_ptr<GMenuItem> mi) {
+            m_menuItems[pos] = mi;
+
+            if (pos.x > 0) m_indexXMax++;
+            if (pos.y > 0) m_indexYMax++;
         }
 
         void render() {
             for (auto &m : m_menuItems) {
-                m->render();
+                m.second->render();
+            }
+
+            m_menuItems[m_index]->renderHighlighted();
+        }
+
+        void onEvent(const SDL_Event& event) override {
+            std::cout << "Menu event" << std::endl;
+            std::cout << m_indexXMax << std::endl;
+            std::cout << m_indexYMax << std::endl;
+            const Uint8 *key_state = SDL_GetKeyboardState(NULL);
+
+            if(key_state[SDL_SCANCODE_S] || key_state[SDL_SCANCODE_DOWN]) {
+                if (m_index.y < m_indexYMax) m_index.y++;
+            }
+
+            if(key_state[SDL_SCANCODE_W] || key_state[SDL_SCANCODE_UP]) {
+                if (m_index.y > 0) m_index.y--;
+            }
+
+            if(key_state[SDL_SCANCODE_D] || key_state[SDL_SCANCODE_RIGHT]) {
+                if (m_index.x < m_indexXMax) m_index.x++;
+                if (m_menuItems[m_index]->type() == MenuItemType::M_BAR) m_menuItems[m_index]->triggerRight();
+            }
+
+            if(key_state[SDL_SCANCODE_A] || key_state[SDL_SCANCODE_LEFT]) {
+                if (m_index.x > 0) m_index.x--;
+                if (m_menuItems[m_index]->type() == MenuItemType::M_BAR) m_menuItems[m_index]->triggerLeft();
+            }
+
+            if (key_state[SDL_SCANCODE_RETURN]) {
+                std::cout << "triggering" << std::endl;
+                m_menuItems[m_index]->trigger();
             }
         }
 
     private:
-        std::vector<std::shared_ptr<GMenuItem>> m_menuItems;
+        std::unordered_map<Vector2, std::shared_ptr<GMenuItem>> m_menuItems;
+        Vector2 m_index;
+        Vector2 m_size;
+        int m_indexXMax;
+        int m_indexYMax;
 
 };
 

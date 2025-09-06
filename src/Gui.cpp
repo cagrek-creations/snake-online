@@ -1,6 +1,7 @@
 #include "Gui.hpp"
 #include "Vector2.hpp"
 #include "headers/GuiElements.hpp"
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
 #include <memory>
@@ -296,7 +297,7 @@ void GUIElement::updatePos(Vector2 newPos) {
 
 
 // Text
-GText::GText(SDL_Renderer *renderer, Vector2 pos, Vector2 dim, std::string content, TTF_Font *font, SDL_Texture *texture) : GUIElement(renderer, pos, texture) {
+GText::GText(SDL_Renderer *renderer, Vector2 pos, Vector2 dim, std::string content, TTF_Font *font, SDL_Texture *texture, SDL_Color color) : GUIElement(renderer, pos, texture, color) {
     m_font = font;
     m_content = content;
 
@@ -307,25 +308,25 @@ GText::GText(SDL_Renderer *renderer, Vector2 pos, Vector2 dim, std::string conte
 }
 
 void GText::render() {
-    // std::cout << m_content << std::endl;
-    // std::cout << m_dest.x << std::endl;
-    // std::cout << m_dest.y << std::endl;
-    // std::cout << m_dest.w << std::endl;
-    // std::cout << m_dest.h << std::endl;
-    // std::cout << m_texture << std::endl;
-    // std::cout << m_renderer << std::endl;
+
     SDL_RenderCopy(m_renderer, m_texture, nullptr, &m_dest);
+}
+
+void GText::renderColor(SDL_Color c) {
+    SDL_SetTextureColorMod(m_texture, c.r, c.g, c.b);
+    SDL_RenderCopy(m_renderer, m_texture, nullptr, &m_dest);
+    SDL_SetTextureColorMod(m_texture, m_color.r, m_color.g, m_color.b);
 }
 
 GText::~GText() {
     // if (m_font) TTF_CloseFont(m_font);
 }
 
-std::shared_ptr<GText> GUI::createText(Vector2 pos, const std::string &content, std::string font) {
-    SDL_Surface *textSurface = m_createTTFSurface(m_font, content, color::WHITE);
+std::shared_ptr<GText> GUI::createText(Vector2 pos, const std::string &content, std::string font, SDL_Color color) {
+    SDL_Surface *textSurface = m_createTTFSurface(m_font, content, color);
     SDL_Texture *textTexture = m_createTextureFromSurface(m_renderer, textSurface);
 
-    std::shared_ptr<GText> _text = std::make_shared<GText>(m_renderer, pos, Vector2(textSurface->w, textSurface->h), content, m_font, textTexture);
+    std::shared_ptr<GText> _text = std::make_shared<GText>(m_renderer, pos, Vector2(textSurface->w, textSurface->h), content, m_font, textTexture, color);
     SDL_FreeSurface(textSurface);
     
     return _text;

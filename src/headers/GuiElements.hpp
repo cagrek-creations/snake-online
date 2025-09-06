@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -9,29 +10,33 @@
 
 class GUIElement {
     public:
-        GUIElement(SDL_Renderer *renderer, Vector2 pos, SDL_Texture *texture) : m_renderer(renderer), m_pos(pos), m_texture(texture) {}
+        GUIElement(SDL_Renderer *renderer, Vector2 pos, SDL_Texture *texture, SDL_Color color) : m_renderer(renderer), m_pos(pos), m_texture(texture), m_color(color) {}
         virtual ~GUIElement() {
             if (m_texture) SDL_DestroyTexture(m_texture);
             std::cout << "GUIElement destructor" << std::endl;
         }
 
         virtual void render() = 0;
+        virtual void renderColor(SDL_Color c) = 0;
         void updatePos(Vector2 newPos);
 
     protected:
         SDL_Texture *m_texture;
         SDL_Renderer *m_renderer;
         SDL_Rect m_dest;
+        SDL_Color m_color;
         Vector2 m_pos;
 };
 
 class GText : GUIElement {
 
     public:
-        GText(SDL_Renderer *renderer, Vector2 pos, Vector2 dim, std::string content, TTF_Font *font, SDL_Texture *texture);
+        GText(SDL_Renderer *renderer, Vector2 pos, Vector2 dim, std::string content, TTF_Font *font, SDL_Texture *texture, SDL_Color color);
         ~GText();
 
         void render() override;
+        void renderColor(SDL_Color c) override;
+        void setColor();
 
     private:
         std::string m_content;

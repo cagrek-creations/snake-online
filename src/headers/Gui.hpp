@@ -103,7 +103,7 @@ class GUI : public Observer {
         TTF_Font *getFont();
         bool loadFont(std::string name, std::string path, int f_size);
 
-        std::shared_ptr<GText> createText(Vector2 pos, const std::string &content, std::string font);
+        std::shared_ptr<GText> createText(Vector2 pos, const std::string &content, std::string font, SDL_Color color);
 
     private:
         int m_windowWidth; 

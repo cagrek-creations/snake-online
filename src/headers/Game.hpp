@@ -45,6 +45,7 @@ class Game : public Observer{
         void createGrid(int width, int height); 
         void createPlayer();
         void createPlayer(int size, int xPos, int yPos);
+        void changeState(gameState gis);
 
 
         void update(double deltaTime);
