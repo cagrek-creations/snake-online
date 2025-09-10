@@ -37,6 +37,7 @@ private:
     int m_loops;
 
     int m_volumeMax = 128;
+    int m_volumeStep = 8;
     int m_volumeMin = 0;
 
     Mix_Chunk* loadChunk(const char* filePath);

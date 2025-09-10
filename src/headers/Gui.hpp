@@ -23,15 +23,19 @@
 #include "GuiElements.hpp"
 
 namespace color {
-    const SDL_Color DEFAULT     = {0,   255, 0,   255};
-    const SDL_Color RED         = {255, 0,   0,   255};
-    const SDL_Color GREEN       = {0,   255, 0,   255};
-    const SDL_Color BLUE        = {0,   0,   255, 255};
-    const SDL_Color WHITE       = {255, 255, 255, 255};
-    const SDL_Color LIGHTGRAY   = {200, 200, 200, 255};
-    const SDL_Color DARKGRAY    = {64,  64,  64,  255};
-    const SDL_Color ORANGE      = {255, 165, 0,   255};
-    const SDL_Color LIGHTBLUE   = {173, 216, 230, 255};
+    const SDL_Color DEFAULT         = {0,   255, 0,   255};
+    const SDL_Color RED             = {255, 0,   0,   255};
+    const SDL_Color GREEN           = {0,   255, 0,   255};
+    const SDL_Color BLUE            = {0,   0,   255, 255};
+    const SDL_Color WHITE           = {255, 255, 255, 255};
+    const SDL_Color LIGHTGRAY       = {200, 200, 200, 255};
+    const SDL_Color DARKGRAY        = {64,  64,  64,  255};
+    const SDL_Color ORANGE          = {255, 165, 0,   255};
+    const SDL_Color LIGHTBLUE       = {173, 216, 230, 255};
+    const SDL_Color GREEN_7EAD63    = {126, 173, 99,  255};
+    const SDL_Color WHITE_CCCCCC    = {204, 204, 204, 255};
+    const SDL_Color GREEN_6DA34D    = {109, 163, 77,  255};
+
 }
 
 enum class TextureID {
@@ -53,6 +57,11 @@ enum class TextureID {
     A_YELLOW_SNAKE,
     A_GREEN_SNAKE,
     A_RED_SNAKE,
+};
+
+enum TextFlags {
+    NONE                = 0,
+    TEXT_CENTRALIZED    = 1 << 0,
 };
 
 SDL_Surface *m_loadSurface(const std::string &path);
@@ -103,7 +112,7 @@ class GUI : public Observer {
         TTF_Font *getFont();
         bool loadFont(std::string name, std::string path, int f_size);
 
-        std::shared_ptr<GText> createText(Vector2 pos, const std::string &content, std::string font, SDL_Color color);
+        std::shared_ptr<GText> createText(Vector2 pos, const std::string &content, std::string font, SDL_Color color, int flags);
 
     private:
         int m_windowWidth; 

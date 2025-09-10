@@ -6,6 +6,7 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_scancode.h>
+#include <cstddef>
 #include <iostream>
 #include <memory>
 
@@ -44,7 +45,7 @@ namespace menuc {
 
 enum class MenuItemType {
     M_BAR,
-    M_TEXT,
+    M_BUTTON,
 };
 
 struct Text {
@@ -86,10 +87,10 @@ class GMenuItem {
 
 };
 
-class GMenuItemText : public GMenuItem {
+class GMenuItemButton : public GMenuItem {
     public:
-        GMenuItemText(GUI *gui, Vector2 pos, std::string content, std::string font, SDL_Color color, SDL_Color highlighted) : GMenuItem(pos, color) {
-            m_text = gui->createText(m_pos, content, font, color);
+        GMenuItemButton(GUI *gui, Vector2 pos, std::string content, std::string font, SDL_Color color, SDL_Color highlighted) : GMenuItem(pos, color) {
+            m_text = gui->createText(m_pos, content, font, color, TEXT_CENTRALIZED);
             m_highlighted = highlighted;
         }
 
@@ -110,7 +111,7 @@ class GMenuItemText : public GMenuItem {
         }
 
         MenuItemType type() override {
-            return MenuItemType::M_TEXT;
+            return MenuItemType::M_BUTTON;
         }
 
     private:
@@ -119,19 +120,35 @@ class GMenuItemText : public GMenuItem {
         SDL_Color m_highlighted;
 };
 
+// TODO: Move the creation of text to outside the menuitem?
 class GMenuItemBar : public GMenuItem {
     public:
-        GMenuItemBar(GUI *gui, Vector2 pos, std::string content, std::string font, SDL_Color color, SDL_Color highlighted) : GMenuItem(pos, color) {
-            m_text = gui->createText(m_pos, content, font, color);
+        GMenuItemBar(GUI *gui, Vector2 pos, Vector2 dim, int step, float scale, std::string content, std::string font, SDL_Color color, SDL_Color highlighted) : GMenuItem(pos, color) {
+            m_text = gui->createText(m_pos, content, font, color, TEXT_CENTRALIZED);
             m_highlighted = highlighted;
+            m_renderer = gui->getRenderer();
+            m_scale = scale;
+            m_barStep = step;
+            m_barSizeMax = dim.x;
+            m_barSize = m_barSizeMax / 2;
+            m_bar.w = m_barSize;
+            m_bar.h = dim.y;
+            m_bar.x = pos.x - m_barSizeMax / 2;
+            m_bar.y = pos.y;
         }
 
         void render() override {
             m_text->render();
+
+            SDL_SetRenderDrawColor(m_renderer, m_color.r, m_color.g, m_color.b, 255);
+            SDL_RenderFillRect(m_renderer, &m_bar);
         }
 
         void renderHighlighted() override {
             m_text->renderColor(m_highlighted);
+
+            SDL_SetRenderDrawColor(m_renderer, m_highlighted.r, m_highlighted.g, m_highlighted.b, 255);
+            SDL_RenderFillRect(m_renderer, &m_bar);
         }
 
         void bind(std::function<void()> l, std::function<void()> r) override {
@@ -141,10 +158,14 @@ class GMenuItemBar : public GMenuItem {
 
         void triggerLeft() override {
             if (m_left) m_left();
+            if (m_barSize > 0) m_barSize -= m_barStep;
+            m_bar.w = m_barSize * m_scale;
         }
 
         void triggerRight() override {
             if (m_right) m_right();
+            if (m_barSize < m_barSizeMax) m_barSize += m_barStep;
+            m_bar.w = m_barSize * m_scale;
         }
 
         MenuItemType type() override {
@@ -155,7 +176,13 @@ class GMenuItemBar : public GMenuItem {
         // TODO: 2D menus would break the functionality of moving a bar right / left with the keyboard.
         // Could implement this so that you have to 'select' the bar before changing its values?
         SDL_Color m_highlighted;
+        SDL_Renderer *m_renderer;
         SDL_Rect m_bar;
+
+        int m_barSize;
+        int m_barSizeMax;
+        int m_barStep;
+        float m_scale;
 
         std::shared_ptr<GText> m_text;
         std::function<void()> m_left;
@@ -165,7 +192,7 @@ class GMenuItemBar : public GMenuItem {
 class GMenu : public Observer {
 
     public:
-        GMenu(Vector2 pos) {
+        GMenu(Vector2 pos) : m_pos(pos) {
             m_indexXMax = 0;
             m_indexYMax = 0;
         }
@@ -182,7 +209,7 @@ class GMenu : public Observer {
                 m.second->render();
             }
 
-            m_menuItems[m_index]->renderHighlighted();
+            if (m_menuItems[m_index]) m_menuItems[m_index]->renderHighlighted();
         }
 
         void onEvent(const SDL_Event& event) override {
@@ -215,7 +242,16 @@ class GMenu : public Observer {
             }
         }
 
+        int getX() {
+            return m_pos.x;
+        }
+
+        int getY() {
+            return m_pos.y;
+        }
+
     private:
+        Vector2 m_pos;
         std::unordered_map<Vector2, std::shared_ptr<GMenuItem>> m_menuItems;
         Vector2 m_index;
         Vector2 m_size;

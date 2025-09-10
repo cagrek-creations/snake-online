@@ -309,23 +309,35 @@ GText::GText(SDL_Renderer *renderer, Vector2 pos, Vector2 dim, std::string conte
 }
 
 void GText::render() {
-
+    SDL_SetTextureColorMod(m_texture, m_color.r, m_color.g, m_color.b);
     SDL_RenderCopy(m_renderer, m_texture, nullptr, &m_dest);
 }
 
 void GText::renderColor(SDL_Color c) {
     SDL_SetTextureColorMod(m_texture, c.r, c.g, c.b);
     SDL_RenderCopy(m_renderer, m_texture, nullptr, &m_dest);
-    SDL_SetTextureColorMod(m_texture, m_color.r, m_color.g, m_color.b);
+}
+
+int GText::getWidth() {
+    return m_dest.w;
+}
+
+int GText::getHeight() {
+    return m_dest.h;
 }
 
 GText::~GText() {
     // if (m_font) TTF_CloseFont(m_font);
 }
 
-std::shared_ptr<GText> GUI::createText(Vector2 pos, const std::string &content, std::string font, SDL_Color color) {
-    SDL_Surface *textSurface = m_createTTFSurface(m_font, content, color);
+std::shared_ptr<GText> GUI::createText(Vector2 pos, const std::string &content, std::string font, SDL_Color color, int flags) {
+    SDL_Surface *textSurface = m_createTTFSurface(m_font, content, color::WHITE);
     SDL_Texture *textTexture = m_createTextureFromSurface(m_renderer, textSurface);
+
+
+    if (flags & TEXT_CENTRALIZED) {
+        pos.x = pos.x - textSurface->w / 2;
+    }
 
     std::shared_ptr<GText> _text = std::make_shared<GText>(m_renderer, pos, Vector2(textSurface->w, textSurface->h), content, m_font, textTexture, color);
     SDL_FreeSurface(textSurface);

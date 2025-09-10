@@ -38,6 +38,9 @@ class GText : GUIElement {
         void renderColor(SDL_Color c) override;
         void setColor();
 
+        int getWidth();
+        int getHeight();
+
     private:
         std::string m_content;
         TTF_Font *m_font;

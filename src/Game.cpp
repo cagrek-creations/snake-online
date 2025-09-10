@@ -77,10 +77,20 @@ void Game::render() {
     m_gui->render();
 }
 
+void Game::onEventState(const SDL_Event &event) {
+    if (m_state == START_MENU) {
+        startMenu->onEvent(event);
+    } else if (m_state == OPTIONS) {
+        optionsMenu->onEvent(event);
+    } else if (m_state == GAME_PLAY) {
+
+    }
+}
+
 void Game::onEvent(const SDL_Event& event) {
     if (m_myPid != -1) m_players[m_myPid]->onEvent(event);
 
-    
+    onEventState(event);
 }
 
 void Game::createGrid() {
@@ -112,11 +122,12 @@ void Game::createPlayer(int size, int xPos, int yPos) {
 void Game::renderState() {
 
     if (m_state == START_MENU) {
-        m_startMenu->render();
+        // m_startMenu->render();
         // t->render();
-        testMenu->render();
+        startMenu->render();
     } else if (m_state == OPTIONS) {
         m_optionsMenu->render();
+        optionsMenu->render();
     } else if (m_state == GAME_PLAY) {
         for (auto &p : m_players) {
             p.second->render();
@@ -131,6 +142,7 @@ void Game::renderState() {
 }
 
 void Game::changeState(gameState gis) {
+    std::cout << m_state << "->" << gis << std::endl;
     m_state = gis;
 }
 
@@ -210,26 +222,29 @@ void Game::setupGui() {
 
     m_gui->loadFont("default", "font.ttf", 128);
 
+    setupStartMenu();
+    setupOptionsMenu();
+
         // t = m_gui->createText(Vector2(150, 0), "test test", "default");
     // std::make_shared<GText>(m_gui->createText(Vector2(150, 0), "test test", "default"));
 
-    testMenu = std::make_unique<GMenu>(Vector2(0, 0));
+    // testMenu = std::make_unique<GMenu>(Vector2(0, 0));
 
-    auto s = std::make_shared<GMenuItemText>(m_gui.get(), Vector2(0, 0), "Menu text", "default", color::WHITE, color::RED);
-    s->bind([this]() {
-        this->changeState(gameState::OPTIONS);
-    });
+    // auto s = std::make_shared<GMenuItemText>(m_gui.get(), Vector2(0, 0), "Menu text", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    // s->bind([this]() {
+    //     this->changeState(gameState::OPTIONS);
+    // });
 
-    auto a = std::make_shared<GMenuItemBar>(m_gui.get(), Vector2(0, 400), "Menu text", "default", color::WHITE, color::RED);
-    a->bind([this]() {
-        m_sound->decreaseVolume();
-    }, [this]() {
-        m_sound->increaseVolume();
-    });
+    // auto a = std::make_shared<GMenuItemBar>(m_gui.get(), Vector2(0, 400), Vector2(128, 10), 8, 1, "Menu text", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    // a->bind([this]() {
+    //     m_sound->decreaseVolume();
+    // }, [this]() {
+    //     m_sound->increaseVolume();
+    // });
 
-    testMenu->addMenuItem(Vector2(0, 0), s);
-    testMenu->addMenuItem(Vector2(0, 2), a);
-    testMenu->addMenuItem(Vector2(0, 1), std::make_shared<GMenuItemText>(m_gui.get(), Vector2(0, 200), "aaaaa", "default", color::WHITE, color::RED));
+    // testMenu->addMenuItem(Vector2(0, 0), s);
+    // testMenu->addMenuItem(Vector2(0, 2), a);
+    // testMenu->addMenuItem(Vector2(0, 1), std::make_shared<GMenuItemText>(m_gui.get(), Vector2(0, 200), "aaaaa", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC));
     // testMenu->addMenuItem(Vector2(1, 0), std::make_shared<GMenuItemText>(m_gui.get(), Vector2(200, 200), "aaaaa", "default", color::WHITE, color::RED));
 }
 
@@ -249,9 +264,56 @@ void Game::setupController() {
     m_gameController->attachObserver(m_sound.get());
     // m_gameController->attachObserver(m_startMenu.get());
     m_gameController->attachObserver(m_optionsMenu.get());
-    m_gameController->attachObserver(testMenu.get());
+    m_gameController->attachObserver(this);
+    // m_gameController->attachObserver(startMenu.get());
+    // m_gameController->attachObserver(optionsMenu.get());
 }
 
 bool Game::isRunning() {
     return m_isRunning && m_gui->getWindowClose();
+}
+
+void Game::setupStartMenu() {
+    startMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, 200));
+
+    auto s = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 200), "START GAME", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    s->bind([this]() {
+        this->changeState(gameState::GAME_PLAY);
+    });
+
+    auto o = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 300), "OPTIONS", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    o->bind([this]() {
+        this->changeState(gameState::OPTIONS);
+    });
+
+    auto q = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 400), "QUIT", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    q->bind([this]() {
+        m_isRunning = false;
+    });
+
+    auto a = std::make_shared<GMenuItemBar>(m_gui.get(), Vector2(startMenu->getX(), 500), Vector2(128, 10), 8, 1, "Menu text", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    a->bind([this]() {
+        m_sound->decreaseVolume();
+    }, [this]() {
+        m_sound->increaseVolume();
+    });
+
+
+
+    startMenu->addMenuItem(Vector2(0, 0), s);
+    startMenu->addMenuItem(Vector2(0, 1), o);
+    startMenu->addMenuItem(Vector2(0, 2), q);
+    startMenu->addMenuItem(Vector2(0, 3), a);
+    startMenu->addMenuItem(Vector2(0, 4), std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(0, 200), "aaaaa", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC));
+}
+
+void Game::setupOptionsMenu() {
+    optionsMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, 200));
+
+    auto q = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 400), "QUIT", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    q->bind([this]() {
+        m_isRunning = false;
+    });
+
+    // optionsMenu->addMenuItem(Vector2(0,0), q);
 }

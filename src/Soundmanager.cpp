@@ -81,12 +81,12 @@ void SoundManager::setVolumeAll() {
 }
 
 void SoundManager::decreaseVolume() {
-    *m_volume -= 8;
+    (*m_volume > m_volumeMin) ? *m_volume -= m_volumeStep : m_volumeMin;
     setVolumeAll();
 }
 
 void SoundManager::increaseVolume() {
-    *m_volume += 8;
+    (*m_volume < m_volumeMax) ? *m_volume += m_volumeStep : m_volumeMin;
     setVolumeAll();
 }
 

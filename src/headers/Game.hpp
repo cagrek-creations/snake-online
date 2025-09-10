@@ -80,7 +80,8 @@ class Game : public Observer{
         std::unique_ptr<Menu> m_startMenu;
         std::unique_ptr<Menu> m_optionsMenu;
 
-        std::unique_ptr<GMenu> testMenu;
+        std::unique_ptr<GMenu> startMenu;
+        std::unique_ptr<GMenu> optionsMenu;
         std::shared_ptr<GText> t;
 
         std::unique_ptr<Controller> m_gameController;
@@ -95,11 +96,15 @@ class Game : public Observer{
 
         void handleEvents(std::vector<std::string> serverEvents);
         void handleEvent(std::vector<std::string> &event);
+        void onEventState(const SDL_Event &event);
 
         void setupGui();
         void setupSound();
         void setupController();
         void setupGame();
+
+        void setupStartMenu();
+        void setupOptionsMenu();
 
         // Game logic
         void setupFromServer(std::vector<std::string> event);
