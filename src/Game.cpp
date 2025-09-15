@@ -126,7 +126,7 @@ void Game::renderState() {
         // t->render();
         startMenu->render();
     } else if (m_state == OPTIONS) {
-        m_optionsMenu->render();
+        // m_optionsMenu->render();
         optionsMenu->render();
     } else if (m_state == GAME_PLAY) {
         for (auto &p : m_players) {
@@ -263,7 +263,7 @@ void Game::setupController() {
     m_gameController->attachObserver(m_gui.get());
     m_gameController->attachObserver(m_sound.get());
     // m_gameController->attachObserver(m_startMenu.get());
-    m_gameController->attachObserver(m_optionsMenu.get());
+    // m_gameController->attachObserver(m_optionsMenu.get());
     m_gameController->attachObserver(this);
     // m_gameController->attachObserver(startMenu.get());
     // m_gameController->attachObserver(optionsMenu.get());
@@ -291,29 +291,30 @@ void Game::setupStartMenu() {
         m_isRunning = false;
     });
 
-    auto a = std::make_shared<GMenuItemBar>(m_gui.get(), Vector2(startMenu->getX(), 500), Vector2(128, 10), 8, 1, "Menu text", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
-    a->bind([this]() {
-        m_sound->decreaseVolume();
-    }, [this]() {
-        m_sound->increaseVolume();
-    });
-
-
 
     startMenu->addMenuItem(Vector2(0, 0), s);
     startMenu->addMenuItem(Vector2(0, 1), o);
     startMenu->addMenuItem(Vector2(0, 2), q);
-    startMenu->addMenuItem(Vector2(0, 3), a);
     startMenu->addMenuItem(Vector2(0, 4), std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(0, 200), "aaaaa", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC));
 }
 
 void Game::setupOptionsMenu() {
     optionsMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, 200));
 
-    auto q = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 400), "QUIT", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
-    q->bind([this]() {
-        m_isRunning = false;
+    auto b = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 400), "BACK", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    b->bind([this]() {
+        // TODO: Should back be previous state?
+        this->changeState(gameState::START_MENU);
     });
 
-    // optionsMenu->addMenuItem(Vector2(0,0), q);
+    auto s = std::make_shared<GMenuItemBar>(m_gui.get(), Vector2(startMenu->getX(), 500), Vector2(128, 10), 8, 1, "Menu text", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    s->bind([this]() {
+        m_sound->decreaseVolume();
+    }, [this]() {
+        m_sound->increaseVolume();
+    });
+
+    // TODO: An empty menu segfaults
+    optionsMenu->addMenuItem(Vector2(0,0), s);
+    optionsMenu->addMenuItem(Vector2(0,1), b);
 }
