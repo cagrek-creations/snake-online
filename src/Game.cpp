@@ -281,21 +281,38 @@ void Game::setupStartMenu() {
         this->changeState(gameState::GAME_PLAY);
     });
 
-    auto o = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 300), "OPTIONS", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    auto o = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 400), "OPTIONS", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     o->bind([this]() {
         this->changeState(gameState::OPTIONS);
     });
 
-    auto q = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 400), "QUIT", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    auto q = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX() + 50, 400), "QUIT", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     q->bind([this]() {
         m_isRunning = false;
     });
 
+    auto a = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 200), "QUIT", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    a->bind([this]() {
+        m_isRunning = false;
+    });
 
-    startMenu->addMenuItem(Vector2(0, 0), s);
-    startMenu->addMenuItem(Vector2(0, 1), o);
-    startMenu->addMenuItem(Vector2(0, 2), q);
-    startMenu->addMenuItem(Vector2(0, 4), std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(0, 200), "aaaaa", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC));
+    auto b = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX() + 50, 200), "QUIT", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    b->bind([this]() {
+        m_isRunning = false;
+    });
+
+    auto c = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX() + 100, 200), "QUIT", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    c->bind([this]() {
+        m_isRunning = false;
+    });
+
+
+    startMenu->addMenuItemRow(0, a);
+    startMenu->addMenuItemRow(0, b);
+    startMenu->addMenuItemRow(0, c);
+    startMenu->addMenuItemRow(1, o);
+    startMenu->addMenuItemRow(1, q);
+    startMenu->addMenuItemRow(2, std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(startMenu->getX(), 600), "aaaaa", "default", color::GREEN_7EAD63, color::WHITE_CCCCCC));
 }
 
 void Game::setupOptionsMenu() {
@@ -315,6 +332,6 @@ void Game::setupOptionsMenu() {
     });
 
     // TODO: An empty menu segfaults
-    optionsMenu->addMenuItem(Vector2(0,0), s);
-    optionsMenu->addMenuItem(Vector2(0,1), b);
+    optionsMenu->addMenuItemRow(0, s);
+    optionsMenu->addMenuItemRow(1, b);
 }

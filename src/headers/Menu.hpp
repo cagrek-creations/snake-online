@@ -13,6 +13,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include <ostream>
 #include <psdk_inc/_ip_types.h>
 #include <vector>
 #include <thread>
@@ -192,53 +193,70 @@ class GMenuItemBar : public GMenuItem {
 class GMenu : public Observer {
 
     public:
-        GMenu(Vector2 pos) : m_pos(pos) {
-            m_indexXMax = 0;
-            m_indexYMax = 0;
-        }
+        GMenu(Vector2 pos) : m_pos(pos) {}
 
-        void addMenuItem(Vector2 pos, std::shared_ptr<GMenuItem> mi) {
-            m_menuItems[pos] = mi;
+        void addMenuItemRow(int row, std::shared_ptr<GMenuItem> mi) {
+            if (row >= m_menuItems.size()) {
+                m_menuItems.resize(row + 1);
+            }
 
-            if (pos.x > 0) m_indexXMax++;
-            if (pos.y > 0) m_indexYMax++;
+            m_menuItems[row].push_back(mi);
         }
 
         void render() {
-            for (auto &m : m_menuItems) {
-                m.second->render();
+            for (size_t row = 0; row < m_menuItems.size(); ++row) {
+                for (size_t col = 0; col < m_menuItems[row].size(); ++col) {
+                    if (m_menuItems[row][col]) {
+                        m_menuItems[row][col]->render();
+                    }
+                }
             }
 
-            if (m_menuItems[m_index]) m_menuItems[m_index]->renderHighlighted();
+            if (m_menuItems[m_index.y][m_index.x]) m_menuItems[m_index.y][m_index.x]->renderHighlighted();
         }
 
         void onEvent(const SDL_Event& event) override {
             std::cout << "Menu event" << std::endl;
-            std::cout << m_indexXMax << std::endl;
-            std::cout << m_indexYMax << std::endl;
             const Uint8 *key_state = SDL_GetKeyboardState(NULL);
 
-            if(key_state[SDL_SCANCODE_S] || key_state[SDL_SCANCODE_DOWN]) {
-                if (m_index.y < m_indexYMax) m_index.y++;
+            if (key_state[SDL_SCANCODE_S] || key_state[SDL_SCANCODE_DOWN]) {
+                m_index.y = std::min(m_index.y + 1, (int)m_menuItems.size() - 1);
+                m_index.x = std::min(m_index.x, (int)m_menuItems[m_index.y].size() - 1);
             }
 
-            if(key_state[SDL_SCANCODE_W] || key_state[SDL_SCANCODE_UP]) {
-                if (m_index.y > 0) m_index.y--;
+            // Move up
+            if (key_state[SDL_SCANCODE_W] || key_state[SDL_SCANCODE_UP]) {
+                m_index.y = std::max(m_index.y - 1, 0);
+                m_index.x = std::min(m_index.x, (int)m_menuItems[m_index.y].size() - 1);
             }
 
-            if(key_state[SDL_SCANCODE_D] || key_state[SDL_SCANCODE_RIGHT]) {
-                if (m_index.x < m_indexXMax) m_index.x++;
-                if (m_menuItems[m_index]->type() == MenuItemType::M_BAR) m_menuItems[m_index]->triggerRight();
+            if (!m_menuItems.empty() && m_index.y < m_menuItems.size() && !m_menuItems[m_index.y].empty()) {
+                auto &item = m_menuItems[m_index.y][m_index.x];
+
+                if (key_state[SDL_SCANCODE_D] || key_state[SDL_SCANCODE_RIGHT]) {
+                    if (item->type() == MenuItemType::M_BAR) {
+                        item->triggerRight();
+                    } else {
+                        m_index.x = std::min(m_index.x + 1, (int)m_menuItems[m_index.y].size() - 1);
+                    }
+                }
+
+                if (key_state[SDL_SCANCODE_A] || key_state[SDL_SCANCODE_LEFT]) {
+                    if (item->type() == MenuItemType::M_BAR) {
+                        item->triggerLeft();
+                    } else {
+                        m_index.x = std::max(m_index.x - 1, 0);
+                    }
+                }
             }
 
-            if(key_state[SDL_SCANCODE_A] || key_state[SDL_SCANCODE_LEFT]) {
-                if (m_index.x > 0) m_index.x--;
-                if (m_menuItems[m_index]->type() == MenuItemType::M_BAR) m_menuItems[m_index]->triggerLeft();
-            }
+            std::cout << m_index.x << std::endl;
+            std::cout << m_index.y << std::endl;
+            std::cout << "===" << std::endl;
 
             if (key_state[SDL_SCANCODE_RETURN]) {
                 std::cout << "triggering" << std::endl;
-                m_menuItems[m_index]->trigger();
+                m_menuItems[m_index.y][m_index.x]->trigger();
             }
         }
 
@@ -252,7 +270,8 @@ class GMenu : public Observer {
 
     private:
         Vector2 m_pos;
-        std::unordered_map<Vector2, std::shared_ptr<GMenuItem>> m_menuItems;
+        // std::unordered_map<Vector2, std::shared_ptr<GMenuItem>> m_menuItems;
+        std::vector<std::vector<std::shared_ptr<GMenuItem>>> m_menuItems;
         Vector2 m_index;
         Vector2 m_size;
         int m_indexXMax;
@@ -501,12 +520,12 @@ class MenuBar : public MenuItem {
                                 m_menuText.yPos + m_barHeight*2, m_progress, m_barHeight};
         }
 
-        void update() {
+        void update() override {
             updateTextColor(m_menuText, menuc::RED);
             m_highlighted = true;
         }
 
-        void reset() {
+        void reset() override {
             updateTextColor(m_menuText, menuc::WHITE);
             m_highlighted = false;
         }
