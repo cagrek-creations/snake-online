@@ -1,5 +1,41 @@
 #include "Gui.hpp"
+#include "Vector2.hpp"
+#include "headers/GuiElements.hpp"
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_ttf.h>
+#include <memory>
+
+SDL_Surface *m_loadSurface(const std::string &path) {
+    SDL_Surface *surface = IMG_Load(path.c_str());
+
+    if (!surface) {
+        std::cout << "Failed to load image: " << IMG_GetError() << std::endl;
+    }
+
+    return surface;
+}
+
+SDL_Surface *m_createTTFSurface(TTF_Font *font, std::string content, SDL_Color color) {
+    SDL_Surface *surface = TTF_RenderText_Solid(font, content.c_str(), color);
+
+    if (!surface) {
+        std::cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << std::endl;
+    }
+
+    return surface;
+}
+
+// TODO: Make this part of the GUI and remove renderer paremeter.
+SDL_Texture *m_createTextureFromSurface(SDL_Renderer *renderer, SDL_Surface *surface) {
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+    if (!texture) {
+        std::cout << "Failed to create texture: " << SDL_GetError() << std::endl;
+    }
+
+    return texture;
+}
 
 GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) {
     int flags = 0;
@@ -45,19 +81,14 @@ GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) 
 
 SDL_Texture *GUI::loadTexture(TextureID name, const std::string &filePath) {
     std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
-    SDL_Surface *surface = IMG_Load((basePathGfx / filePath).string().c_str());
-    if (!surface) {
-        std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
-    }
 
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+    SDL_Surface *surface = m_loadSurface((basePathGfx / filePath).string());
+
+    SDL_Texture *texture = m_createTextureFromSurface(m_renderer, surface);
+
     SDL_FreeSurface(surface);
 
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-
-    if (!texture) {
-        std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
-    }
 
     m_textureMap[name] = texture;
 
@@ -89,20 +120,14 @@ SpriteSheet *GUI::getAtlas(TextureID id) {
 
 SDL_Texture *GUI::loadTextureAlpha(TextureID name, const std::string &filePath, int alpha, bool cache) {
     std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
-    SDL_Surface *surface = IMG_Load((basePathGfx / filePath).string().c_str());
-    if (!surface) {
-        std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
-    }
+    SDL_Surface *surface = m_loadSurface((basePathGfx / filePath).string());
 
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+    SDL_Texture *texture = m_createTextureFromSurface(m_renderer, surface);
     SDL_FreeSurface(surface);
 
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
     SDL_SetTextureAlphaMod(texture, alpha);
 
-    if (!texture) {
-        std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
-    }
     if (cache) {
         m_textureMap[name] = texture;
     }
@@ -110,6 +135,7 @@ SDL_Texture *GUI::loadTextureAlpha(TextureID name, const std::string &filePath, 
     return texture;
 }
 
+// TODO: Remove???
 SDL_Rect GUI::createRect(int x, int y, int w, int h)  {
     SDL_Rect rect;
     rect.x = x;
@@ -260,8 +286,28 @@ SDL_Renderer *GUI::getRenderer() {
     return m_renderer;
 }
 
+// TODO: Update to take a font from the m_fonts vector.
 TTF_Font *GUI::getFont() {
     return m_font;
+}
+
+bool GUI::loadFont(std::string name, std::string path, int f_size) {
+    std::filesystem::path basePathFonts = getExecutableDir() / "fonts";
+
+    // See if font with same name already exists.
+    if (m_fonts.find(name) != m_fonts.end()) {
+        return false;
+    }
+
+    TTF_Font *font = TTF_OpenFont((basePathFonts / path).string().c_str(), f_size);
+    if (!font) {
+        std::cout << "Failed to load font" << std::endl;
+        return false;
+    }
+
+    m_fonts[name] = font;
+
+    return true;
 }
 
 GUI::~GUI() {
@@ -269,4 +315,57 @@ GUI::~GUI() {
     TTF_Quit();
     Mix_Quit();
     SDL_Quit();
+}
+
+void GUIElement::updatePos(Vector2 newPos) {
+    m_pos = newPos;
+}
+
+
+// Text
+GText::GText(SDL_Renderer *renderer, Vector2 pos, Vector2 dim, std::string content, TTF_Font *font, SDL_Texture *texture, SDL_Color color) : GUIElement(renderer, pos, texture, color) {
+    m_font = font;
+    m_content = content;
+
+    m_dest.x = pos.x;
+    m_dest.y = pos.y;
+    m_dest.w = dim.x;
+    m_dest.h = dim.y;
+}
+
+void GText::render() {
+    SDL_SetTextureColorMod(m_texture, m_color.r, m_color.g, m_color.b);
+    SDL_RenderCopy(m_renderer, m_texture, nullptr, &m_dest);
+}
+
+void GText::renderColor(SDL_Color c) {
+    SDL_SetTextureColorMod(m_texture, c.r, c.g, c.b);
+    SDL_RenderCopy(m_renderer, m_texture, nullptr, &m_dest);
+}
+
+int GText::getWidth() {
+    return m_dest.w;
+}
+
+int GText::getHeight() {
+    return m_dest.h;
+}
+
+GText::~GText() {
+    // if (m_font) TTF_CloseFont(m_font);
+}
+
+std::shared_ptr<GText> GUI::createText(Vector2 pos, const std::string &content, std::string font, SDL_Color color, int flags) {
+    SDL_Surface *textSurface = m_createTTFSurface(m_font, content, color::WHITE);
+    SDL_Texture *textTexture = m_createTextureFromSurface(m_renderer, textSurface);
+
+
+    if (flags & TEXT_CENTRALIZED) {
+        pos.x = pos.x - textSurface->w / 2;
+    }
+
+    std::shared_ptr<GText> _text = std::make_shared<GText>(m_renderer, pos, Vector2(textSurface->w, textSurface->h), content, m_font, textTexture, color);
+    SDL_FreeSurface(textSurface);
+    
+    return _text;
 }

@@ -6,6 +6,7 @@
 
 #include "Controller.hpp"
 #include "Common.hpp"
+#include "GuiElements.hpp"
 #include "Snake.hpp"
 #include "Grid.hpp"
 #include "Menu.hpp"
@@ -44,6 +45,7 @@ class Game : public Observer{
         void createGrid(int width, int height); 
         void createPlayer();
         void createPlayer(int size, int xPos, int yPos);
+        void changeState(gameState gis);
 
 
         void update(double deltaTime);
@@ -88,6 +90,10 @@ class Game : public Observer{
         std::unique_ptr<Menu> m_startMenu;
         std::unique_ptr<Menu> m_optionsMenu;
 
+        std::unique_ptr<GMenu> startMenu;
+        std::unique_ptr<GMenu> optionsMenu;
+        std::shared_ptr<GText> t;
+
         std::unique_ptr<Controller> m_gameController;
 
 
@@ -100,11 +106,15 @@ class Game : public Observer{
 
         void handleEvents(std::vector<std::string> serverEvents);
         void handleEvent(std::vector<std::string> &event);
+        void onEventState(const SDL_Event &event);
 
         void setupGui();
         void setupSound();
         void setupController();
         void setupGame();
+
+        void setupStartMenu();
+        void setupOptionsMenu();
 
         // Game logic
         void setupFromServer(std::vector<std::string> event);

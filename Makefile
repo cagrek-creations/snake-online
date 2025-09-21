@@ -82,7 +82,8 @@ install::
 	mkdir -p bin/
 	mkdir -p bin/gfx
 	mkdir -p bin/sfx
-	cp -r gfx/* bin/gfx
-	cp -r sfx/* bin/sfx
-	cp font.ttf bin/
+	mkdir -p bin/fonts
+	cp gfx/* bin/gfx
+	cp sfx/* bin/sfx
+	cp font.ttf bin/fonts
 
