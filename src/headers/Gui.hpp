@@ -17,6 +17,7 @@
 
 // #include "Menu.hpp"
 #include "Sprite.hpp"
+#include "Vector2.hpp"
 #include "utils.hpp"
 #include "Observer.hpp"
 
@@ -57,6 +58,7 @@ enum class TextureID {
     A_YELLOW_SNAKE,
     A_GREEN_SNAKE,
     A_RED_SNAKE,
+    MAINMENU,
 };
 
 enum TextFlags {
@@ -95,6 +97,8 @@ class GUI : public Observer {
 
         int getWindowCenterX();
         int getWindowCenterY();
+
+        void renderTexture(TextureID key, Vector2 pos, Vector2 dim);
 
         SDL_Rect createRect(int x, int y, int w, int h);
         SDL_Color getColor(std::string colorName);

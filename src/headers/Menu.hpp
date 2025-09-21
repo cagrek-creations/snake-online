@@ -224,7 +224,6 @@ class GMenu : public Observer {
                 m_index.x = std::min(m_index.x, (int)m_menuItems[m_index.y].size() - 1);
             }
 
-            // Move up
             if (key_state[SDL_SCANCODE_W] || key_state[SDL_SCANCODE_UP]) {
                 m_index.y = std::max(m_index.y - 1, 0);
                 m_index.x = std::min(m_index.x, (int)m_menuItems[m_index.y].size() - 1);
