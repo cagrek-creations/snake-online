@@ -82,6 +82,11 @@ class GMenuItem {
         virtual void update() {}
         virtual MenuItemType type() = 0;
 
+        std::shared_ptr<GMenuItem> up;
+        std::shared_ptr<GMenuItem> down;
+        std::shared_ptr<GMenuItem> left;
+        std::shared_ptr<GMenuItem> right;
+
     protected:
         Vector2 m_pos;
         SDL_Color m_color;
@@ -195,67 +200,80 @@ class GMenu : public Observer {
     public:
         GMenu(Vector2 pos) : m_pos(pos) {}
 
-        void addMenuItemRow(int row, std::shared_ptr<GMenuItem> mi) {
-            if (row >= m_menuItems.size()) {
-                m_menuItems.resize(row + 1);
-            }
+         void setCurrent(std::shared_ptr<GMenuItem> item) { m_current = item; }
 
-            m_menuItems[row].push_back(mi);
+        void moveUp() { if (m_current->up)    m_current = m_current->up; }
+        void moveDown() { if (m_current->down)  m_current = m_current->down; }
+        void moveLeft() { 
+            if (m_current->type() == MenuItemType::M_BAR) m_current->triggerLeft();
+            else if (m_current->left) m_current = m_current->left; 
         }
+        void moveRight() { 
+            if (m_current->type() == MenuItemType::M_BAR) m_current->triggerRight();
+            else if (m_current->right) m_current = m_current->right; 
+        }
+
+        void trigger() { m_current->trigger(); }
 
         void render() {
-            for (size_t row = 0; row < m_menuItems.size(); ++row) {
-                for (size_t col = 0; col < m_menuItems[row].size(); ++col) {
-                    if (m_menuItems[row][col]) {
-                        m_menuItems[row][col]->render();
-                    }
-                }
+            for (auto &item : m_menuItems) {
+                item->render();
             }
-
-            if (m_menuItems[m_index.y][m_index.x]) m_menuItems[m_index.y][m_index.x]->renderHighlighted();
+            if (m_current) m_current->renderHighlighted();
         }
+
+        void addItem(std::shared_ptr<GMenuItem> item) {
+            m_menuItems.push_back(item);
+        }
+
+        // void addMenuItemRow(int row, std::shared_ptr<GMenuItem> mi) {
+        //     if (row >= m_menuItems.size()) {
+        //         m_menuItems.resize(row + 1);
+        //     }
+
+        //     m_menuItems[row].push_back(mi);
+        // }
+
+        // void render() {
+        //     for (size_t row = 0; row < m_menuItems.size(); ++row) {
+        //         for (size_t col = 0; col < m_menuItems[row].size(); ++col) {
+        //             if (m_menuItems[row][col]) {
+        //                 m_menuItems[row][col]->render();
+        //             }
+        //         }
+        //     }
+
+        //     if (m_menuItems[m_index.y][m_index.x]) m_menuItems[m_index.y][m_index.x]->renderHighlighted();
+        // }
 
         void onEvent(const SDL_Event& event) override {
             std::cout << "Menu event" << std::endl;
             const Uint8 *key_state = SDL_GetKeyboardState(NULL);
 
             if (key_state[SDL_SCANCODE_S] || key_state[SDL_SCANCODE_DOWN]) {
-                m_index.y = std::min(m_index.y + 1, (int)m_menuItems.size() - 1);
-                m_index.x = std::min(m_index.x, (int)m_menuItems[m_index.y].size() - 1);
+                moveDown();
             }
 
             if (key_state[SDL_SCANCODE_W] || key_state[SDL_SCANCODE_UP]) {
-                m_index.y = std::max(m_index.y - 1, 0);
-                m_index.x = std::min(m_index.x, (int)m_menuItems[m_index.y].size() - 1);
+                moveUp();
             }
 
-            if (!m_menuItems.empty() && m_index.y < m_menuItems.size() && !m_menuItems[m_index.y].empty()) {
-                auto &item = m_menuItems[m_index.y][m_index.x];
 
-                if (key_state[SDL_SCANCODE_D] || key_state[SDL_SCANCODE_RIGHT]) {
-                    if (item->type() == MenuItemType::M_BAR) {
-                        item->triggerRight();
-                    } else {
-                        m_index.x = std::min(m_index.x + 1, (int)m_menuItems[m_index.y].size() - 1);
-                    }
-                }
-
-                if (key_state[SDL_SCANCODE_A] || key_state[SDL_SCANCODE_LEFT]) {
-                    if (item->type() == MenuItemType::M_BAR) {
-                        item->triggerLeft();
-                    } else {
-                        m_index.x = std::max(m_index.x - 1, 0);
-                    }
-                }
+            if (key_state[SDL_SCANCODE_D] || key_state[SDL_SCANCODE_RIGHT]) {
+                moveRight();
             }
+
+            if (key_state[SDL_SCANCODE_A] || key_state[SDL_SCANCODE_LEFT]) {
+                moveLeft();
+            }
+            
 
             std::cout << m_index.x << std::endl;
             std::cout << m_index.y << std::endl;
             std::cout << "===" << std::endl;
 
             if (key_state[SDL_SCANCODE_RETURN]) {
-                std::cout << "triggering" << std::endl;
-                m_menuItems[m_index.y][m_index.x]->trigger();
+                trigger();
             }
         }
 
@@ -270,7 +288,9 @@ class GMenu : public Observer {
     private:
         Vector2 m_pos;
         // std::unordered_map<Vector2, std::shared_ptr<GMenuItem>> m_menuItems;
-        std::vector<std::vector<std::shared_ptr<GMenuItem>>> m_menuItems;
+        // std::vector<std::vector<std::shared_ptr<GMenuItem>>> m_menuItems;
+        std::vector<std::shared_ptr<GMenuItem>> m_menuItems;
+        std::shared_ptr<GMenuItem> m_current;
         Vector2 m_index;
         Vector2 m_size;
         int m_indexXMax;
