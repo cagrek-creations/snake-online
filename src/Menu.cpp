@@ -1,332 +1,156 @@
 #include "Menu.hpp"
 
-Menu::Menu(SDL_Renderer *renderer, int menuid, int xPos, int yPos, 
-            int width, int height, TTF_Font *font, int &state, int previousState, int menuOwnState) {
-
-    m_renderer = renderer;
-
-    m_xPos          = xPos;
-    m_yPos          = yPos;
-    m_width         = width;
-    m_height        = height;
-    m_menuid        = menuid;
-    // m_running       = true;
-    m_updateMenu    = false;
-    m_activeMenu    = false;
-    m_limit         = 0;
-    m_menuIndex     = 0; // Starting at first value of a menu.
-
-    m_state         = &state;
-    m_menuOwnState  = menuOwnState;
-    m_previousState = previousState;
-
-    m_font = font;
-    // m_menuThread = std::thread(&Menu::updateMenu, this);
-    // std::cout << &m_items << std::endl;
 
 
+GMenuItemButton::GMenuItemButton(GUI* gui, Vector2 pos, std::string content, std::string font, SDL_Color color, SDL_Color highlighted) : GMenuItem(pos, color, MenuItemType::M_BUTTON), m_highlighted(highlighted) {
+    m_text = gui->createText(m_pos, content, font, color, TEXT_CENTRALIZED);
 }
 
-Text Menu::createText(const std::string &name, int xPos, int yPos, SDL_Color textColor) {
-    
-    SDL_Surface *textSurface = TTF_RenderText_Solid(m_font, name.c_str(), textColor);
-
-    if (!textSurface) {
-        std::cerr << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << std::endl;
-    }
-
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-    if (!textTexture) {
-        std::cerr << "Unable to create texture from rendered text! SDL_Error: " << SDL_GetError() << std::endl;
-        SDL_FreeSurface(textSurface);
-    }
-
-    Text textInfo;
-    textInfo.width      = textSurface->w;
-    textInfo.height     = textSurface->h;
-    textInfo.texture    = textTexture;
-    textInfo.xPos       = xPos;
-    textInfo.yPos       = yPos;
-    textInfo.name       = name;
-
-    SDL_FreeSurface(textSurface);
-    return textInfo;
+void GMenuItemButton::render() {
+    m_text->render();
 }
 
-bool Menu::updateText(Text &txt, SDL_Color textColor) {
-    SDL_Surface *textSurface = TTF_RenderText_Solid(m_font, txt.name.c_str(), textColor);
-    if (!textSurface) {
-        std::cerr << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << std::endl;
-    }
-
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-    if (!textTexture) {
-        std::cerr << "Unable to create texture from rendered text! SDL_Error: " << SDL_GetError() << std::endl;
-        SDL_FreeSurface(textSurface);
-    }
-    SDL_FreeSurface(textSurface);
-
-    txt.texture = textTexture;
-    return true;
+void GMenuItemButton::renderHighlighted() {
+    m_text->renderColor(m_highlighted);
 }
 
-bool Menu::updateTextValue(Text &txt, const std::string newText, MenuItem &mi) {
-    std::string newValue = mi.getTextString() + newText;
-    SDL_Surface *textSurface = TTF_RenderText_Solid(m_font, newValue.c_str(), mi.getColor());
-    if (!textSurface) {
-        std::cerr << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << std::endl;
-    }
-
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-    if (!textTexture) {
-        std::cerr << "Unable to create texture from rendered text! SDL_Error: " << SDL_GetError() << std::endl;
-        SDL_FreeSurface(textSurface);
-    }
-    SDL_FreeSurface(textSurface);
-
-    txt.texture = textTexture;
-    return true;
+void GMenuItemButton::bind(std::function<void()> f) {
+    m_select = f;
 }
 
-// template int Menu::addItem(std::string name, int type, float *reference_value);
-int Menu::addItem() {
-    return m_items.size();
+void GMenuItemButton::trigger() {
+    if (m_select) m_select();
 }
 
-int Menu::addItemState(const std::string &name, int nextState) {
+GMenuItemBar::GMenuItemBar(GUI* gui, Vector2 pos, Vector2 dim, int step, float scale, std::string content, std::string font, SDL_Color color, SDL_Color highlighted) : GMenuItem(pos, color, MenuItemType::M_BAR), m_highlighted(highlighted) {
+    m_text = gui->createText(m_pos, content, font, color, TEXT_CENTRALIZED);
+    m_renderer = gui->getRenderer();
+    m_scale = scale;
+    m_barStep = step;
+    m_barSizeMax = dim.x;
+    m_barSize = m_barSizeMax / 2;
 
-    // std::unique_ptr<MenuState> mi = std::make_unique<MenuState>(m_renderer, refFunc);
-    // m_items.push_back(std::move(mi));
-
-    std::unique_ptr<MenuState> mi = std::make_unique<MenuState>(m_renderer, name, nextState, m_xPos, m_yPos + m_items.size() * 50, m_font, *this);
-    // m_items.push_back(std::move(mi));
-    addItemT(std::move(mi));
-    // Text textInfo = createText(name, m_xPos, m_yPos + m_items.size() * 50, menuc::WHITE);
-    // textInfo.updateX(m_xPos + (m_width - textInfo.width) / 2);
-
-    // if(m_items.size() == 0) {
-    //     updateText(textInfo, menuc::RED);
-    // }
-    // int x = 3;
-    // // MenuItem mi(x);
-    // // mi.menuText = textInfo;
-    // // mi.nextState = newValue;
-    // // mi.type = MENU_STATE;
-    // // mi.m_renderer = m_renderer;
-    // auto myLambda = []() {
-        
-    // };
-
-    // // std::function using the lambda
-    // std::function<void()> myFunction = myLambda;
-    // MenuState mi = MenuState(m_renderer, myFunction);
-
-    // m_items.push_back(&mi);
-
-    return m_items.size(); 
+    m_bar.w = m_barSize;
+    m_bar.h = dim.y;
+    m_bar.x = pos.x - m_barSizeMax / 2;
+    m_bar.y = pos.y;
 }
 
-int Menu::addItemBar(std::string name, std::function<void()> refFuncL, std::function<void()> refFuncR) {
-    std::unique_ptr<MenuBar> mi = std::make_unique<MenuBar>(m_renderer, name, m_xPos, m_yPos + m_items.size() * 50, m_font, refFuncL, refFuncR, *this);
-    // m_items.push_back(std::move(mi));
-    addItemT(std::move(mi));
-    return 0;
+void GMenuItemBar::render() {
+    m_text->render();
+    SDL_SetRenderDrawColor(m_renderer, m_color.r, m_color.g, m_color.b, 255);
+    SDL_RenderFillRect(m_renderer, &m_bar);
 }
 
-void Menu::updateMenu() {
-    
+void GMenuItemBar::renderHighlighted() {
+    m_text->renderColor(m_highlighted);
+    SDL_SetRenderDrawColor(m_renderer, m_highlighted.r, m_highlighted.g, m_highlighted.b, 255);
+    SDL_RenderFillRect(m_renderer, &m_bar);
 }
 
-void Menu::onEvent(const SDL_Event& event) {
-    // Replace with game menu.
-    if(event.type == SDL_USEREVENT) {
-        if(event.user.code == 3) {
-            const Uint8 *key_state = SDL_GetKeyboardState(NULL);
-            if(key_state[SDL_SCANCODE_ESCAPE]) {
-                *m_state = 0x0;
-            }
-        }
-    }
+void GMenuItemBar::bind(std::function<void()> l, std::function<void()> r) {
+    m_left = l;
+    m_right = r;
+}
 
-    if(*m_state == m_menuOwnState) {
-        if(event.type == SDL_USEREVENT) {
-            if(event.user.code == m_menuid) {
-                m_activeMenu = true;
-            } else {
-                m_activeMenu = false;
-            }
-        }
+void GMenuItemBar::triggerLeft() {
+    if (m_left) m_left();
+    if (m_barSize > 0) m_barSize -= m_barStep;
+    m_bar.w = m_barSize * m_scale;
+}
 
-        if (event.type == SDL_KEYDOWN) {
-            const Uint8 *key_state = SDL_GetKeyboardState(NULL);
-            if (m_items.size() > 0) {
-                if (key_state[SDL_SCANCODE_DOWN]) {
-                    m_items[m_menuIndex]->reset();
-                    if (m_menuIndex < m_items.size() - 1)
-                    m_menuIndex++;
-                    m_items[m_menuIndex]->update();
-                } else if (key_state[SDL_SCANCODE_UP]) {
-                    m_items[m_menuIndex]->reset();
-                    if (m_menuIndex > 0)
-                    m_menuIndex--;
-                    m_items[m_menuIndex]->update();
-                }
-                // if(key_state[SDL_SCANCODE_DOWN]) {
-                //     updateText(m_items[m_menuIndex]->getColor(), menuc::WHITE);
-                //     if(m_menuIndex < m_items.size()-1) m_menuIndex++;
-                //     updateText(m_items[m_menuIndex].menuText, menuc::RED);
-                // } else if (key_state[SDL_SCANCODE_UP]) {
-                //     updateText(m_items[m_menuIndex].menuText, menuc::WHITE);
-                //     if(m_menuIndex > 0) m_menuIndex--;
-                //     updateText(m_items[m_menuIndex].menuText, menuc::RED);
-                // }
+void GMenuItemBar::triggerRight() {
+    if (m_right) m_right();
+    if (m_barSize < m_barSizeMax) m_barSize += m_barStep;
+    m_bar.w = m_barSize * m_scale;
+}
 
-                else if (key_state[SDL_SCANCODE_RIGHT]) {
-                    m_items[m_menuIndex]->trigger(KEY_RIGHT);
-                }
+GMenu::GMenu(Vector2 pos) : m_pos(pos) {}
 
-                else if (key_state[SDL_SCANCODE_LEFT]) {
-                    m_items[m_menuIndex]->trigger(KEY_LEFT);
-                }
+void GMenu::setCurrent(std::shared_ptr<GMenuItem> item) {
+    m_current = item;
+}
 
-                else if (key_state[SDL_SCANCODE_RETURN]) {
-                    m_items[m_menuIndex]->trigger(-1);
-                }
-            }
-
-          // if(key_state[SDL_SCANCODE_RIGHT] && m_items[m_menuIndex].type ==
-          // MENU_BAR) {
-          //     (m_items[m_menuIndex].referenceValue) += 128 / 10;
-          //     m_controller->broadcastEvent(5); // Sound change
-          // }
-
-          // if(key_state[SDL_SCANCODE_LEFT] && m_items[m_menuIndex].type ==
-          // MENU_BAR) {
-          //     (m_items[m_menuIndex].referenceValue) -= 128 / 10;
-          //     m_controller->broadcastEvent(5);
-          // }
-
-          // if (key_state[SDL_SCANCODE_ESCAPE]) {
-          //     std::cout << "ESCAPE" << std::endl;
-          //     if(m_items.size() > 0)
-          //     updateText(m_items[m_menuIndex].menuText, menuc::WHITE);
-          //     m_menuIndex = -2;
-          //     m_updateMenu = true;
-          // }
-
-          if (key_state[SDL_SCANCODE_ESCAPE]) {
-            std::cout << "PREVIOUS:" << m_previousState << std::endl;
-            *m_state = m_previousState;
-          }
-
-          if (key_state[SDL_SCANCODE_RETURN]) {
-            if (m_items.size() > 0) {
-              // m_updateMenu = true;
-              // m_items[m_menuIndex].menuText
-              // if(m_items[m_menuIndex].type == MENU_STATE) {
-              //     updateText(m_items[m_menuIndex].menuText, menuc::WHITE);
-              //     *m_state = m_items[m_menuIndex].nextState;
-              // } else if (m_items[m_menuIndex].type == MENU_ON_OFF) {
-              //     if (m_items[m_menuIndex].onoff) {
-              //         updateTextValue(m_items[m_menuIndex].menuText, "off",
-              //         m_items[m_menuIndex]); m_items[m_menuIndex].onoff =
-              //         false; m_items[m_menuIndex].referenceValue = 0;
-              //     } else {
-              //         updateTextValue(m_items[m_menuIndex].menuText, "on",
-              //         m_items[m_menuIndex]); m_items[m_menuIndex].onoff =
-              //         true; m_items[m_menuIndex].referenceValue = 1;
-              //     }
-              //     m_controller->broadcastEvent(5);
-              // }
-            }
-          }
-        }
+void GMenu::moveUp() {
+    if (m_current && m_current->up) {
+        m_current = m_current->up;
     }
 }
 
-int Menu::update(double deltaTime, bool gameRunning) {
-    m_limit += deltaTime;  
-    const Uint8 *key_state = SDL_GetKeyboardState(NULL);
-    // m_running = gameRunning;
-
-
-    // SDL_Event event;
-    // SDL_PollEvent( &event );
-    //     if (event.type == SDL_KEYDOWN) {
-    //         std::cout << "KEYDOWN";
-    //         if(key_state[SDL_SCANCODE_DOWN]) {
-    //             updateText(m_items[m_menuIndex].menuText, menuc::WHITE);
-    //             if(m_menuIndex < m_items.size()-1) m_menuIndex++;
-    //             updateText(m_items[m_menuIndex].menuText, menuc::RED);
-    //         } else if (key_state[SDL_SCANCODE_UP]) {
-    //             updateText(m_items[m_menuIndex].menuText, menuc::WHITE);
-    //             if(m_menuIndex > 0) m_menuIndex--;
-    //             updateText(m_items[m_menuIndex].menuText, menuc::RED);
-    //         }
-    //     }
-    
-    // if(m_limit > 100.f) {
-    //     m_limit = 0;
-    //     if(key_state[SDL_SCANCODE_DOWN]) {
-    //         updateText(m_items[m_menuIndex].menuText, menuc::WHITE);
-    //         if(m_menuIndex < m_items.size()-1) m_menuIndex++;
-    //         updateText(m_items[m_menuIndex].menuText, menuc::RED);
-    //     } else if (key_state[SDL_SCANCODE_UP]) {
-    //         updateText(m_items[m_menuIndex].menuText, menuc::WHITE);
-    //         if(m_menuIndex > 0) m_menuIndex--;
-    //         updateText(m_items[m_menuIndex].menuText, menuc::RED);
-    //     }
-    // }
-
-    if(key_state[SDL_SCANCODE_RETURN]) {
-        return m_menuIndex + 1;
-    }
-
-    return 0;
-}
-
-int Menu::getMenuIndex() {
-    if(m_updateMenu) {
-        m_updateMenu = false;
-        int newIndex = m_menuIndex + 1; 
-        return newIndex;
-    } else {
-        return -2;
+void GMenu::moveDown() {
+    if (m_current && m_current->down) {
+        m_current = m_current->down;
     }
 }
 
-int *Menu::getMenuState() {
-    return m_state;
+void GMenu::moveLeft() {
+    if (!m_current) return;
+
+    if (m_current->type() == MenuItemType::M_BAR) {
+        m_current->triggerLeft();
+    } else if (m_current->left) {
+        m_current = m_current->left;
+    }
 }
 
-int Menu::getMenuXpos() {
-    return m_xPos;
+void GMenu::moveRight() {
+    if (!m_current) return;
+
+    if (m_current->type() == MenuItemType::M_BAR) {
+        m_current->triggerRight();
+    } else if (m_current->right) {
+        m_current = m_current->right;
+    }
 }
 
-int Menu::getMenuWidth() {
-    return m_width;
+void GMenu::trigger() {
+    if (m_current) {
+        m_current->trigger();
+    }
 }
 
-void Menu::render() {
-
-    SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
-
-    SDL_Rect rectL = {m_xPos, m_yPos, 1, m_height};
-    SDL_Rect rectR = {m_xPos + m_width, m_yPos, 1, m_height};
-
-    SDL_RenderFillRect(m_renderer, &rectL);
-    SDL_RenderFillRect(m_renderer, &rectR);
-
-    for (auto &m : m_items) {
-        // SDL_Rect renderQuad = {m.menuText.xPos, m.menuText.yPos, m.menuText.width, m.menuText.height};
-        // SDL_RenderCopy(m_renderer, m.menuText.texture, nullptr, &renderQuad); 
-        m->render();
+void GMenu::render() {
+    for (auto& mi : m_menuItems) {
+        mi->render();
     }
 
+    if (m_current) {
+        m_current->renderHighlighted();
+    }
 }
 
-Menu::~Menu() {
-    // for (auto &m : m_items) {
-    //     SDL_DestroyTexture(m.menuText.texture);
-    // }
+void GMenu::addItem(std::shared_ptr<GMenuItem> item) {
+    m_menuItems.push_back(item);
+}
+
+void GMenu::onEvent(const SDL_Event& event) {
+    const Uint8* key_state = SDL_GetKeyboardState(NULL);
+
+    if (key_state[SDL_SCANCODE_S] || key_state[SDL_SCANCODE_DOWN]) {
+        moveDown();
+    }
+
+    if (key_state[SDL_SCANCODE_W] || key_state[SDL_SCANCODE_UP]) {
+        moveUp();
+    }
+
+    if (key_state[SDL_SCANCODE_D] || key_state[SDL_SCANCODE_RIGHT]) {
+        moveRight();
+    }
+
+    if (key_state[SDL_SCANCODE_A] || key_state[SDL_SCANCODE_LEFT]) {
+        moveLeft();
+    }
+
+    if (key_state[SDL_SCANCODE_RETURN]) {
+        trigger();
+    }
+}
+
+int GMenu::getX() const {
+    return m_pos.x;
+}
+
+int GMenu::getY() const {
+    return m_pos.y;
 }

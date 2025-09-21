@@ -9,7 +9,7 @@
 
 #ifdef _WIN32
     typedef SOCKET socket_t;
-    #define INVALID_SOCKET_VALUE INVALID_SOCKET_VALUE
+    #define INVALID_SOCKET_VALUE INVALID_SOCKET
     #define SOCKET_ERROR_VALUE SOCKET_ERROR
 #else
     typedef int socket_t;

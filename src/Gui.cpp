@@ -145,6 +145,17 @@ SDL_Rect GUI::createRect(int x, int y, int w, int h)  {
     return rect;
 }
 
+void GUI::renderTexture(TextureID key, Vector2 pos, Vector2 dim) {
+    SDL_Rect dst;
+
+    dst.x = pos.x;
+    dst.y = pos.y;
+    dst.w = dim.x;
+    dst.h = dim.y;
+
+    SDL_RenderCopy(m_renderer, getTexture(key), nullptr, &dst);
+}
+
 SDL_Texture *GUI::copyTexture(TextureID key) {
     int w, h;
     Uint32 format;
@@ -356,15 +367,27 @@ GText::~GText() {
 }
 
 std::shared_ptr<GText> GUI::createText(Vector2 pos, const std::string &content, std::string font, SDL_Color color, int flags) {
-    SDL_Surface *textSurface = m_createTTFSurface(m_font, content, color::WHITE);
-    SDL_Texture *textTexture = m_createTextureFromSurface(m_renderer, textSurface);
 
+    auto it = m_fonts.find(font);
+    if (it == m_fonts.end()) {
+        // fallback
+        it = m_fonts.find("default");
+        if (it == m_fonts.end()) return nullptr;
+    }
+    TTF_Font *_font = it->second;
+    if (!_font) {
+        std::cerr << "Error: font pointer is null for " << font << std::endl;
+        return nullptr;
+    }
+
+    SDL_Surface *textSurface = m_createTTFSurface(_font, content, color::WHITE);
+    SDL_Texture *textTexture = m_createTextureFromSurface(m_renderer, textSurface);
 
     if (flags & TEXT_CENTRALIZED) {
         pos.x = pos.x - textSurface->w / 2;
     }
 
-    std::shared_ptr<GText> _text = std::make_shared<GText>(m_renderer, pos, Vector2(textSurface->w, textSurface->h), content, m_font, textTexture, color);
+    std::shared_ptr<GText> _text = std::make_shared<GText>(m_renderer, pos, Vector2(textSurface->w, textSurface->h), content, _font, textTexture, color);
     SDL_FreeSurface(textSurface);
     
     return _text;

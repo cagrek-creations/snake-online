@@ -16,13 +16,8 @@ LINKER_FLAGS += `pkg-config --libs --static SDL2_Image`
 LINKER_FLAGS += `pkg-config --libs --static SDL2_Mixer`
 LINKER_FLAGS += -lbrotlicommon -lsharpyuv
 
-ifeq ($(UNAME), Windows_NT)
-LIBS= -lmingw32 -lws2_32 -lSDL2main -lSDL2 -lSDL2_Image -lSDL2_TTF -lSDL2_Mixer
-endif
 
-ifeq ($(UNAME), Linux)
-LIBS= -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
-endif
+LIBS= -lmingw32 -lws2_32 -lSDL2main -lSDL2 -lSDL2_Image -lSDL2_TTF -lSDL2_Mixer
 
 IDIR = ./src/headers
 CFLAGS= -I$(IDIR) $(LIBS) $(EXTRA_LIBS)
