@@ -77,11 +77,8 @@ class Game : public Observer{
 
         std::unique_ptr<GUI> m_gui;
 
-        std::unique_ptr<Menu> m_startMenu;
-        std::unique_ptr<Menu> m_optionsMenu;
-
-        std::unique_ptr<GMenu> startMenu;
-        std::unique_ptr<GMenu> optionsMenu;
+        std::unique_ptr<GMenu> m_startMenu;
+        std::unique_ptr<GMenu> m_optionsMenu;
         std::shared_ptr<GText> t;
 
         std::unique_ptr<Controller> m_gameController;
