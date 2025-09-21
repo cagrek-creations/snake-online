@@ -62,7 +62,6 @@ GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) 
         );
 
         m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_PRESENTVSYNC);
-
         if(m_renderer) {
             SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
         }
@@ -194,6 +193,32 @@ SDL_Texture *GUI::copyTexture(TextureID key) {
     SDL_SetRenderTarget(m_renderer, oldTarget);
 
     return copy;
+}
+
+void GUI::renderText(int x, int y, const std::string &text) {
+    // Create surface from text
+    SDL_Surface* surface = TTF_RenderText_Blended(m_font, text.c_str(), color::WHITE);
+    if (!surface) {
+        SDL_Log("Failed to create text surface: %s", TTF_GetError());
+        return;
+    }
+
+    // Create texture from surface
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+    if (!texture) {
+        SDL_Log("Failed to create text texture: %s", SDL_GetError());
+        SDL_FreeSurface(surface);
+        return;
+    }
+
+    SDL_Rect destRect = { x, y, surface->w, surface->h };
+
+    SDL_FreeSurface(surface); // surface no longer needed
+
+    // Render the texture to screen
+    SDL_RenderCopy(m_renderer, texture, nullptr, &destRect);
+
+    SDL_DestroyTexture(texture); // Clean up texture
 }
 
 SDL_Texture *GUI::getTexture(TextureID key) {

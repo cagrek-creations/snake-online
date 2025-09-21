@@ -1,3 +1,4 @@
+UNAME := $(shell uname -s)
 
 OBJS = ./src/*.cpp
 
@@ -70,6 +71,7 @@ install::
 	# Clone assets
 	mkdir -p assets
 	git clone https://github.com/cagrek-creations/snake-assets.git tmp/snake-assets
+	cp -r tmp/snake-assets/* assets/
 
 	# Setup bin
 	mkdir -p bin/

@@ -27,6 +27,9 @@ Game::Game() {
 
 void Game::update(double deltaTime) {
     m_deltaTime = deltaTime;
+    m_fps = 1.0f / (m_deltaTime / 1000.f);
+    m_fpsCounter += deltaTime;
+
     m_gameController->update();
 
     // Change name to controller events?
@@ -64,6 +67,13 @@ void Game::update(double deltaTime) {
 void Game::render() {
     m_gui->clearRenderer();
     m_gui->update();
+    
+    if (m_fpsCounter > 500.f) {
+        m_fpsCounter = 0;
+        m_fpsString = "fps: " + std::to_string((int)m_fps);
+    }
+    
+    m_gui->renderText(WINDOW_WIDTH - 100, 100, m_fpsString);
 
     // TODO: Update this to only render over the grid instead of the screen.
     SDL_Rect dstRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
