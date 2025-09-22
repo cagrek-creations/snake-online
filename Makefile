@@ -76,9 +76,8 @@ install::
 	# Setup bin
 	mkdir -p bin/
 	mkdir -p bin/gfx
+	mkdir -p bin/gfx/scores
+	mkdir -p bin/gfx/snakes
 	mkdir -p bin/sfx
 	mkdir -p bin/fonts
-	cp gfx/* bin/gfx
-	cp sfx/* bin/sfx
-	cp font.ttf bin/fonts
 

@@ -24,7 +24,9 @@ typedef std::chrono::high_resolution_clock Clock;
 enum gameState {START_MENU  = 0, 
                 GAME_PLAY   = 1,
                 OPTIONS     = 2, 
-                GAME_QUIT   = 3};
+                GAME_QUIT   = 3,
+                CREDITS     = 4
+            };
 
 
 template <typename ClassType>
@@ -33,7 +35,6 @@ std::function<void()> bindMemberFunction(std::unique_ptr<ClassType>& object, voi
         (ptr->*memberFunction)();
     };
 }
-
 
 class Game : public Observer{
 
@@ -89,6 +90,7 @@ class Game : public Observer{
 
         std::unique_ptr<GMenu> m_startMenu;
         std::unique_ptr<GMenu> m_optionsMenu;
+        std::unique_ptr<GMenu> m_creditsMenu;
         std::shared_ptr<GText> t;
 
         std::unique_ptr<Controller> m_gameController;
@@ -101,6 +103,9 @@ class Game : public Observer{
         int m_playSound = 1;
         std::unique_ptr<SoundManager> m_sound;
 
+        void loadTextures();
+        void loadFonts();
+
         void handleEvents(std::vector<std::string> serverEvents);
         void handleEvent(std::vector<std::string> &event);
         void onEventState(const SDL_Event &event);
@@ -112,6 +117,7 @@ class Game : public Observer{
 
         void setupStartMenu();
         void setupOptionsMenu();
+        void setupCreditsMenu();
 
         // Game logic
         void setupFromServer(std::vector<std::string> event);

@@ -21,6 +21,7 @@ class SnakeEffect : public Effect {
         SnakeEffect(Snake &target, float duration) : Effect(duration), m_target(target) {}
     protected:
         Snake &m_target;
+        // TODO: add type here?
 };
 
 class InvertControlsEffect : public SnakeEffect {

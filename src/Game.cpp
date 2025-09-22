@@ -92,6 +92,8 @@ void Game::onEventState(const SDL_Event &event) {
         m_optionsMenu->onEvent(event);
     } else if (m_state == GAME_PLAY) {
 
+    } else if (m_state == CREDITS) {
+        m_creditsMenu->onEvent(event);
     }
 }
 
@@ -148,6 +150,13 @@ void Game::renderState() {
         }
     } else if (m_state == GAME_QUIT) {
         m_isRunning = false;
+    } else if (m_state == CREDITS) {
+        m_creditsMenu->render();
+        // TODO: Now these texts are created and destroyed in each loop. Load them once and display them instead?
+        m_gui->createText(Vector2(WINDOW_MIDDLE_X, 200), "Game programming & logic", "pixeloidm_32", color::GREEN_7EAD63, TEXT_CENTRALIZED)->render();
+        m_gui->createText(Vector2(WINDOW_MIDDLE_X, 250), "Darclander & Kumole", "pixeloidm_32", color::GREEN_7EAD63, TEXT_CENTRALIZED)->render();
+        m_gui->createText(Vector2(WINDOW_MIDDLE_X, 400), "Music & Graphical Design", "pixeloidm_32", color::GREEN_7EAD63, TEXT_CENTRALIZED)->render();
+        m_gui->createText(Vector2(WINDOW_MIDDLE_X, 450), "Gammelen", "pixeloidm_32", color::GREEN_7EAD63, TEXT_CENTRALIZED)->render();
     }
 }
 
@@ -188,33 +197,12 @@ void Game::setupGui() {
 
     m_state = START_MENU;
 
-    std::filesystem::path basePathGfx = getExecutableDir() / "gfx";
-
-    m_gui = std::make_unique<GUI>("Snake", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FULLSCREEN);
-    m_gui->loadTexture(TextureID::ERR, "err.png");
-    m_gui->loadTexture(TextureID::BERRY, "berry.png");
-    m_gui->loadTexture(TextureID::SPEED, "speed.png");
-    m_gui->loadTexture(TextureID::SPEED_O, "speed.png");
-    m_gui->loadTexture(TextureID::SWAPAROO, "swaparoo.png");
-    m_gui->loadTexture(TextureID::SWAPAROO_O, "swaparoo.png");
-    m_gui->loadTexture(TextureID::GRIDTILE, "gridtile.png");
-    m_gui->loadTexture(TextureID::GHOST, "scores/SnakePowerGhost.png");
-    m_gui->loadTexture(TextureID::SLOW, "scores/SnakePowerSlow.png");
-    m_gui->loadTexture(TextureID::FREEZE, "scores/SnakePowerFreeze.png");
-    m_gui->loadTexture(TextureID::RAGE, "scores/SnakePowerRage.png");
-    m_gui->loadTexture(TextureID::MAINMENU, "MainMenu.png");
-    m_gui->loadTextureAlpha(TextureID::BERRY_GLOW, "shiny.png", 255, true);
-    m_gui->loadTextureAlpha(TextureID::VINJETTE, "vinjette.png", 64, true);
-    m_gui->loadAtlas(TextureID::A_YELLOW_SNAKE, "snakes/y_s.png", 16, 16, 4);
-    m_gui->loadAtlas(TextureID::A_PURPLE_SNAKE, "snakes/p_s.png", 16, 16, 4);
-    m_gui->loadAtlas(TextureID::A_GREEN_SNAKE, "snakes/g_s.png", 16, 16, 4);
-    m_gui->loadAtlas(TextureID::A_RED_SNAKE, "snakes/r_s.png", 16, 16, 4);
-
-    m_gui->loadFont("default_32", "font.ttf", 32);
-    m_gui->loadFont("default_64", "font.ttf", 64);
+    loadTextures();
+    loadFonts();
 
     setupStartMenu();
     setupOptionsMenu();
+    setupCreditsMenu();
 
 }
 
@@ -246,30 +234,38 @@ bool Game::isRunning() {
 void Game::setupStartMenu() {
     m_startMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y));
 
-    auto s = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() - 275, m_startMenu->getY() - 25), "START GAME", "default_64", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    auto s = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() - 275, m_startMenu->getY() - 25), "START GAME", "pixeloidm_64", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     s->bind([this]() {
         this->changeState(gameState::GAME_PLAY);
     });
 
-    auto o = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() + 275, m_startMenu->getY() - 25), "OPTIONS", "default_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    auto o = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() + 275, m_startMenu->getY() - 25), "OPTIONS", "pixeloidm_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     o->bind([this]() {
         this->changeState(gameState::OPTIONS);
     });
 
-    auto q = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() + 285, m_startMenu->getY() + 10), "QUIT", "default_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    auto q = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() + 285, m_startMenu->getY() + 10), "QUIT", "pixeloidm_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     q->bind([this]() {
         m_isRunning = false;
     });
 
+    auto c = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(100, WINDOW_HEIGHT - 100), "CREDITS", "pixeloidm_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    c->bind([this]() {
+        this->changeState(gameState::CREDITS);
+    });
+
     s->right = o;
+    s->left = c;
     o->down = q;
     q->up = o;
     o->left = s;
     q->left = s;
+    c->right = s;
 
     m_startMenu->addItem(s);
     m_startMenu->addItem(o);
     m_startMenu->addItem(q);
+    m_startMenu->addItem(c);
 
     m_startMenu->setCurrent(s);
 }
@@ -277,14 +273,14 @@ void Game::setupStartMenu() {
 void Game::setupOptionsMenu() {
     m_optionsMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, 200));
 
-    auto s = std::make_shared<GMenuItemBar>(m_gui.get(), Vector2(m_optionsMenu->getX(), 400), Vector2(128, 10), 8, 1, "Menu text", "default_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    auto s = std::make_shared<GMenuItemBar>(m_gui.get(), Vector2(m_optionsMenu->getX(), 400), Vector2(128, 10), 8, 1, "volume", "pixeloidm_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     s->bind([this]() {
         m_sound->decreaseVolume();
     }, [this]() {
         m_sound->increaseVolume();
     });
 
-    auto b = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_optionsMenu->getX(), 500), "BACK", "default_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    auto b = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_optionsMenu->getX(), 500), "BACK", "pixeloidm_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     b->bind([this]() {
         // TODO: Should back be previous state?
         this->changeState(gameState::START_MENU);
@@ -297,4 +293,47 @@ void Game::setupOptionsMenu() {
     s->down = b;    
     
     m_optionsMenu->setCurrent(s);
+}
+
+void Game::setupCreditsMenu() {
+    m_creditsMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, 200));
+
+    auto b = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_creditsMenu->getX(), 700), "BACK", "pixeloidm_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
+    b->bind([this]() {
+        this->changeState(gameState::START_MENU);
+    });
+
+    m_creditsMenu->addItem(b);
+
+    m_creditsMenu->setCurrent(b);
+}
+
+void Game::loadFonts() {
+    m_gui->loadFont("default_32", "font.ttf", 32);
+    m_gui->loadFont("default_64", "font.ttf", 64);
+
+    m_gui->loadFont("pixeloidm_32", "PixeloidMono.ttf", 32);
+    m_gui->loadFont("pixeloidm_64", "PixeloidMono.ttf", 64);
+}
+
+void Game::loadTextures() {
+    m_gui = std::make_unique<GUI>("Snake", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FULLSCREEN);
+    m_gui->loadTexture(TextureID::ERR, "err.png");
+    m_gui->loadTexture(TextureID::BERRY, "scores/SnakePowerBerry.png");
+    m_gui->loadTexture(TextureID::SPEED, "scores/SnakePowerSpeed.png");
+    m_gui->loadTexture(TextureID::SPEED_O, "scores/SnakePowerSpeed.png");
+    m_gui->loadTexture(TextureID::SWAPAROO, "scores/SnakePowerInvert.png");
+    m_gui->loadTexture(TextureID::SWAPAROO_O, "scores/SnakePowerInvert.png");
+    m_gui->loadTexture(TextureID::GRIDTILE, "gridtile.png");
+    m_gui->loadTexture(TextureID::GHOST, "scores/SnakePowerGhost.png");
+    m_gui->loadTexture(TextureID::SLOW, "scores/SnakePowerSlow.png");
+    m_gui->loadTexture(TextureID::FREEZE, "scores/SnakePowerFreeze.png");
+    m_gui->loadTexture(TextureID::RAGE, "scores/SnakePowerRage.png");
+    m_gui->loadTexture(TextureID::MAINMENU, "MainMenu.png");
+    m_gui->loadTextureAlpha(TextureID::BERRY_GLOW, "shiny.png", 255, true);
+    m_gui->loadTextureAlpha(TextureID::VINJETTE, "vinjette.png", 64, true);
+    m_gui->loadAtlas(TextureID::A_YELLOW_SNAKE, "snakes/y_s.png", 16, 16, 4);
+    m_gui->loadAtlas(TextureID::A_PURPLE_SNAKE, "snakes/p_s.png", 16, 16, 4);
+    m_gui->loadAtlas(TextureID::A_GREEN_SNAKE, "snakes/g_s.png", 16, 16, 4);
+    m_gui->loadAtlas(TextureID::A_RED_SNAKE, "snakes/r_s.png", 16, 16, 4);
 }
