@@ -73,7 +73,7 @@ void Game::render() {
         m_fpsString = "fps: " + std::to_string((int)m_fps);
     }
     
-    m_gui->renderText(WINDOW_WIDTH - 100, 100, m_fpsString);
+    m_gui->renderText(WINDOW_WIDTH - 200, 100, m_fpsString);
 
     // TODO: Update this to only render over the grid instead of the screen.
     SDL_Rect dstRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};

@@ -67,7 +67,8 @@ GUI::GUI(const char *title, int windowWidth, int windowHeight, bool fullscreen) 
         }
     }
 
-    m_font = TTF_OpenFont("./font.ttf", 28);
+    std::filesystem::path basePathFonts = getExecutableDir() / "fonts";
+    m_font = TTF_OpenFont((basePathFonts / "PixeloidMono.ttf").string().c_str(), 28);
 
     if (!m_font) {
         std::cerr << "Failed to load font! SDL_ttf Error: " << TTF_GetError() << std::endl;
@@ -303,6 +304,7 @@ TTF_Font *GUI::getFont() {
 }
 
 bool GUI::loadFont(std::string name, std::string path, int f_size) {
+    // TODO: Make constants in GUI?
     std::filesystem::path basePathFonts = getExecutableDir() / "fonts";
 
     // See if font with same name already exists.
