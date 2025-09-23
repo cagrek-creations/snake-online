@@ -58,6 +58,16 @@ remove:
 	rm obj/*
 
 install::
+	mkdir -p obj/
+
+	# Setup bin
+	mkdir -p bin/
+	mkdir -p bin/gfx
+	mkdir -p bin/gfx/scores
+	mkdir -p bin/gfx/snakes
+	mkdir -p bin/sfx
+	mkdir -p bin/fonts
+
 	# Clean tmp
 	rm -rf tmp
 	mkdir -p tmp
@@ -71,13 +81,5 @@ install::
 	# Clone assets
 	mkdir -p assets
 	git clone https://github.com/cagrek-creations/snake-assets.git tmp/snake-assets
-	cp -r tmp/snake-assets/* assets/
-
-	# Setup bin
-	mkdir -p bin/
-	mkdir -p bin/gfx
-	mkdir -p bin/gfx/scores
-	mkdir -p bin/gfx/snakes
-	mkdir -p bin/sfx
-	mkdir -p bin/fonts
+	cp -r tmp/snake-assets/* bin/
 
