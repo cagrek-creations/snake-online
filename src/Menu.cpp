@@ -123,27 +123,29 @@ void GMenu::addItem(std::shared_ptr<GMenuItem> item) {
     m_menuItems.push_back(item);
 }
 
-void GMenu::onEvent(const SDL_Event& event) {
-    const Uint8* key_state = SDL_GetKeyboardState(NULL);
+void GMenu::onEvent(const SDL_Event &event) {
+    if (event.type == SDL_KEYDOWN) {
+        const Uint8* key_state = SDL_GetKeyboardState(NULL);
 
-    if (key_state[SDL_SCANCODE_S] || key_state[SDL_SCANCODE_DOWN]) {
-        moveDown();
-    }
+        if (key_state[SDL_SCANCODE_S] || key_state[SDL_SCANCODE_DOWN]) {
+            moveDown();
+        }
 
-    if (key_state[SDL_SCANCODE_W] || key_state[SDL_SCANCODE_UP]) {
-        moveUp();
-    }
+        if (key_state[SDL_SCANCODE_W] || key_state[SDL_SCANCODE_UP]) {
+            moveUp();
+        }
 
-    if (key_state[SDL_SCANCODE_D] || key_state[SDL_SCANCODE_RIGHT]) {
-        moveRight();
-    }
+        if (key_state[SDL_SCANCODE_D] || key_state[SDL_SCANCODE_RIGHT]) {
+            moveRight();
+        }
 
-    if (key_state[SDL_SCANCODE_A] || key_state[SDL_SCANCODE_LEFT]) {
-        moveLeft();
-    }
+        if (key_state[SDL_SCANCODE_A] || key_state[SDL_SCANCODE_LEFT]) {
+            moveLeft();
+        }
 
-    if (key_state[SDL_SCANCODE_RETURN]) {
-        trigger();
+        if (key_state[SDL_SCANCODE_RETURN]) {
+            trigger();
+        }
     }
 }
 

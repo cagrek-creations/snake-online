@@ -256,11 +256,13 @@ void Game::setupStartMenu() {
 
     s->right = o;
     s->left = c;
+    s->down = c;
     o->down = q;
     q->up = o;
     o->left = s;
     q->left = s;
     c->right = s;
+    c->up = s;
 
     m_startMenu->addItem(s);
     m_startMenu->addItem(o);
