@@ -23,6 +23,7 @@
 #include "GuiElements.hpp"
 #include "Observer.hpp"
 #include "Gui.hpp"
+#include "Soundmanager.hpp"
 #include "Vector2.hpp"
 
 #define MENU_STATE      0x0
@@ -126,7 +127,7 @@ class GMenuItemBar : public GMenuItem {
 
 class GMenu : public Observer {
     public:
-        explicit GMenu(Vector2 pos);
+        GMenu(Vector2 pos, SoundManager *sm);
 
         void setCurrent(std::shared_ptr<GMenuItem> item);
 
@@ -134,6 +135,8 @@ class GMenu : public Observer {
         void moveDown();
         void moveLeft();
         void moveRight();
+
+        void moveSound();
 
         void trigger();
 
@@ -149,4 +152,6 @@ class GMenu : public Observer {
         Vector2 m_pos;
         std::vector<std::shared_ptr<GMenuItem>> m_menuItems;
         std::shared_ptr<GMenuItem> m_current;
+
+        SoundManager *m_sm;
 };

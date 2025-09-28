@@ -41,6 +41,7 @@ void SoundManager::onEvent(const SDL_Event& event) {
     }
 }
 
+// TODO: Add loadsound with volume parameter.
 bool SoundManager::loadSound(const char* filePath, const char* soundKey) {
     std::filesystem::path basePathSfx = getExecutableDir() / "sfx";
     Mix_Chunk* chunk = loadChunk((basePathSfx / filePath).string().c_str());

@@ -1,4 +1,5 @@
 #include "Menu.hpp"
+#include "Soundmanager.hpp"
 
 
 
@@ -65,22 +66,28 @@ void GMenuItemBar::triggerRight() {
     m_bar.w = m_barSize * m_scale;
 }
 
-GMenu::GMenu(Vector2 pos) : m_pos(pos) {}
+GMenu::GMenu(Vector2 pos, SoundManager *sm) : m_pos(pos), m_sm(sm) {}
 
 void GMenu::setCurrent(std::shared_ptr<GMenuItem> item) {
     m_current = item;
+}
+
+void GMenu::moveSound() {
+    m_sm->playSound("MenuTriggerArrowKeys", 0);
 }
 
 void GMenu::moveUp() {
     if (m_current && m_current->up) {
         m_current = m_current->up;
     }
+    moveSound();
 }
 
 void GMenu::moveDown() {
     if (m_current && m_current->down) {
         m_current = m_current->down;
     }
+    moveSound();
 }
 
 void GMenu::moveLeft() {
@@ -91,6 +98,7 @@ void GMenu::moveLeft() {
     } else if (m_current->left) {
         m_current = m_current->left;
     }
+    moveSound();
 }
 
 void GMenu::moveRight() {
@@ -101,6 +109,7 @@ void GMenu::moveRight() {
     } else if (m_current->right) {
         m_current = m_current->right;
     }
+    moveSound();
 }
 
 void GMenu::trigger() {

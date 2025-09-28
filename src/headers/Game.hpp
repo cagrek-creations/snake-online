@@ -105,6 +105,7 @@ class Game : public Observer{
 
         void loadTextures();
         void loadFonts();
+        void loadSounds();
 
         void handleEvents(std::vector<std::string> serverEvents);
         void handleEvent(std::vector<std::string> &event);

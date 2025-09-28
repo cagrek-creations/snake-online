@@ -210,10 +210,8 @@ void Game::setupSound() {
     m_volume = 64;
     m_playSound = 1;
     m_sound = std::make_unique<SoundManager>(m_volume, m_playSound);
-    
-    m_sound->loadSound("MegaSnake.mp3", "MegaSnake");
-    m_sound->setVolume("MegaSnake", m_volume); // 50%
-    m_sound->playSound("MegaSnake", -1);
+
+    loadSounds();
 }
 
 void Game::setupController() {
@@ -232,11 +230,12 @@ bool Game::isRunning() {
 }
 
 void Game::setupStartMenu() {
-    m_startMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y));
+    m_startMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y), m_sound.get());
 
     auto s = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() - 275, m_startMenu->getY() - 25), "START GAME", "pixeloidm_64", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     s->bind([this]() {
         this->changeState(gameState::GAME_PLAY);
+        this->m_sound->playSound("MenuSelectEnter", 0);
     });
 
     auto o = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() + 275, m_startMenu->getY() - 25), "OPTIONS", "pixeloidm_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
@@ -273,7 +272,7 @@ void Game::setupStartMenu() {
 }
 
 void Game::setupOptionsMenu() {
-    m_optionsMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, 200));
+    m_optionsMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, 200), m_sound.get());
 
     auto s = std::make_shared<GMenuItemBar>(m_gui.get(), Vector2(m_optionsMenu->getX(), 400), Vector2(128, 10), 8, 1, "volume", "pixeloidm_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     s->bind([this]() {
@@ -292,13 +291,13 @@ void Game::setupOptionsMenu() {
     m_optionsMenu->addItem(b);
 
     b->up = s;
-    s->down = b;    
-    
+    s->down = b;
+
     m_optionsMenu->setCurrent(s);
 }
 
 void Game::setupCreditsMenu() {
-    m_creditsMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, 200));
+    m_creditsMenu = std::make_unique<GMenu>(Vector2(WINDOW_MIDDLE_X, 200), m_sound.get());
 
     auto b = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_creditsMenu->getX(), 700), "BACK", "pixeloidm_32", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     b->bind([this]() {
@@ -316,6 +315,19 @@ void Game::loadFonts() {
 
     m_gui->loadFont("pixeloidm_32", "PixeloidMono.ttf", 32);
     m_gui->loadFont("pixeloidm_64", "PixeloidMono.ttf", 64);
+}
+
+void Game::loadSounds() {
+    m_sound->loadSound("MegaSnake.mp3", "MegaSnake");
+    m_sound->setVolume("MegaSnake", m_volume); // 50%
+    m_sound->playSound("MegaSnake", -1);
+    m_sound->stopSound("MegaSnake");
+
+    m_sound->loadSound("MenuSelectEnter.wav", "MenuSelectEnter");
+    m_sound->setVolume("MenuSelectEnter", m_volume); // 50%
+
+    m_sound->loadSound("MenuTriggerArrowKeys.wav", "MenuTriggerArrowKeys");
+    m_sound->setVolume("MenuTriggerArrowKeys", m_volume); // 50%
 }
 
 void Game::loadTextures() {
