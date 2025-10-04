@@ -74,12 +74,11 @@ class GMenuItem {
         Vector2 m_pos;
         SDL_Color m_color;
         MenuItemType m_type;
-
 };
 
 class GMenuItemButton : public GMenuItem {
 public:
-    GMenuItemButton(GUI* gui, Vector2 pos, std::string content, std::string font,
+    GMenuItemButton(GUI *gui, Vector2 pos, std::string content, std::string font,
                     SDL_Color color, SDL_Color highlighted);
 
     void render() override;
@@ -107,12 +106,8 @@ class GMenuItemBar : public GMenuItem {
         void triggerRight() override;
 
     private:
-        // TODO: 2D menus would break the functionality of moving a bar right / left with the keyboard.
-        // Could implement this so that you have to 'select' the bar before changing its values?
-        // Reply: this should probably be fine with the new implementation of menus since 
-        // they set up and down values for each MenuItem.
         SDL_Color m_highlighted;
-        SDL_Renderer* m_renderer;
+        SDL_Renderer *m_renderer;
         SDL_Rect m_bar;
 
         int m_barSize;
