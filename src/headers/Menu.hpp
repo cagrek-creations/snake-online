@@ -26,25 +26,6 @@
 #include "Soundmanager.hpp"
 #include "Vector2.hpp"
 
-#define MENU_STATE      0x0
-#define MENU_OPTION     0x1
-#define MENU_BAR        0x2
-#define MENU_ON_OFF     0x3
-
-
-#define KEY_ENTER       -1
-#define KEY_LEFT        0x0
-#define KEY_RIGHT       0x1
-#define KEY_UP          0x2
-#define KEY_DOWN        0x3
-
-namespace menuc {
-    const SDL_Color RED     = {255, 0,   0,   255};
-    const SDL_Color GREEN   = {0,   255, 0,   255};
-    const SDL_Color BLUE    = {0,   0,   255, 255};
-    const SDL_Color WHITE   = {255, 255, 255, 255};
-}
-
 enum class MenuItemType {
     M_BAR,
     M_BUTTON,
@@ -61,7 +42,7 @@ class GMenuItem {
         virtual void trigger() {}
         virtual void triggerLeft() {}
         virtual void triggerRight() {}
-        // TODO: Move the triggering to the menu items and let them choose based on events.
+        // TODO: Move the triggering to the menu items and let them choose based on events?
         virtual void update() {}
         MenuItemType type() const { return m_type; }
 
