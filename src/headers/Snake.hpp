@@ -8,7 +8,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <functional>
-#include <map>
 #include <cmath>
 
 #include "Grid.hpp"

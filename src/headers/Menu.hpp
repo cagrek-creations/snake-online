@@ -2,23 +2,13 @@
 
 #pragma once
 
-#include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_scancode.h>
-#include <cstddef>
 #include <iostream>
 #include <memory>
+#include <vector>
+#include <functional>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-
-#include <ostream>
-#include <psdk_inc/_ip_types.h>
-#include <vector>
-#include <thread>
-#include <functional>
-#include <unordered_map>
 
 #include "GuiElements.hpp"
 #include "Observer.hpp"
