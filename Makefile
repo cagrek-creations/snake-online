@@ -1,12 +1,5 @@
-UNAME := $(shell uname -s)
-
-OBJS = ./src/*.cpp
-
 CC=g++
-
 OPTIMIZATION= #-O2
-
-STATIC= -static -static-libgcc -static-libstdc++ 
 
 # https://www.reddit.com/r/gamedev/comments/5pl8vs/sdl2_staticlly_link/
 LINKER_FLAGS= -static
@@ -16,12 +9,17 @@ LINKER_FLAGS += `pkg-config --libs --static SDL2_Image`
 LINKER_FLAGS += `pkg-config --libs --static SDL2_Mixer`
 LINKER_FLAGS += -lbrotlicommon -lsharpyuv
 
-
-LIBS= -lmingw32 -lws2_32 -lSDL2main -lSDL2 -lSDL2_Image -lSDL2_TTF -lSDL2_Mixer
+ifeq ($(OS), Windows_NT)
+    LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lws2_32
+else
+    UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S), Linux)
+		LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+	endif
+endif
 
 IDIR = ./src/headers
 CFLAGS= -I$(IDIR) $(LIBS) $(EXTRA_LIBS)
-# _DEPS = Gui.hpp Snake.hpp Grid.hpp Menu.hpp Score.hpp Controller.hpp Soundmanager.hpp comm_util.hpp Observer.hpp Game.hpp
 DEPS = $(wildcard $(IDIR)/*.hpp)
 
 ODIR = ./obj
@@ -82,4 +80,3 @@ install::
 	mkdir -p assets
 	git clone https://github.com/cagrek-creations/snake-assets.git tmp/snake-assets
 	cp -r tmp/snake-assets/* bin/
-
