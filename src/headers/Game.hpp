@@ -130,5 +130,7 @@ class Game : public Observer{
         void removeScore(Vector2 pos);
         void playerGrow();
 
+        Gridpoint *calcScorePoint(Vector2 pos);
+
         void handleEffects(const std::string &type, int pid);
 };
