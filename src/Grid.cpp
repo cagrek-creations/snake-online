@@ -9,11 +9,12 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, 
     m_granularityY = granularityY;
     m_gui = gui;
 
-    m_gridPointWidth = granularityX;
-    m_gridPointHeight = granularityY;
+    int baseSize = 32;
+    int scale = 1;
+    while ((baseSize / scale) * rows > m_gui->getWindowWidth() || (baseSize / scale) * columns > m_gui->getWindowHeight()) scale *= 2;
 
-    int r = width / granularityX;
-    int c = height / granularityY;
+    m_gridPointWidth = baseSize / scale;
+    m_gridPointHeight = baseSize / scale;
 
     m_pos = pos;
 

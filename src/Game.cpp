@@ -104,7 +104,7 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, 25, 15, Vector2(100, 100));
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 64, 64, 125, 125, Vector2(0, 0));
 }
 
 void Game::createGrid(int width, int height) {
