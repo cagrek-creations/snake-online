@@ -191,6 +191,7 @@ void Game::setupGame() {
 }
 
 void Game::setupGui() {
+    m_gui = std::make_unique<GUI>("Snake", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FULLSCREEN);
 
     m_state = START_MENU;
 
@@ -323,7 +324,6 @@ void Game::loadSounds() {
 }
 
 void Game::loadTextures() {
-    m_gui = std::make_unique<GUI>("Snake", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FULLSCREEN);
     m_gui->loadTexture(TextureID::ERR, "err.png");
     m_gui->loadTexture(TextureID::BERRY, "scores/SnakePowerBerry.png");
     m_gui->loadTexture(TextureID::SPEED, "scores/SnakePowerSpeed.png");
