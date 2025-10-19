@@ -1,5 +1,4 @@
 #include "Grid.hpp"
-#include "Vector2.hpp"
 
 Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, int rows, int columns, Vector2 pos) {
     m_gridWidth = width;
@@ -10,9 +9,13 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, 
     m_gui = gui;
     m_renderer = m_gui->getRenderer();
 
-    int baseSize = 32;
+    // int baseSize = 16;
+    // TODO: Better scaling?
+    int baseSize = std::min(m_gui->getWindowWidth() / rows, (int)(m_gui->getWindowHeight() - (m_gui->getWindowHeight() * 0.2)) / columns);
+    std::cout << baseSize << std::endl;
     int scale = 1;
-    while ((baseSize / scale) * rows > m_gui->getWindowWidth() || (baseSize / scale) * columns > m_gui->getWindowHeight()) scale *= 2;
+    // while ((baseSize / scale) * rows > m_gui->getWindowWidth() || (baseSize / scale) * columns > m_gui->getWindowHeight()) scale *= 2;
+    // while ((baseSize / scale) * rows < m_gui->getWindowWidth() && (baseSize / scale) * columns < m_gui->getWindowHeight()) baseSize += 2;
 
     m_gridPointWidth = baseSize / scale;
     m_gridPointHeight = baseSize / scale;

@@ -103,7 +103,7 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 64, 64, 50, 25, Vector2(0, 0));
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 64, 64, 80, 66, Vector2(0, 0));
 }
 
 void Game::createGrid(int width, int height) {
@@ -111,7 +111,7 @@ void Game::createGrid(int width, int height) {
 }
 
 void Game::createPlayer() {
-    Vector2 initialPos = Vector2(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y);
+    Vector2 initialPos = Vector2(1, 1);
     std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 6, color::GREEN, m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);

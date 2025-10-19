@@ -3,6 +3,7 @@
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include <SDL2/SDL.h>
 
