@@ -85,6 +85,7 @@ class Grid {
 
     private: 
         SDL_Renderer *m_renderer;
+        SDL_Texture *m_gridTexture;
         GUI *m_gui;
 
         int m_gridWidth;

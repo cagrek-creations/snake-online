@@ -8,6 +8,7 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, 
     m_granularityX = granularityX;
     m_granularityY = granularityY;
     m_gui = gui;
+    m_renderer = m_gui->getRenderer();
 
     int baseSize = 32;
     int scale = 1;
@@ -26,6 +27,19 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, 
             m_gridpoints.push_back(Gridpoint(m_gui, Vector2(_x, _y), m_gridPointWidth, m_gridPointHeight));
         }
     }
+
+    m_gridTexture = SDL_CreateTexture(
+        m_renderer,
+        SDL_PIXELFORMAT_RGBA8888,
+        SDL_TEXTUREACCESS_TARGET,
+        m_gridWidth,
+        m_gridHeight
+    );
+
+    SDL_SetRenderTarget(m_renderer, m_gridTexture);
+    for (auto &gp : m_gridpoints)
+        gp.renderTexture();
+    SDL_SetRenderTarget(m_renderer, nullptr);
 }
 
 void Grid::setSize(int width, int height) {
@@ -45,10 +59,7 @@ void Grid::setSize(int width, int height) {
 }
 
 void Grid::render() {
-    for(auto &gp : m_gridpoints) {
-        // gp.render();
-        gp.renderTexture();
-    }
+    SDL_RenderCopy(m_renderer, m_gridTexture, nullptr, nullptr);
 }
 
 bool Grid::isPointEmpty(Gridpoint point) {

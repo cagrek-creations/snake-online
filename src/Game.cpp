@@ -67,6 +67,8 @@ void Game::update(double deltaTime) {
 void Game::render() {
     m_gui->clearRenderer();
     m_gui->update();
+
+    renderState();
     
     if (m_fpsCounter > 500.f) {
         m_fpsCounter = 0;
@@ -78,9 +80,6 @@ void Game::render() {
     // TODO: Update this to only render over the grid instead of the screen.
     SDL_Rect dstRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
     SDL_RenderCopy(m_gui->getRenderer(), m_gui->getTexture(TextureID::VINJETTE), NULL, &dstRect);
-
-    renderState();
-
 
     m_gui->render();
 }
@@ -104,7 +103,7 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 64, 64, 125, 125, Vector2(0, 0));
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 64, 64, 250, 250, Vector2(0, 0));
 }
 
 void Game::createGrid(int width, int height) {
@@ -203,7 +202,6 @@ void Game::setupGui() {
     setupStartMenu();
     setupOptionsMenu();
     setupCreditsMenu();
-
 }
 
 void Game::setupSound() {
@@ -218,11 +216,7 @@ void Game::setupController() {
     m_gameController = std::make_unique<Controller>();
     m_gameController->attachObserver(m_gui.get());
     m_gameController->attachObserver(m_sound.get());
-    // m_gameController->attachObserver(m_startMenu.get());
-    // m_gameController->attachObserver(m_optionsMenu.get());
     m_gameController->attachObserver(this);
-    // m_gameController->attachObserver(startMenu.get());
-    // m_gameController->attachObserver(optionsMenu.get());
 }
 
 bool Game::isRunning() {
