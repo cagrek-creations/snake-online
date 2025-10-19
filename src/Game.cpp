@@ -103,7 +103,7 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 64, 64, 250, 250, Vector2(0, 0));
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 64, 64, 50, 25, Vector2(0, 0));
 }
 
 void Game::createGrid(int width, int height) {
@@ -115,8 +115,6 @@ void Game::createPlayer() {
     std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 6, color::GREEN, m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);
-    // m_players[m_myPid]->addEffect(std::make_unique<FreezeEffect>(*m_players[m_myPid], 50000.0f));
-    // m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 15000.0f));
 }
 
 void Game::createPlayer(int size, int xPos, int yPos) {
@@ -331,7 +329,7 @@ void Game::loadTextures() {
     m_gui->loadTexture(TextureID::SPEED, "scores/SnakePowerSpeed.png");
     m_gui->loadTexture(TextureID::SPEED_O, "scores/SnakePowerSpeed.png");
     m_gui->loadTexture(TextureID::SWAPAROO, "scores/SnakePowerInvert.png");
-    m_gui->loadTexture(TextureID::SWAPAROO_O, "scores/SnakePowerInvert.png");
+    m_gui->loadTexture(TextureID::SWAPAROO_O, "scores/SnakePowerInvertO.png");
     m_gui->loadTexture(TextureID::GRIDTILE, "gridtile.png");
     m_gui->loadTexture(TextureID::GHOST, "scores/SnakePowerGhost.png");
     m_gui->loadTexture(TextureID::SLOW, "scores/SnakePowerSlow.png");

@@ -25,8 +25,8 @@ void Snake::createEffectUi() {
             m_gui->getTexture(m_snakeEffects[i]->getType()), 
             m_snakeEffects[i]->getColor(), 
             Vector2(startX + col * (barWidth + padding), WINDOW_HEIGHT - 200 + row * (barHeight + 5)), 
-            barWidth, 
-            barHeight, 
+            barWidth,
+            barHeight,
             0.35)
         ));
 
@@ -113,7 +113,7 @@ void Snake::render() {
     if (m_pid == 0) {
         // std::cout << "Drawing bar" << std::endl;
         renderBoostBar();
-        renderEffectBars();
+        // renderEffectBars();
     }
 
 }
@@ -551,13 +551,12 @@ UIElementSnakeEffect::UIElementSnakeEffect(SDL_Renderer *renderer, SDL_Texture *
     int m_barWidthMax = width * (0.95 - scale); // 95% for padding
 
 
-    int textureWidth = static_cast<int>(width * 0.35);
+    int textureWidth = static_cast<int>(width * scale);
     m_textureRect = SDL_Rect {pos.x, pos.y, textureWidth, height};
     
     m_barPos = pos + Vector2(textureWidth * 1.1, 0); // 10% padding from width
-    m_barBackgroundLayer = SDL_Rect {m_barPos.x, m_barPos.y + height / 2, m_barWidthMax, static_cast<int>(height * 0.20)};
-    m_effectDurationBar = SDL_Rect {m_barPos.x, m_barPos.y + height / 2, 0, static_cast<int>(height * 0.20)};
-
+    m_barBackgroundLayer = SDL_Rect {m_barPos.x, m_barPos.y + height / 2, m_barWidthMax, static_cast<int>(height * scale)};
+    m_effectDurationBar = SDL_Rect {m_barPos.x, m_barPos.y + height / 2, 0, static_cast<int>(height * scale)};
 }
 
 void UIElementSnakeEffect::update(float e, float d) {
@@ -574,5 +573,4 @@ void UIElementSnakeEffect::render() {
 
     SDL_SetRenderDrawColor(m_renderer, m_color.r, m_color.g, m_color.b, m_color.a);
     SDL_RenderFillRect(m_renderer, &m_effectDurationBar);
-
 }
