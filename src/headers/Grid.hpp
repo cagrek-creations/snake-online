@@ -3,6 +3,7 @@
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include <SDL2/SDL.h>
 
@@ -85,6 +86,7 @@ class Grid {
 
     private: 
         SDL_Renderer *m_renderer;
+        SDL_Texture *m_gridTexture;
         GUI *m_gui;
 
         int m_gridWidth;

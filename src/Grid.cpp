@@ -1,5 +1,4 @@
 #include "Grid.hpp"
-#include "Vector2.hpp"
 
 Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, int rows, int columns, Vector2 pos) {
     m_gridWidth = width;
@@ -8,12 +7,18 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, 
     m_granularityX = granularityX;
     m_granularityY = granularityY;
     m_gui = gui;
+    m_renderer = m_gui->getRenderer();
 
-    m_gridPointWidth = granularityX;
-    m_gridPointHeight = granularityY;
+    // int baseSize = 16;
+    // TODO: Better scaling?
+    int baseSize = std::min(m_gui->getWindowWidth() / rows, (int)(m_gui->getWindowHeight() - (m_gui->getWindowHeight() * 0.2)) / columns);
+    std::cout << baseSize << std::endl;
+    int scale = 1;
+    // while ((baseSize / scale) * rows > m_gui->getWindowWidth() || (baseSize / scale) * columns > m_gui->getWindowHeight()) scale *= 2;
+    // while ((baseSize / scale) * rows < m_gui->getWindowWidth() && (baseSize / scale) * columns < m_gui->getWindowHeight()) baseSize += 2;
 
-    int r = width / granularityX;
-    int c = height / granularityY;
+    m_gridPointWidth = baseSize / scale;
+    m_gridPointHeight = baseSize / scale;
 
     m_pos = pos;
 
@@ -25,6 +30,19 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, 
             m_gridpoints.push_back(Gridpoint(m_gui, Vector2(_x, _y), m_gridPointWidth, m_gridPointHeight));
         }
     }
+
+    m_gridTexture = SDL_CreateTexture(
+        m_renderer,
+        SDL_PIXELFORMAT_RGBA8888,
+        SDL_TEXTUREACCESS_TARGET,
+        m_gridWidth,
+        m_gridHeight
+    );
+
+    SDL_SetRenderTarget(m_renderer, m_gridTexture);
+    for (auto &gp : m_gridpoints)
+        gp.renderTexture();
+    SDL_SetRenderTarget(m_renderer, nullptr);
 }
 
 void Grid::setSize(int width, int height) {
@@ -44,10 +62,7 @@ void Grid::setSize(int width, int height) {
 }
 
 void Grid::render() {
-    for(auto &gp : m_gridpoints) {
-        // gp.render();
-        gp.renderTexture();
-    }
+    SDL_RenderCopy(m_renderer, m_gridTexture, nullptr, nullptr);
 }
 
 bool Grid::isPointEmpty(Gridpoint point) {

@@ -67,6 +67,8 @@ void Game::update(double deltaTime) {
 void Game::render() {
     m_gui->clearRenderer();
     m_gui->update();
+
+    renderState();
     
     if (m_fpsCounter > 500.f) {
         m_fpsCounter = 0;
@@ -78,9 +80,6 @@ void Game::render() {
     // TODO: Update this to only render over the grid instead of the screen.
     SDL_Rect dstRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
     SDL_RenderCopy(m_gui->getRenderer(), m_gui->getTexture(TextureID::VINJETTE), NULL, &dstRect);
-
-    renderState();
-
 
     m_gui->render();
 }
@@ -104,7 +103,7 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, 25, 15, Vector2(100, 100));
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 64, 64, 80, 66, Vector2(0, 0));
 }
 
 void Game::createGrid(int width, int height) {
@@ -112,12 +111,10 @@ void Game::createGrid(int width, int height) {
 }
 
 void Game::createPlayer() {
-    Vector2 initialPos = Vector2(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y);
+    Vector2 initialPos = Vector2(1, 1);
     std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 6, color::GREEN, m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);
-    // m_players[m_myPid]->addEffect(std::make_unique<FreezeEffect>(*m_players[m_myPid], 50000.0f));
-    // m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 15000.0f));
 }
 
 void Game::createPlayer(int size, int xPos, int yPos) {
@@ -194,6 +191,7 @@ void Game::setupGame() {
 }
 
 void Game::setupGui() {
+    m_gui = std::make_unique<GUI>("Snake", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FULLSCREEN);
 
     m_state = START_MENU;
 
@@ -203,7 +201,6 @@ void Game::setupGui() {
     setupStartMenu();
     setupOptionsMenu();
     setupCreditsMenu();
-
 }
 
 void Game::setupSound() {
@@ -218,11 +215,7 @@ void Game::setupController() {
     m_gameController = std::make_unique<Controller>();
     m_gameController->attachObserver(m_gui.get());
     m_gameController->attachObserver(m_sound.get());
-    // m_gameController->attachObserver(m_startMenu.get());
-    // m_gameController->attachObserver(m_optionsMenu.get());
     m_gameController->attachObserver(this);
-    // m_gameController->attachObserver(startMenu.get());
-    // m_gameController->attachObserver(optionsMenu.get());
 }
 
 bool Game::isRunning() {
@@ -331,13 +324,12 @@ void Game::loadSounds() {
 }
 
 void Game::loadTextures() {
-    m_gui = std::make_unique<GUI>("Snake", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FULLSCREEN);
     m_gui->loadTexture(TextureID::ERR, "err.png");
     m_gui->loadTexture(TextureID::BERRY, "scores/SnakePowerBerry.png");
     m_gui->loadTexture(TextureID::SPEED, "scores/SnakePowerSpeed.png");
     m_gui->loadTexture(TextureID::SPEED_O, "scores/SnakePowerSpeed.png");
     m_gui->loadTexture(TextureID::SWAPAROO, "scores/SnakePowerInvert.png");
-    m_gui->loadTexture(TextureID::SWAPAROO_O, "scores/SnakePowerInvert.png");
+    m_gui->loadTexture(TextureID::SWAPAROO_O, "scores/SnakePowerInvertO.png");
     m_gui->loadTexture(TextureID::GRIDTILE, "gridtile.png");
     m_gui->loadTexture(TextureID::GHOST, "scores/SnakePowerGhost.png");
     m_gui->loadTexture(TextureID::SLOW, "scores/SnakePowerSlow.png");
