@@ -11,7 +11,7 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, 
 
     // int baseSize = 16;
     // TODO: Better scaling?
-    int baseSize = std::min(m_gui->getWindowWidth() / rows, (int)(m_gui->getWindowHeight() - (m_gui->getWindowHeight() * 0.2)) / columns);
+    int baseSize = std::min((int)(m_gui->getWindowWidth() / rows), (int)(m_gui->getWindowHeight() - (m_gui->getWindowHeight() * 0.2)) / columns);
     std::cout << baseSize << std::endl;
     int scale = 1;
     // while ((baseSize / scale) * rows > m_gui->getWindowWidth() || (baseSize / scale) * columns > m_gui->getWindowHeight()) scale *= 2;
@@ -20,13 +20,17 @@ Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, 
     m_gridPointWidth = baseSize / scale;
     m_gridPointHeight = baseSize / scale;
 
+    int offsetX = (m_gui->getWindowWidth() - baseSize * rows) / 2;
+    std::cout << "offsetx" << offsetX << std::endl;
+    int offsetY = 0;
+
     m_pos = pos;
 
     // Wrong order here?
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
-            int _x = i * m_gridPointWidth + m_pos.x;
-            int _y = j * m_gridPointHeight + m_pos.y;
+            int _x = i * m_gridPointWidth + m_pos.x + offsetX;
+            int _y = j * m_gridPointHeight + m_pos.y + offsetY;
             m_gridpoints.push_back(Gridpoint(m_gui, Vector2(_x, _y), m_gridPointWidth, m_gridPointHeight));
         }
     }

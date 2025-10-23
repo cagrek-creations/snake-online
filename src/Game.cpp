@@ -111,7 +111,7 @@ void Game::createGrid(int width, int height) {
 }
 
 void Game::createPlayer() {
-    Vector2 initialPos = Vector2(1, 1);
+    Vector2 initialPos = Vector2(400, 20);
     std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 6, color::GREEN, m_players.size(), 1);
     m_gameController->attachObserver(snake.get());
     m_players[m_myPid] = std::move(snake);
