@@ -25,6 +25,10 @@ void Game::handleEvent(std::vector<std::string> &event) {
         
     }
 
+    if (command == "WAITING_FOR_PLAYERS") {
+
+    }
+
     if (command == "ADD_SCORE") {
         std::string type = event[1];
         int xPos = stoi(event[3]);
