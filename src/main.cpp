@@ -8,13 +8,13 @@
 #include <sstream>
 #include <unordered_map>
 
-#include "Gui.hpp"
-#include "Snake.hpp"
-#include "Grid.hpp"
-#include "Menu.hpp"
-#include "Score.hpp"
-#include "Game.hpp"
-#include "Soundmanager.hpp"
+#include "headers/Gui.hpp"
+#include "headers/Snake.hpp"
+#include "headers/Grid.hpp"
+#include "headers/Menu.hpp"
+#include "headers/Score.hpp"
+#include "headers/Game.hpp"
+#include "headers/Soundmanager.hpp"
 // #include "Event.hpp"
 // #include "Client.hpp"
 

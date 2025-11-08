@@ -1,4 +1,4 @@
-#include "Soundmanager.hpp"
+#include "headers/Soundmanager.hpp"
 
 // TODO: Introduce sound class for each sound to scale volume per sound? How many channels?
 SoundManager::SoundManager(int &volume, int &playSound) {

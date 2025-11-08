@@ -1,11 +1,4 @@
-#include "Game.hpp"
-#include "GuiElements.hpp"
-#include "Snake.hpp"
-#include "SnakeEffects.hpp"
-#include "Vector2.hpp"
-#include "headers/Gui.hpp"
-#include "headers/Menu.hpp"
-#include <memory>
+#include "headers/Game.hpp"
 
 int WINDOW_FULLSCREEN = 0;
 

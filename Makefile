@@ -33,7 +33,7 @@ LIBSRC = ./src/cpp-lib
 all: snake
 
 $(ODIR)/%.o: ./src/%.cpp $(DEPS)
-	$(CC) -c $(OPTIMIZATION) -o $@ $< -I./src/headers -I./src/cpp-lib
+	$(CC) -c $(OPTIMIZATION) -o $@ $< -I./src/cpp-lib # -I./src/headers
 
 $(ODIR)/%.o: $(LIBSRC)/%.cpp
 	$(CC) -c $(OPTIMIZATION) -o $@ $< -I./src/cpp-lib

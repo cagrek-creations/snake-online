@@ -1,5 +1,4 @@
-#include "Sprite.hpp"
-#include <SDL2/SDL_render.h>
+#include "headers/Sprite.hpp"
 
 Sprite::~Sprite() {
     

@@ -1,4 +1,4 @@
-#include "Controller.hpp"
+#include "headers/Controller.hpp"
 
 void getIpAdressAndPort(std::string &ip, int &port) {
     std::unordered_map<std::string, std::string> config = getConfiguration("config.txt");

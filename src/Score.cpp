@@ -1,6 +1,4 @@
-#include "Score.hpp"
-#include "headers/Gui.hpp"
-#include <SDL2/SDL_render.h>
+#include "headers/Score.hpp"
 
 Score::Score(SDL_Renderer *renderer, GUI *gui, int width, int height, TextureID type) {
     m_renderer = renderer;

@@ -1,6 +1,4 @@
-#include "Game.hpp"
-#include "SnakeEffects.hpp"
-#include "headers/Gui.hpp"
+#include "headers/Game.hpp"
 
 void Game::handleEvents(std::vector<std::string> serverEvents) {
     for (auto se : serverEvents) {

@@ -1,10 +1,4 @@
-#include "Gui.hpp"
-#include "Vector2.hpp"
-#include "headers/GuiElements.hpp"
-#include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_ttf.h>
-#include <memory>
+#include "headers/Gui.hpp"
 
 SDL_Surface *m_loadSurface(const std::string &path) {
     SDL_Surface *surface = IMG_Load(path.c_str());

@@ -1,4 +1,4 @@
-#include "Grid.hpp"
+#include "headers/Grid.hpp"
 
 Grid::Grid(GUI *gui, int width, int height, int granularityX, int granularityY, int rows, int columns, Vector2 pos) {
     m_gridWidth = width;

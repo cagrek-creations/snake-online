@@ -1,7 +1,5 @@
-#include "Menu.hpp"
-#include "Soundmanager.hpp"
-
-
+#include "headers/Menu.hpp"
+#include "headers/Soundmanager.hpp"
 
 GMenuItemButton::GMenuItemButton(GUI* gui, Vector2 pos, std::string content, std::string font, SDL_Color color, SDL_Color highlighted) : GMenuItem(pos, color, MenuItemType::M_BUTTON), m_highlighted(highlighted) {
     m_text = gui->createText(m_pos, content, font, color, TEXT_CENTRALIZED);

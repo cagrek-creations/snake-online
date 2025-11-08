@@ -1,7 +1,5 @@
-#include "Snake.hpp"
-#include "SnakeEffects.hpp"
-#include "Vector2.hpp"
-#include "headers/Gui.hpp"
+#include "headers/Snake.hpp"
+#include "headers/SnakeEffects.hpp"
 
 void Snake::createEffectUi() {
     int rows = 2;
