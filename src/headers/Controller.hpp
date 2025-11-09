@@ -1,9 +1,11 @@
 #pragma once
 
+#include <atomic>
 #include <iostream>
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <algorithm> 
 
 #include <SDL2/SDL.h>
 
@@ -49,13 +51,24 @@ class Controller {
         }
 
         void connect(std::string m_ip, int m_port) {
-            m_client = std::make_unique<TcpCommunication>(m_ip.c_str(), m_port); 
+            m_client = std::make_unique<TcpCommunication>(m_ip.c_str(), m_port);
 
-            if (m_client->isConnected()) {
+            if (m_client->isConnected() && !m_running) {
                 // Allow for client to communicate
-                std::thread receiveThread(&Controller::comm_receive, this);
-                receiveThread.detach();
+                m_running = true;
+                m_receiveThread = std::thread(&Controller::comm_receive, this);
             }
+        }
+
+        void disconnect() {
+            std::cout << "disconnecting" << std::endl;
+            m_client->closeConnection();
+            m_running = false;
+            if (m_receiveThread.joinable()) {
+                m_receiveThread.join();
+            }
+            std::cout << "disconnecting" << std::endl;
+            m_client.reset();
         }
 
         // Attach an observer to the controller
@@ -65,6 +78,13 @@ class Controller {
             observer->setSignalCallback([this](const std::string &message) {
                 this->onObserverSignal(message);
             });
+        }
+    
+        void detachObserver(Observer* observer) {
+            observers.erase(
+                std::remove(observers.begin(), observers.end(), observer),
+                observers.end()
+            );
         }
 
         void onObserverSignal(const std::string &message) {
@@ -146,7 +166,7 @@ class Controller {
         }
 
         void comm_receive() {
-            while(m_client && m_client->isConnected()) {
+            while(m_running && m_client && m_client->isConnected()) {
                 std::string input = "";
                 m_client->receive(input);
                 std::cout << "Receiving: " << input << std::endl;
@@ -171,5 +191,7 @@ class Controller {
         std::vector<std::string> m_serverEvents;
         std::vector<std::string> m_localEvents;
         std::mutex m_mutexServerEvents;
+        std::atomic<bool> m_running{false};
+        std::thread m_receiveThread;
 
 };
