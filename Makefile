@@ -82,7 +82,7 @@ install::
 	cp -r tmp/snake-assets/* bin/
 
 prepare-windows-x86_64::
-	pacman -S --needed --noconfirm \
+	pacman -S --noconfirm \
 	  mingw-w64-x86_64-SDL2 \
 	  mingw-w64-x86_64-SDL2_image \
 	  mingw-w64-x86_64-SDL2_ttf \
