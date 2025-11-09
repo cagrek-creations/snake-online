@@ -9,6 +9,11 @@ int WINDOW_MIDDLE_X (WINDOW_WIDTH / 2);
 int WINDOW_MIDDLE_Y (WINDOW_HEIGHT / 2);
 
 Game::Game() {
+    
+}
+
+void Game::init() {
+    
     setupSound();
 
     setupGui();
@@ -16,6 +21,14 @@ Game::Game() {
     setupController();
 
     setupGame();
+}
+
+void Game::reset() {
+    m_players.clear();
+    m_grid.reset();
+    m_scores.clear();
+    m_myPid = -1;
+    m_serverSetupIsComplete = false;
 }
 
 void Game::update(double deltaTime) {
@@ -80,6 +93,7 @@ void Game::render() {
 void Game::escape() {
     disconnect();
     m_state = START_MENU;
+    reset();
 }
 
 void Game::onEventState(const SDL_Event &event) {
@@ -120,7 +134,7 @@ void Game::createPlayer(int size, int xPos, int yPos) {
     int yPosGrid = ((yPos) * (m_grid->getGridPointHeight()));
     Vector2 initialPos = Vector2(xPosGrid, yPosGrid);
     std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), size, m_gui->getColor(m_playerColor), m_players.size(), 1);
-    m_gameController->attachObserver(snake.get());
+    m_gameController->attachObserver(snake);
     m_players[m_myPid] = std::move(snake);
 }
 
@@ -218,9 +232,9 @@ void Game::setupSound() {
 
 void Game::setupController() {
     m_gameController = std::make_unique<Controller>();
-    m_gameController->attachObserver(m_gui.get());
-    m_gameController->attachObserver(m_sound.get());
-    m_gameController->attachObserver(this);
+    m_gameController->attachObserver(m_gui);
+    m_gameController->attachObserver(m_sound);
+    m_gameController->attachObserver(shared_from_this());
 }
 
 bool Game::isRunning() {
