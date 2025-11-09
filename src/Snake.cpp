@@ -96,10 +96,6 @@ Snake::~Snake() {
 
 void Snake::render() {
 
-    for (const auto& pair : m_effectUIs) {
-         pair.second->render();
-    }
-
     for (int i = 0; i < snakeBlocks.size(); i++) {
         if (m_isGhost > 0) {
             snakeBlocks[i].renderWithAlpha(64);
@@ -112,6 +108,9 @@ void Snake::render() {
         // std::cout << "Drawing bar" << std::endl;
         renderBoostBar();
         // renderEffectBars();
+        for (const auto& pair : m_effectUIs) {
+            pair.second->render();
+        }
     }
 
 }

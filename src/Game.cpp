@@ -77,6 +77,11 @@ void Game::render() {
     m_gui->render();
 }
 
+void Game::escape() {
+    disconnect();
+    m_state = START_MENU;
+}
+
 void Game::onEventState(const SDL_Event &event) {
     if (m_state == START_MENU) {
         m_startMenu->onEvent(event);
@@ -92,6 +97,9 @@ void Game::onEventState(const SDL_Event &event) {
 void Game::onEvent(const SDL_Event& event) {
     if (m_myPid != -1) m_players[m_myPid]->onEvent(event);
 
+    const Uint8 *key_state = SDL_GetKeyboardState(NULL);
+    if(key_state[SDL_SCANCODE_ESCAPE] && m_state == GAME_PLAY) escape();
+
     onEventState(event);
 }
 
@@ -104,10 +112,7 @@ void Game::createGrid(int width, int height) {
 }
 
 void Game::createPlayer() {
-    Vector2 initialPos = Vector2(1, 1);
-    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), 6, color::GREEN, m_players.size(), 1);
-    m_gameController->attachObserver(snake.get());
-    m_players[m_myPid] = std::move(snake);
+    createPlayer(6, 1, 1);
 }
 
 void Game::createPlayer(int size, int xPos, int yPos) {
@@ -155,14 +160,7 @@ void Game::changeState(gameState gis) {
     m_state = gis;
 }
 
-void Game::setupGame() {
-
-    // TODO: replace with yaml instead of parsing .txt?
-    getIpAdressAndPort(m_serverIp, m_serverPort);
-    getName(m_playerName);
-    getColor(m_playerColor);
-
-
+void Game::connect() {
     std::string firstCommand = "ADD_NEW_PLAYER;" + m_playerName + ";" + m_playerColor;
 
     m_gameController->connect(m_serverIp, m_serverPort);
@@ -181,6 +179,20 @@ void Game::setupGame() {
             break;
         }
     }
+}
+
+void Game::disconnect() {
+    m_gameController->disconnect();
+}
+
+void Game::setupGame() {
+
+    // TODO: replace with yaml instead of parsing .txt?
+    getIpAdressAndPort(m_serverIp, m_serverPort);
+    getName(m_playerName);
+    getColor(m_playerColor);
+
+    // connect();
 }
 
 void Game::setupGui() {
@@ -220,6 +232,10 @@ void Game::setupStartMenu() {
 
     auto s = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() - 275, m_startMenu->getY() - 25), "START GAME", "pixeloidm_64", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     s->bind([this]() {
+        if (!m_isConnected) {
+            connect();
+        }
+
         this->changeState(gameState::GAME_PLAY);
         this->m_sound->playSound("MenuSelectEnter", 0);
     });

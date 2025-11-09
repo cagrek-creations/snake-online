@@ -14,6 +14,7 @@ void Game::handleEvent(std::vector<std::string> &event) {
     // TODO: I think this could segfault in the future if not handled properly
     if (command == "NEW_PLAYER_RESPONSE") {
         setupFromServer(event);
+        std::cout << "PID" << m_myPid << std::endl;
         m_serverSetupIsComplete = true;
     }
 
@@ -130,7 +131,7 @@ void Game::addPlayer(std::vector<std::string> event) {
 void Game::setupFromServer(std::vector<std::string> event) {
     // Set pid
     m_myPid = stoi(event[1]);
-    
+
     // Set grid size
     createGrid(stoi(event[4]), stoi(event[5]));
 
