@@ -58,6 +58,9 @@ class Game : public Observer{
         void onEvent(const SDL_Event &event) override;
 
         bool isRunning();
+
+        void connect();
+        void disconnect();
         
     private:
         double m_deltaTime = 0;
@@ -95,8 +98,6 @@ class Game : public Observer{
         std::shared_ptr<GText> t;
 
         std::unique_ptr<Controller> m_gameController;
-
-
         std::string m_lastPosition;
 
         // Sound
@@ -111,6 +112,7 @@ class Game : public Observer{
         void handleEvents(std::vector<std::string> serverEvents);
         void handleEvent(std::vector<std::string> &event);
         void onEventState(const SDL_Event &event);
+        void escape();
 
         void setupGui();
         void setupSound();
@@ -134,4 +136,6 @@ class Game : public Observer{
         Gridpoint *calcScorePoint(Vector2 pos);
 
         void handleEffects(const std::string &type, int pid);
+
+        bool m_isConnected{false};
 };
