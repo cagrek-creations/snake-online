@@ -36,11 +36,12 @@ std::function<void()> bindMemberFunction(std::unique_ptr<ClassType>& object, voi
     };
 }
 
+const auto TIMEOUT_DURATION = std::chrono::seconds(1);
+
 class Game : public Observer{
 
     public:
         Game();
-
 
         void createGrid();
         void createGrid(int width, int height); 

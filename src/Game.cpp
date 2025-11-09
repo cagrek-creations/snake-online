@@ -157,6 +157,7 @@ void Game::changeState(gameState gis) {
 
 void Game::setupGame() {
 
+    // TODO: replace with yaml instead of parsing .txt?
     getIpAdressAndPort(m_serverIp, m_serverPort);
     getName(m_playerName);
     getColor(m_playerColor);
@@ -168,13 +169,12 @@ void Game::setupGame() {
     m_gameController->sendMessage(firstCommand);
 
     // Wait for server response
-    int timeout = 0;
+    auto startTime = std::chrono::steady_clock::now();
     while (!m_serverSetupIsComplete) {
         std::vector<std::string> events = m_gameController->getServerEvents();
 
         handleEvents(events);
-        ++timeout;
-        if (timeout > 1000000) {
+        if (std::chrono::steady_clock::now() - startTime > TIMEOUT_DURATION) {
             std::cout << "Reached timeout connecting to server, continuing..." << std::endl;
             createGrid();
             createPlayer();
