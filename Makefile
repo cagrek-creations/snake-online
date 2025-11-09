@@ -19,7 +19,7 @@ else
 endif
 
 IDIR = ./src/headers
-CFLAGS= -I$(IDIR) $(LIBS) $(EXTRA_LIBS)
+CFLAGS= $(LIBS) $(EXTRA_LIBS)
 DEPS = $(wildcard $(IDIR)/*.hpp)
 
 ODIR = ./obj
