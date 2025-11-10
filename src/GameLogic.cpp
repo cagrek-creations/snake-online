@@ -91,7 +91,7 @@ void Game::updatePlayerPosition(std::vector<std::string> event) {
     int xPos = stoi(event[2]);
     int yPos = stoi(event[3]);
     if (m_players[pid]) {
-        m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth(), yPos * m_grid->getGridPointHeight());
+        m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth() + 1, yPos * m_grid->getGridPointHeight() + 1);
     }
 }
 
@@ -190,6 +190,9 @@ void Game::handleEffects(const std::string &type, int pid) {
     }
     if (type == "speed_self" && pid == m_myPid) {
         m_players[m_myPid]->addEffect(std::make_unique<SpeedBoostEffect>(*m_players[m_myPid], 5000.0f));
+    }
+    if (type == "inverse_other" && pid != m_myPid) {
+        m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 5000.0f));
     }
 }
 

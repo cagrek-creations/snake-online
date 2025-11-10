@@ -59,7 +59,8 @@ void Game::update(double deltaTime) {
         player->update(m_deltaTime);
         Vector2 pos = player->getPos();
         Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
-
+        // std::cout << m_grid->getPoint(pos.x, pos.y)->getGridPointX() << std::endl;
+        // std::cout << pos.x << std::endl;
         std::string command = "PLAYER_UPDATE_POSITION;" + std::to_string(m_myPid) + ";" + std::to_string(gp->getGridPointX() / m_grid->getGridPointWidth()) + ";" + std::to_string(gp->getGridPointY() / m_grid->getGridPointHeight());
 
         if (command != m_lastPosition) {
@@ -118,11 +119,12 @@ void Game::onEvent(const SDL_Event& event) {
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 64, 64, 80, 66, Vector2(0, 0));
+    createGrid(80, 66);
 }
 
 void Game::createGrid(int width, int height) {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, width, height, Vector2(0,0));
+    std::cout << "Creating grid with size: " << width << ", " << height << std::endl;
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, width, height, Vector2(0, 0));
 }
 
 void Game::createPlayer() {
