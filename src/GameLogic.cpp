@@ -90,6 +90,7 @@ void Game::updatePlayerPosition(std::vector<std::string> event) {
     int xPos = stoi(event[2]);
     int yPos = stoi(event[3]);
     if (m_players[pid]) {
+        // TODO: Fix positioning. Currently it is not aligned with server or game logic
         m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth(), yPos * m_grid->getGridPointHeight());
     }
 }
