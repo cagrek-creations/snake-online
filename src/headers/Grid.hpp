@@ -17,7 +17,7 @@ class Gridpoint {
         ~Gridpoint();
 
         bool operator==(const Gridpoint& other) const {
-            return (m_gridPointX == other.m_gridPointX) && (m_gridPointX == other.m_gridPointX);
+            return (m_gridPointX == other.m_gridPointX) && (m_gridPointY == other.m_gridPointY);
         }
 
         void render();
