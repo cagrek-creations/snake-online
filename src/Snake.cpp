@@ -109,7 +109,6 @@ void Snake::render() {
     }
 
     if (m_pid == 0) {
-        // std::cout << "Drawing bar" << std::endl;
         renderBoostBar();
         // renderEffectBars();
     }
