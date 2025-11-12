@@ -91,6 +91,7 @@ void Game::updatePlayerPosition(std::vector<std::string> event) {
     int xPos = stoi(event[2]);
     int yPos = stoi(event[3]);
     if (m_players[pid]) {
+        // TODO: Change to updateSnakePos?
         m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth() + 1, yPos * m_grid->getGridPointHeight() + 1);
     }
 }

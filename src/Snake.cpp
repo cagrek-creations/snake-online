@@ -330,6 +330,9 @@ void Snake::updateSnakePos(Gridpoint *gp) {
         neck->rotateTexture(calculateBodyOffset(head->getDirection(), neck->getDirection()) - neck->getDegrees());
     }
 
+    std::cout << "=== pid:" << m_pid << std::endl;
+    std::cout << calculateBodyOffset(head->getDirection(), neck->getDirection()) - neck->getDegrees() << std::endl;
+
 }
 
 void Snake::grow() {
@@ -407,10 +410,22 @@ void Snake::updatePos(int xPos, int yPos) {
         newPoint->setNotEmpty();
 
         // TODO: Replace with: updateSnakePos(newPoint);
-        snakeBlocks.pop_back();
-        Vector2 newPos = newPoint->getGridPointPos() + Vector2(2, 2);
-        Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
-        snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
+        // snakeBlocks.pop_back();
+        // Vector2 newPos = newPoint->getGridPointPos() + Vector2(2, 2);
+        // Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
+        // snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
+        m_degrees = 0;
+        m_snakeDirection = DIR_DOWN;
+        Vector2 _np = newPoint->getGridPointPos();
+        Vector2 _op = oldPoint->getGridPointPos();
+        if (_np.x > _op.x) m_degrees = 0; m_snakeDirection = DIR_RIGHT;
+        if (_np.x < _op.x) m_degrees = 180; m_snakeDirection = DIR_LEFT;
+        if (_np.y > _op.y) m_degrees = 90; m_snakeDirection = DIR_DOWN;
+        if (_np.y < _op.y) m_degrees = -90; m_snakeDirection = DIR_UP;
+
+        snakeBlocks.front().setDegrees(m_degrees);
+        
+        updateSnakePos(newPoint);
     } else {
         return;
     }
