@@ -47,6 +47,7 @@ class TcpCommunication {
             closeConnection();
         }
 
+        // TODO: unused?
         void receiveData() {
             char responseBuffer[1024];
             int resp = 1;
@@ -90,7 +91,7 @@ class TcpCommunication {
                 return "false";
             }
 
-            buffer[bytesRead] = '\0'; // Null-terminate the received data
+            buffer[bytesRead] = '\0';
             // std::cout << "Received data from server: " << buffer << "\n";
             return std::string(buffer);
         }
@@ -101,7 +102,7 @@ class TcpCommunication {
                 return false;
             }
 
-            const size_t bufferSize = 2048; // You can adjust this based on your needs
+            const size_t bufferSize = 2048;
             char buffer[bufferSize];
 
             ssize_t bytesRead = ::recv(m_clientSocket, buffer, bufferSize - 1, 0);
@@ -115,8 +116,8 @@ class TcpCommunication {
                 return false;
             }
 
-            buffer[bytesRead] = '\0'; // Null-terminate the received data
-            receivedData = buffer;    // Assign the buffer to the std::string
+            buffer[bytesRead] = '\0';
+            receivedData = buffer;
             std::cout << "Received data from server: " << receivedData << "\n";
             return true;
         }
