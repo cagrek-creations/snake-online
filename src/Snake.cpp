@@ -407,6 +407,9 @@ void Snake::updatePos(int xPos, int yPos) {
         newPoint->setNotEmpty();
 
         // TODO: Replace with: updateSnakePos(newPoint);
+        // TODO: updating the position like this for other players will result in the snake to be
+        // rendered without knowing the "degrees" for calculating body differences in corners.
+        // Implement something similar to the Snake::update() function here as well.
         snakeBlocks.pop_back();
         Vector2 newPos = newPoint->getGridPointPos() + Vector2(2, 2);
         Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
