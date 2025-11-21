@@ -14,6 +14,7 @@ void Game::handleEvent(std::vector<std::string> &event) {
     // TODO: I think this could segfault in the future if not handled properly
     if (command == "NEW_PLAYER_RESPONSE") {
         setupFromServer(event);
+        std::cout << "PID" << m_myPid << std::endl;
         m_serverSetupIsComplete = true;
     }
 
@@ -90,8 +91,9 @@ void Game::updatePlayerPosition(std::vector<std::string> event) {
     int xPos = stoi(event[2]);
     int yPos = stoi(event[3]);
     if (m_players[pid]) {
+        // TODO: Change to updateSnakePos?
         // TODO: Fix positioning. Currently it is not aligned with server or game logic
-        m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth(), yPos * m_grid->getGridPointHeight());
+        m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth() + 1, yPos * m_grid->getGridPointHeight() + 1);
     }
 }
 
@@ -131,7 +133,7 @@ void Game::addPlayer(std::vector<std::string> event) {
 void Game::setupFromServer(std::vector<std::string> event) {
     // Set pid
     m_myPid = stoi(event[1]);
-    
+
     // Set grid size
     createGrid(stoi(event[4]), stoi(event[5]));
 
@@ -190,6 +192,9 @@ void Game::handleEffects(const std::string &type, int pid) {
     }
     if (type == "speed_self" && pid == m_myPid) {
         m_players[m_myPid]->addEffect(std::make_unique<SpeedBoostEffect>(*m_players[m_myPid], 5000.0f));
+    }
+    if (type == "inverse_other" && pid != m_myPid) {
+        m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 5000.0f));
     }
 }
 

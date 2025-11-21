@@ -88,4 +88,3 @@ prepare-windows-x86_64::
 	  mingw-w64-x86_64-SDL2_ttf \
 	  mingw-w64-x86_64-SDL2_mixer \
 	  mingw-w64-x86_64-yaml-cpp
-

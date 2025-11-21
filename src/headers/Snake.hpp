@@ -124,6 +124,7 @@ class Snake : public Observer {
         void update(double deltaTime);
 
         void updatePos(int xPos, int yPos);
+        void updateSnakePos(Gridpoint *gp);
 
         void setSpeed(int speed);
 
@@ -172,7 +173,7 @@ class Snake : public Observer {
 
     private:
 
-        void updateSnakePos(Gridpoint *gp);
+        
         int calculateBodyOffset(direction dir1, direction dir2);
 
         int m_snakeSize;

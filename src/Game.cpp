@@ -9,6 +9,11 @@ int WINDOW_MIDDLE_X (WINDOW_WIDTH / 2);
 int WINDOW_MIDDLE_Y (WINDOW_HEIGHT / 2);
 
 Game::Game() {
+    
+}
+
+void Game::init() {
+    
     setupSound();
 
     setupGui();
@@ -16,6 +21,14 @@ Game::Game() {
     setupController();
 
     setupGame();
+}
+
+void Game::reset() {
+    m_players.clear();
+    m_grid.reset();
+    m_scores.clear();
+    m_myPid = -1;
+    m_serverSetupIsComplete = false;
 }
 
 void Game::update(double deltaTime) {
@@ -46,7 +59,8 @@ void Game::update(double deltaTime) {
         player->update(m_deltaTime);
         Vector2 pos = player->getPos();
         Gridpoint *gp = m_grid->getPoint(pos.x, pos.y);
-
+        // std::cout << m_grid->getPoint(pos.x, pos.y)->getGridPointX() << std::endl;
+        // std::cout << pos.x << std::endl;
         std::string command = "PLAYER_UPDATE_POSITION;" + std::to_string(m_myPid) + ";" + std::to_string(gp->getGridPointX() / m_grid->getGridPointWidth()) + ";" + std::to_string(gp->getGridPointY() / m_grid->getGridPointHeight());
 
         if (command != m_lastPosition) {
@@ -77,6 +91,12 @@ void Game::render() {
     m_gui->render();
 }
 
+void Game::escape() {
+    disconnect();
+    m_state = START_MENU;
+    reset();
+}
+
 void Game::onEventState(const SDL_Event &event) {
     if (m_state == START_MENU) {
         m_startMenu->onEvent(event);
@@ -92,15 +112,19 @@ void Game::onEventState(const SDL_Event &event) {
 void Game::onEvent(const SDL_Event& event) {
     if (m_myPid != -1) m_players[m_myPid]->onEvent(event);
 
+    const Uint8 *key_state = SDL_GetKeyboardState(NULL);
+    if(key_state[SDL_SCANCODE_ESCAPE] && m_state == GAME_PLAY) escape();
+
     onEventState(event);
 }
 
 void Game::createGrid() {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 64, 64, 80, 66, Vector2(0, 0));
+    createGrid(80, 66);
 }
 
 void Game::createGrid(int width, int height) {
-    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, width, height, Vector2(0,0));
+    std::cout << "Creating grid with size: " << width << ", " << height << std::endl;
+    m_grid = std::make_unique<Grid>(m_gui.get(), WINDOW_WIDTH, WINDOW_HEIGHT, 32, 32, width, height, Vector2(0, 0));
 }
 
 void Game::createPlayer() {
@@ -112,7 +136,7 @@ void Game::createPlayer(int size, int xPos, int yPos) {
     int yPosGrid = ((yPos) * (m_grid->getGridPointHeight()));
     Vector2 initialPos = Vector2(xPosGrid, yPosGrid);
     std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), size, m_gui->getColor(m_playerColor), m_players.size(), 1);
-    m_gameController->attachObserver(snake.get());
+    m_gameController->attachObserver(snake);
     m_players[m_myPid] = std::move(snake);
 }
 
@@ -152,14 +176,7 @@ void Game::changeState(gameState gis) {
     m_state = gis;
 }
 
-void Game::setupGame() {
-
-    // TODO: replace with yaml instead of parsing .txt?
-    getIpAdressAndPort(m_serverIp, m_serverPort);
-    getName(m_playerName);
-    getColor(m_playerColor);
-
-
+void Game::connect() {
     std::string firstCommand = "ADD_NEW_PLAYER;" + m_playerName + ";" + m_playerColor;
 
     m_gameController->connect(m_serverIp, m_serverPort);
@@ -178,6 +195,20 @@ void Game::setupGame() {
             break;
         }
     }
+}
+
+void Game::disconnect() {
+    m_gameController->disconnect();
+}
+
+void Game::setupGame() {
+
+    // TODO: replace with yaml instead of parsing .txt?
+    getIpAdressAndPort(m_serverIp, m_serverPort);
+    getName(m_playerName);
+    getColor(m_playerColor);
+
+    // connect();
 }
 
 void Game::setupGui() {
@@ -203,9 +234,9 @@ void Game::setupSound() {
 
 void Game::setupController() {
     m_gameController = std::make_unique<Controller>();
-    m_gameController->attachObserver(m_gui.get());
-    m_gameController->attachObserver(m_sound.get());
-    m_gameController->attachObserver(this);
+    m_gameController->attachObserver(m_gui);
+    m_gameController->attachObserver(m_sound);
+    m_gameController->attachObserver(shared_from_this());
 }
 
 bool Game::isRunning() {
@@ -217,6 +248,10 @@ void Game::setupStartMenu() {
 
     auto s = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() - 275, m_startMenu->getY() - 25), "START GAME", "pixeloidm_64", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     s->bind([this]() {
+        if (!m_isConnected) {
+            connect();
+        }
+
         this->changeState(gameState::GAME_PLAY);
         this->m_sound->playSound("MenuSelectEnter", 0);
     });

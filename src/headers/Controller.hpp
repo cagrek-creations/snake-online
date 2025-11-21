@@ -6,6 +6,7 @@
 #include <thread>
 #include <mutex>
 #include <algorithm> 
+#include <memory>
 
 #include <SDL2/SDL.h>
 
@@ -71,20 +72,24 @@ class Controller {
             m_client.reset();
         }
 
+        
+        // void attachObserver(Observer* observer) {
+        //     observers.push_back(observer);
+
+        //     observer->setSignalCallback([this](const std::string &message) {
+        //         this->onObserverSignal(message);
+        //     });
+        // }
+
         // Attach an observer to the controller
-        void attachObserver(Observer* observer) {
+        void attachObserver(std::shared_ptr<Observer> observer) {
             observers.push_back(observer);
 
-            observer->setSignalCallback([this](const std::string &message) {
-                this->onObserverSignal(message);
+            observer->setSignalCallback([weakSelf = std::weak_ptr<Observer>(observer), this](const std::string &message) {
+                if (auto obs = weakSelf.lock()) {
+                    this->onObserverSignal(message);
+                }
             });
-        }
-    
-        void detachObserver(Observer* observer) {
-            observers.erase(
-                std::remove(observers.begin(), observers.end(), observer),
-                observers.end()
-            );
         }
 
         void onObserverSignal(const std::string &message) {
@@ -94,18 +99,24 @@ class Controller {
 
         // Notify all attached observers about an event
         void notifyEvent(const SDL_Event& event) {
-            for (auto observer : observers) {
-                observer->onEvent(event);
+            for (auto it = observers.begin(); it != observers.end(); ) {
+                if (auto obs = it->lock()) {
+                    obs->onEvent(event);
+                    ++it;
+                } else {
+                    it = observers.erase(it);
+                }
             }
         }
 
         void notifyMessage(const std::string &message) {
-            // if(m_client->isConnected()) {
-            //     m_client->send(message.c_str(), message.size());
-            // }
-
-            for (auto observer : observers) {
-                observer->onMessage(message);
+            for (auto it = observers.begin(); it != observers.end(); ) {
+                if (auto obs = it->lock()) {
+                    obs->onMessage(message);
+                    ++it;
+                } else {
+                    it = observers.erase(it);
+                }
             }
 
             m_localEvents.push_back(message);
@@ -150,15 +161,21 @@ class Controller {
         std::string m_ip = "127.0.0.1";
         int m_port = 12345;
 
-        std::vector<Observer*> observers;
+        // std::vector<Observer*> observers;
+        std::vector<std::weak_ptr<Observer>> observers;
         // std::thread m_controllerThread;
         SDL_Event m_event;
         bool running = true;
 
         void handleInput(const std::string input) {
             // Default implementation: just notify observers
-            for (auto observer : observers) {
-                observer->onServerMessage(input);
+            for (auto it = observers.begin(); it != observers.end(); ) {
+                if (auto obs = it->lock()) {
+                    obs->onServerMessage(input);
+                    ++it;
+                } else {
+                    it = observers.erase(it);
+                }
             }
 
             std::lock_guard<std::mutex> lock(m_mutexServerEvents);
