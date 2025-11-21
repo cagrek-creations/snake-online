@@ -352,7 +352,7 @@ void Game::loadTextures() {
     m_gui->loadTexture(TextureID::ERR, "err.png");
     m_gui->loadTexture(TextureID::BERRY, "scores/SnakePowerBerry.png");
     m_gui->loadTexture(TextureID::SPEED, "scores/SnakePowerSpeed.png");
-    m_gui->loadTexture(TextureID::SPEED_O, "scores/SnakePowerSpeed.png");
+    m_gui->loadTexture(TextureID::SPEED_O, "scores/SnakePowerSpeedO.png");
     m_gui->loadTexture(TextureID::SWAPAROO, "scores/SnakePowerInvert.png");
     m_gui->loadTexture(TextureID::SWAPAROO_O, "scores/SnakePowerInvertO.png");
     m_gui->loadTexture(TextureID::GRIDTILE, "gridtile.png");

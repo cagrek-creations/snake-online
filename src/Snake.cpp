@@ -105,7 +105,6 @@ void Snake::render() {
     }
 
     if (m_pid == 0) {
-        // std::cout << "Drawing bar" << std::endl;
         renderBoostBar();
         // renderEffectBars();
         for (const auto& pair : m_effectUIs) {
@@ -431,12 +430,12 @@ void Snake::updatePos(int xPos, int yPos) {
     }
 }
 
+// TODO: Redo with vectors and merge with bottom
 Snakeblock::Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, SDL_Texture *texture, int degrees, SDL_Color color, direction dir) {
 
     m_snakeBlockPos = Vector2(snakeBlockXpos, snakeBlockYpos);
     this->m_snakeBlockWidth = snakeBlockWidth;
     this->m_snakeBlockheight = snakeBlockHeight;
-    // this->m_renderer = renderer;
     m_gui = gui;
     this->m_texture = texture;
     this->m_degrees = degrees;
@@ -455,13 +454,13 @@ Snakeblock::Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int sna
     m_textureDegreeOffset = 180;
 }
 
+// TODO: Redo with vectors
 Snakeblock::Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, std::shared_ptr<Sprite> sprite, int degrees, SDL_Color color, direction dir) 
     : m_sprite(sprite) {
 
     m_snakeBlockPos = Vector2(snakeBlockXpos, snakeBlockYpos);
     this->m_snakeBlockWidth = snakeBlockWidth;
     this->m_snakeBlockheight = snakeBlockHeight;
-    // this->m_renderer = renderer;
     m_gui = gui;
     this->m_degrees = degrees;
     m_snakeBlockDirection = dir;
