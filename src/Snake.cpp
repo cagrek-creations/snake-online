@@ -352,6 +352,32 @@ int getDegrees(direction dir) {
     return -1;
 }
 
+// TODO: this can probably be removed and replace the check with A.x == B.x.
+bool withinEpsilon(int a, int b, float eps) {
+    return std::abs(a - b) < eps;
+}
+
+void Snake::calculateDirectionOtherPlayer(Vector2 _op, Vector2 _np) {
+    // TODO: two can be same at once
+    // TODO: we are comparing the tail
+    if (_np.x > _op.x && withinEpsilon(_np.y, _op.y, 10)) {
+        m_snakeDirection = DIR_RIGHT;
+        m_degrees = getDegrees(DIR_RIGHT);
+    }
+    if (_np.x < _op.x && withinEpsilon(_np.y, _op.y, 10)) {
+        m_snakeDirection = DIR_LEFT;
+        m_degrees = getDegrees(DIR_LEFT);
+    }
+    if (_np.y > _op.y && withinEpsilon(_np.x, _op.x, 10)) {
+        m_snakeDirection = DIR_DOWN;
+        m_degrees = getDegrees(DIR_DOWN);
+    }
+    if (_np.y < _op.y && withinEpsilon(_np.x, _op.x, 10)) {
+        m_snakeDirection = DIR_UP;
+        m_degrees = getDegrees(DIR_UP);
+    }
+}
+
 void Snake::updatePos(int xPos, int yPos) {
     int newPosX = xPos;
     int newPosY = yPos;
@@ -368,32 +394,13 @@ void Snake::updatePos(int xPos, int yPos) {
         }
 
         newPoint->setNotEmpty();
+        auto neck = snakeBlocks[0].getPos(); // TODO: should verify that index 0 exists?
+        Gridpoint *neckPoint = m_grid->getPoint(neck.x + m_snakeWidth / 2, neck.y + m_snakeHeight / 2);
 
         Vector2 _np = newPoint->getGridPointPos();
-        Vector2 _op = oldPoint->getGridPointPos();
-        std::cout << "old: " << _op.to_string() << std::endl;
-        std::cout << "new: " << _np.to_string() << std::endl;
-        // TODO: two can be same at once
-        if (_np.x > _op.x) {
-            m_snakeDirection = DIR_RIGHT; 
-            m_degrees = getDegrees(DIR_RIGHT);
-            std::cout << "Setting dir right" << std::endl; 
-        }
-        if (_np.x < _op.x) {
-            m_snakeDirection = DIR_LEFT; 
-            m_degrees = getDegrees(DIR_LEFT);
-            std::cout << "Setting dir left" << std::endl;
-        } 
-        if (_np.y > _op.y) {
-            m_snakeDirection = DIR_DOWN;
-            m_degrees = getDegrees(DIR_DOWN);
-            std::cout << "Setting dir down" << std::endl;
-        } 
-        if (_np.y < _op.y) {
-            m_snakeDirection = DIR_UP;
-            m_degrees = getDegrees(DIR_UP);
-            std::cout << "Setting dir up" << std::endl;
-        } 
+        Vector2 _op = neckPoint->getGridPointPos();
+
+        calculateNewPosOtherPlayer(_op, _np);
 
         std::cout << m_degrees << std::endl;
         updateSnakePos(newPoint);

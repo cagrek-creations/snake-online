@@ -242,5 +242,8 @@ class Snake : public Observer {
         std::unordered_map<TextureID, std::unique_ptr<UIElementSnakeEffect>> m_effectUIs;
         std::vector<std::unique_ptr<Effect>> m_snakeEffects;
 
+        // Misc
+        void calculateDirectionOtherPlayer(Vector2 _op, Vector2 _np);
+
 };
 
