@@ -308,9 +308,11 @@ int Snake::calculateBodyOffset(direction dir1, direction dir2) {
 }
 
 void Snake::updateSnakePos(Gridpoint *gp) {
+
     snakeBlocks.pop_back();
     Vector2 newPos = gp->getGridPointPos(); //+ Vector2(2, 2);
     Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
+    // std::cout << "creating new block with: " << m_degrees << std::endl;
     snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
 
     snakeBlocks.back().setSprite(m_spriteSnakeTail);
@@ -329,9 +331,75 @@ void Snake::updateSnakePos(Gridpoint *gp) {
         neck->rotateTexture(calculateBodyOffset(head->getDirection(), neck->getDirection()) - neck->getDegrees());
     }
 
-    std::cout << "=== pid:" << m_pid << std::endl;
-    std::cout << calculateBodyOffset(head->getDirection(), neck->getDirection()) - neck->getDegrees() << std::endl;
+}
 
+int getDegrees(direction dir) {
+    if (dir == DIR_DOWN) {
+        return 90;
+    }
+
+    if(dir == DIR_UP) {
+        return -90;
+    }
+
+    if(dir == DIR_RIGHT) {
+        return 0;
+    }
+
+    if(dir == DIR_LEFT) {
+        return 180;
+    }
+    return -1;
+}
+
+void Snake::updatePos(int xPos, int yPos) {
+    int newPosX = xPos;
+    int newPosY = yPos;
+  
+    Gridpoint *newPoint = m_grid->getPoint(newPosX + m_snakeWidth / 2, newPosY + m_snakeHeight / 2);
+
+    Vector2 oldPos = snakeBlocks.back().getPos();
+    Gridpoint *oldPoint = m_grid->getPoint(oldPos.x + m_snakeWidth / 2, oldPos.y + m_snakeHeight / 2);
+
+    if(oldPoint != nullptr) oldPoint->setEmpty();
+    if(newPoint != nullptr) {
+        if(!newPoint->isEmpty()) {
+            std::cout << "GAME OVER!" << std::endl;
+        }
+
+        newPoint->setNotEmpty();
+
+        Vector2 _np = newPoint->getGridPointPos();
+        Vector2 _op = oldPoint->getGridPointPos();
+        std::cout << "old: " << _op.to_string() << std::endl;
+        std::cout << "new: " << _np.to_string() << std::endl;
+        // TODO: two can be same at once
+        if (_np.x > _op.x) {
+            m_snakeDirection = DIR_RIGHT; 
+            m_degrees = getDegrees(DIR_RIGHT);
+            std::cout << "Setting dir right" << std::endl; 
+        }
+        if (_np.x < _op.x) {
+            m_snakeDirection = DIR_LEFT; 
+            m_degrees = getDegrees(DIR_LEFT);
+            std::cout << "Setting dir left" << std::endl;
+        } 
+        if (_np.y > _op.y) {
+            m_snakeDirection = DIR_DOWN;
+            m_degrees = getDegrees(DIR_DOWN);
+            std::cout << "Setting dir down" << std::endl;
+        } 
+        if (_np.y < _op.y) {
+            m_snakeDirection = DIR_UP;
+            m_degrees = getDegrees(DIR_UP);
+            std::cout << "Setting dir up" << std::endl;
+        } 
+
+        std::cout << m_degrees << std::endl;
+        updateSnakePos(newPoint);
+    } else {
+        return;
+    }
 }
 
 void Snake::grow() {
@@ -381,53 +449,6 @@ void Snake::removeSlowBoost() {
 
 void Snake::setSpeed(int speed) {
     m_speedLimit = m_speedLimitBase / speed;
-}
-
-void Snake::updatePos(int xPos, int yPos) {
-    
-    int newPosX = xPos;
-    int newPosY = yPos;
-  
-    Gridpoint *newPoint = m_grid->getPoint(newPosX + m_snakeWidth / 2, newPosY + m_snakeHeight / 2);
-
-    int oldPosX = snakeBlocks.back().getPosX();
-    int oldPosY = snakeBlocks.back().getPosY();
-    Vector2 oldPos = snakeBlocks.back().getPos();
-    Gridpoint *oldPoint = m_grid->getPoint(oldPos.x + m_snakeWidth / 2, oldPos.y + m_snakeHeight / 2);
-
-    if(oldPoint != nullptr) oldPoint->setEmpty();
-    if(newPoint != nullptr) {
-        if(!newPoint->isEmpty()) {
-            std::cout << "GAME OVER!" << std::endl;
-        }
-
-        // if(newPoint->hasScore()) {
-        //     snakeBlocks.push_back(Snakeblock(m_renderer, (snakeBlocks.size()-1)*m_snakeWidth, 1, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color));
-        //     newPoint->removeScore();
-        // }
-        
-        newPoint->setNotEmpty();
-
-        // TODO: Replace with: updateSnakePos(newPoint);
-        // snakeBlocks.pop_back();
-        // Vector2 newPos = newPoint->getGridPointPos() + Vector2(2, 2);
-        // Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
-        // snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
-        m_degrees = 0;
-        m_snakeDirection = DIR_DOWN;
-        Vector2 _np = newPoint->getGridPointPos();
-        Vector2 _op = oldPoint->getGridPointPos();
-        if (_np.x > _op.x) m_degrees = 0; m_snakeDirection = DIR_RIGHT;
-        if (_np.x < _op.x) m_degrees = 180; m_snakeDirection = DIR_LEFT;
-        if (_np.y > _op.y) m_degrees = 90; m_snakeDirection = DIR_DOWN;
-        if (_np.y < _op.y) m_degrees = -90; m_snakeDirection = DIR_UP;
-
-        snakeBlocks.front().setDegrees(m_degrees);
-        
-        updateSnakePos(newPoint);
-    } else {
-        return;
-    }
 }
 
 // TODO: Redo with vectors and merge with bottom
@@ -541,6 +562,10 @@ void Snakeblock::setDegrees(int degrees) {
 
 direction Snakeblock::getDirection() {
     return m_snakeBlockDirection;
+}
+
+void Snakeblock::setDirection(direction dir) {
+    m_snakeBlockDirection = dir;
 }
 
 Snakeblock::~Snakeblock() {

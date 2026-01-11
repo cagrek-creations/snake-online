@@ -3,7 +3,7 @@
 void Game::handleEvents(std::vector<std::string> serverEvents) {
     for (auto se : serverEvents) {
         std::vector<std::string> event = splitString(se, ';');
-        std::cout << "Handling: " << event[0] << std::endl;
+        // std::cout << "Handling: " << event[0] << std::endl;
         handleEvent(event);
     }
 }

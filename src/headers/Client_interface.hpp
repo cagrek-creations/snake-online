@@ -118,7 +118,7 @@ class TcpCommunication {
 
             buffer[bytesRead] = '\0';
             receivedData = buffer;
-            std::cout << "Received data from server: " << receivedData << "\n";
+            // std::cout << "Received data from server: " << receivedData << "\n";
             return true;
         }
 

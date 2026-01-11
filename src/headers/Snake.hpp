@@ -87,6 +87,7 @@ class Snakeblock {
         void setDegrees(int degrees);
         int getDegrees();
         direction getDirection();
+        void setDirection(direction dir);
 
     private:
         int m_snakeBlockWidth;
