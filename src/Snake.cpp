@@ -394,15 +394,16 @@ void Snake::updatePos(int xPos, int yPos) {
         }
 
         newPoint->setNotEmpty();
+
         auto neck = snakeBlocks[0].getPos(); // TODO: should verify that index 0 exists?
         Gridpoint *neckPoint = m_grid->getPoint(neck.x + m_snakeWidth / 2, neck.y + m_snakeHeight / 2);
 
         Vector2 _np = newPoint->getGridPointPos();
         Vector2 _op = neckPoint->getGridPointPos();
 
-        calculateNewPosOtherPlayer(_op, _np);
+        calculateDirectionOtherPlayer(_op, _np);
 
-        std::cout << m_degrees << std::endl;
+        // std::cout << m_degrees << std::endl;
         updateSnakePos(newPoint);
     } else {
         return;
