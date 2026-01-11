@@ -96,10 +96,6 @@ Snake::~Snake() {
 
 void Snake::render() {
 
-    for (const auto& pair : m_effectUIs) {
-         pair.second->render();
-    }
-
     for (int i = 0; i < snakeBlocks.size(); i++) {
         if (m_isGhost > 0) {
             snakeBlocks[i].renderWithAlpha(64);
@@ -111,6 +107,9 @@ void Snake::render() {
     if (m_pid == 0) {
         renderBoostBar();
         // renderEffectBars();
+        for (const auto& pair : m_effectUIs) {
+            pair.second->render();
+        }
     }
 
 }
@@ -309,9 +308,11 @@ int Snake::calculateBodyOffset(direction dir1, direction dir2) {
 }
 
 void Snake::updateSnakePos(Gridpoint *gp) {
+
     snakeBlocks.pop_back();
     Vector2 newPos = gp->getGridPointPos(); //+ Vector2(2, 2);
     Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
+    // std::cout << "creating new block with: " << m_degrees << std::endl;
     snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
 
     snakeBlocks.back().setSprite(m_spriteSnakeTail);
@@ -330,6 +331,83 @@ void Snake::updateSnakePos(Gridpoint *gp) {
         neck->rotateTexture(calculateBodyOffset(head->getDirection(), neck->getDirection()) - neck->getDegrees());
     }
 
+}
+
+int getDegrees(direction dir) {
+    if (dir == DIR_DOWN) {
+        return 90;
+    }
+
+    if(dir == DIR_UP) {
+        return -90;
+    }
+
+    if(dir == DIR_RIGHT) {
+        return 0;
+    }
+
+    if(dir == DIR_LEFT) {
+        return 180;
+    }
+    return -1;
+}
+
+// TODO: this can probably be removed and replace the check with A.x == B.x.
+bool withinEpsilon(int a, int b, float eps) {
+    return std::abs(a - b) < eps;
+}
+
+void Snake::calculateDirectionOtherPlayer(Vector2 _op, Vector2 _np) {
+    // TODO: two can be same at once
+    // TODO: we are comparing the tail
+    if (_np.x > _op.x && withinEpsilon(_np.y, _op.y, 10)) {
+        m_snakeDirection = DIR_RIGHT;
+        m_degrees = getDegrees(DIR_RIGHT);
+    }
+    if (_np.x < _op.x && withinEpsilon(_np.y, _op.y, 10)) {
+        m_snakeDirection = DIR_LEFT;
+        m_degrees = getDegrees(DIR_LEFT);
+    }
+    if (_np.y > _op.y && withinEpsilon(_np.x, _op.x, 10)) {
+        m_snakeDirection = DIR_DOWN;
+        m_degrees = getDegrees(DIR_DOWN);
+    }
+    if (_np.y < _op.y && withinEpsilon(_np.x, _op.x, 10)) {
+        m_snakeDirection = DIR_UP;
+        m_degrees = getDegrees(DIR_UP);
+    }
+}
+
+void Snake::updatePos(int xPos, int yPos) {
+    int newPosX = xPos;
+    int newPosY = yPos;
+  
+    Gridpoint *newPoint = m_grid->getPoint(newPosX + m_snakeWidth / 2, newPosY + m_snakeHeight / 2);
+
+    Vector2 oldPos = snakeBlocks.back().getPos();
+    Gridpoint *oldPoint = m_grid->getPoint(oldPos.x + m_snakeWidth / 2, oldPos.y + m_snakeHeight / 2);
+
+    if(oldPoint != nullptr) oldPoint->setEmpty();
+    if(newPoint != nullptr) {
+        if(!newPoint->isEmpty()) {
+            std::cout << "GAME OVER!" << std::endl;
+        }
+
+        newPoint->setNotEmpty();
+
+        auto neck = snakeBlocks[0].getPos(); // TODO: should verify that index 0 exists?
+        Gridpoint *neckPoint = m_grid->getPoint(neck.x + m_snakeWidth / 2, neck.y + m_snakeHeight / 2);
+
+        Vector2 _np = newPoint->getGridPointPos();
+        Vector2 _op = neckPoint->getGridPointPos();
+
+        calculateDirectionOtherPlayer(_op, _np);
+
+        // std::cout << m_degrees << std::endl;
+        updateSnakePos(newPoint);
+    } else {
+        return;
+    }
 }
 
 void Snake::grow() {
@@ -379,44 +457,6 @@ void Snake::removeSlowBoost() {
 
 void Snake::setSpeed(int speed) {
     m_speedLimit = m_speedLimitBase / speed;
-}
-
-void Snake::updatePos(int xPos, int yPos) {
-    
-    int newPosX = xPos;
-    int newPosY = yPos;
-  
-    Gridpoint *newPoint = m_grid->getPoint(newPosX + m_snakeWidth / 2, newPosY + m_snakeHeight / 2);
-
-    int oldPosX = snakeBlocks.back().getPosX();
-    int oldPosY = snakeBlocks.back().getPosY();
-    Vector2 oldPos = snakeBlocks.back().getPos();
-    Gridpoint *oldPoint = m_grid->getPoint(oldPos.x + m_snakeWidth / 2, oldPos.y + m_snakeHeight / 2);
-
-    if(oldPoint != nullptr) oldPoint->setEmpty();
-    if(newPoint != nullptr) {
-        if(!newPoint->isEmpty()) {
-            std::cout << "GAME OVER!" << std::endl;
-        }
-
-        // if(newPoint->hasScore()) {
-        //     snakeBlocks.push_back(Snakeblock(m_renderer, (snakeBlocks.size()-1)*m_snakeWidth, 1, m_snakeWidth, m_snakeHeight, m_textureSnakeHead, m_degrees, m_color));
-        //     newPoint->removeScore();
-        // }
-        
-        newPoint->setNotEmpty();
-
-        // TODO: Replace with: updateSnakePos(newPoint);
-        // TODO: updating the position like this for other players will result in the snake to be
-        // rendered without knowing the "degrees" for calculating body differences in corners.
-        // Implement something similar to the Snake::update() function here as well.
-        snakeBlocks.pop_back();
-        Vector2 newPos = newPoint->getGridPointPos() + Vector2(2, 2);
-        Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
-        snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
-    } else {
-        return;
-    }
 }
 
 // TODO: Redo with vectors and merge with bottom
@@ -530,6 +570,10 @@ void Snakeblock::setDegrees(int degrees) {
 
 direction Snakeblock::getDirection() {
     return m_snakeBlockDirection;
+}
+
+void Snakeblock::setDirection(direction dir) {
+    m_snakeBlockDirection = dir;
 }
 
 Snakeblock::~Snakeblock() {

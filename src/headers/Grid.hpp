@@ -16,8 +16,18 @@ class Gridpoint {
         Gridpoint(GUI *gui, Vector2 pos, int width, int height);
         ~Gridpoint();
 
-        bool operator==(const Gridpoint& other) const {
+        bool operator==(const Gridpoint &other) const {
             return (m_gridPointX == other.m_gridPointX) && (m_gridPointY == other.m_gridPointY);
+        }
+
+        bool operator>(const Gridpoint &other) const {
+            if ((m_gridPointX > other.m_gridPointX) && (m_gridPointY > other.m_gridPointY)) return true;
+            return false;
+        }
+
+        bool operator<(const Gridpoint &other) const {
+            if ((m_gridPointX < other.m_gridPointX) && (m_gridPointY < other.m_gridPointY)) return true;
+            return false;
         }
 
         void render();

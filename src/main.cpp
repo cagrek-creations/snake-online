@@ -101,7 +101,8 @@ int main(int argc, char **argv) {
 
     int pid = -1;
     
-    Game g = Game();
+    auto g = std::make_shared<Game>();
+    g->init();
 
     std::unordered_map<int, std::shared_ptr<Snake>> players{};
     std::unordered_map<std::string, std::shared_ptr<Score>> scores{};
@@ -109,10 +110,10 @@ int main(int argc, char **argv) {
     double deltaTime = 0;
     uint32_t startingTick = 0;
 
-    while(g.isRunning()) {
+    while(g->isRunning()) {
         auto t0 = Clock::now();
-        g.render();
-        g.update(deltaTime);
+        g->render();
+        g->update(deltaTime);
         auto t1 = Clock::now();
         deltaTime = (double)(std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()) / 1000000.f;
     }

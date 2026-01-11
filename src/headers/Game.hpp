@@ -38,10 +38,11 @@ std::function<void()> bindMemberFunction(std::unique_ptr<ClassType>& object, voi
 
 const auto TIMEOUT_DURATION = std::chrono::seconds(1);
 
-class Game : public Observer{
+class Game : public Observer, public std::enable_shared_from_this<Game>{
 
     public:
         Game();
+        void init();
 
         void createGrid();
         void createGrid(int width, int height); 
@@ -58,6 +59,9 @@ class Game : public Observer{
         void onEvent(const SDL_Event &event) override;
 
         bool isRunning();
+
+        void connect();
+        void disconnect();
         
     private:
         double m_deltaTime = 0;
@@ -85,24 +89,22 @@ class Game : public Observer{
         std::unordered_map<int, std::shared_ptr<Snake>> m_players{};
         std::unordered_map<std::string, std::shared_ptr<Score>> m_scores{};
 
-        std::unique_ptr<Grid> m_grid;
+        std::shared_ptr<Grid> m_grid;
 
-        std::unique_ptr<GUI> m_gui;
+        std::shared_ptr<GUI> m_gui;
 
-        std::unique_ptr<GMenu> m_startMenu;
-        std::unique_ptr<GMenu> m_optionsMenu;
-        std::unique_ptr<GMenu> m_creditsMenu;
+        std::shared_ptr<GMenu> m_startMenu;
+        std::shared_ptr<GMenu> m_optionsMenu;
+        std::shared_ptr<GMenu> m_creditsMenu;
         std::shared_ptr<GText> t;
 
-        std::unique_ptr<Controller> m_gameController;
-
-
+        std::shared_ptr<Controller> m_gameController;
         std::string m_lastPosition;
 
         // Sound
         int m_volume = 64;
         int m_playSound = 1;
-        std::unique_ptr<SoundManager> m_sound;
+        std::shared_ptr<SoundManager> m_sound;
 
         void loadTextures();
         void loadFonts();
@@ -111,6 +113,8 @@ class Game : public Observer{
         void handleEvents(std::vector<std::string> serverEvents);
         void handleEvent(std::vector<std::string> &event);
         void onEventState(const SDL_Event &event);
+        void escape();
+        void reset();
 
         void setupGui();
         void setupSound();
@@ -134,4 +138,6 @@ class Game : public Observer{
         Gridpoint *calcScorePoint(Vector2 pos);
 
         void handleEffects(const std::string &type, int pid);
+
+        bool m_isConnected{false};
 };
