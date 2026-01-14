@@ -7,3 +7,6 @@ This version is the online version of: [https://github.com/cagrek-creations/snak
 [cpp-lib](https://github.com/cagrek-creations/cpp-lib)
 
 Before running any `make` command, be sure to run `make install`.
+
+Windows dependencies can also be prepared with `make prepare-windows-x86_64`
+

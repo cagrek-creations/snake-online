@@ -55,7 +55,7 @@ clangd:
 remove:
 	rm obj/*
 
-install::
+install:
 	mkdir -p obj/
 
 	# Setup bin
@@ -81,7 +81,7 @@ install::
 	git clone https://github.com/cagrek-creations/snake-assets.git tmp/snake-assets
 	cp -r tmp/snake-assets/* bin/
 
-prepare-windows-x86_64::
+prepare-windows-x86_64:
 	pacman -S --noconfirm \
 	  mingw-w64-x86_64-SDL2 \
 	  mingw-w64-x86_64-SDL2_image \
