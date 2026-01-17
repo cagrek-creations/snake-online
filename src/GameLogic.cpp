@@ -93,7 +93,7 @@ void Game::updatePlayerPosition(std::vector<std::string> event) {
     if (m_players[pid]) {
         // TODO: Change to updateSnakePos?
         // TODO: Fix positioning. Currently it is not aligned with server or game logic
-        m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth() + 1, yPos * m_grid->getGridPointHeight() + 1);
+        m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth(), yPos * m_grid->getGridPointHeight());
     }
 }
 
