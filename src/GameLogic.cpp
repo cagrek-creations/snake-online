@@ -38,7 +38,6 @@ void Game::handleEvent(std::vector<std::string> &event) {
     if (command == "BERRY_POSITION") {
         int xPos = stoi(event[1]);
         int yPos = stoi(event[2]);
-        // TODO: update
         addScore(Vector2(xPos, yPos), "berry");
     }
 
@@ -182,7 +181,7 @@ void Game::removeScore(Vector2 pos) {
 Gridpoint *Game::calcScorePoint(Vector2 pos) {
     pos.x = ((pos.x) * (m_grid->getGridPointWidth()));
     pos.y = ((pos.y) * (m_grid->getGridPointHeight()));
-    return m_grid->getPoint(pos.x + 1, pos.y + 1);
+    return m_grid->getPoint(pos.x + 1, pos.y + 1F);
 }
 
 void Game::handleEffects(const std::string &type, int pid) {

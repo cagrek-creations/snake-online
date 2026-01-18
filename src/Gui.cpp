@@ -168,7 +168,7 @@ SDL_Texture *GUI::copyTexture(TextureID key) {
     }
 
     // Create new texture as a render target
-    SDL_Texture* copy = SDL_CreateTexture(m_renderer, format, SDL_TEXTUREACCESS_TARGET, w, h);
+    SDL_Texture *copy = SDL_CreateTexture(m_renderer, format, SDL_TEXTUREACCESS_TARGET, w, h);
     if (!copy) {
         SDL_Log("SDL_CreateTexture failed: %s", SDL_GetError());
         return nullptr;
@@ -176,7 +176,7 @@ SDL_Texture *GUI::copyTexture(TextureID key) {
 
     SDL_SetTextureBlendMode(copy, SDL_BLENDMODE_BLEND);
 
-    SDL_Texture* oldTarget = SDL_GetRenderTarget(m_renderer);
+    SDL_Texture *oldTarget = SDL_GetRenderTarget(m_renderer);
 
     SDL_SetRenderTarget(m_renderer, copy);
 
@@ -192,14 +192,14 @@ SDL_Texture *GUI::copyTexture(TextureID key) {
 
 void GUI::renderText(int x, int y, const std::string &text) {
     // Create surface from text
-    SDL_Surface* surface = TTF_RenderText_Blended(m_font, text.c_str(), color::WHITE);
+    SDL_Surface *surface = TTF_RenderText_Blended(m_font, text.c_str(), color::WHITE);
     if (!surface) {
         SDL_Log("Failed to create text surface: %s", TTF_GetError());
         return;
     }
 
     // Create texture from surface
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(m_renderer, surface);
     if (!texture) {
         SDL_Log("Failed to create text texture: %s", SDL_GetError());
         SDL_FreeSurface(surface);
@@ -208,12 +208,10 @@ void GUI::renderText(int x, int y, const std::string &text) {
 
     SDL_Rect destRect = { x, y, surface->w, surface->h };
 
-    SDL_FreeSurface(surface); // surface no longer needed
-
-    // Render the texture to screen
+    // surface no longer needed
+    SDL_FreeSurface(surface);
     SDL_RenderCopy(m_renderer, texture, nullptr, &destRect);
-
-    SDL_DestroyTexture(texture); // Clean up texture
+    SDL_DestroyTexture(texture);
 }
 
 SDL_Texture *GUI::getTexture(TextureID key) {
@@ -223,11 +221,10 @@ SDL_Texture *GUI::getTexture(TextureID key) {
         return it->second;
     }
 
-    return nullptr;  // Texture not found
+    return nullptr;
 }
 
 void GUI::unloadTexture(TextureID key) {
-    // Unload the texture associated with the key
     auto it = m_textureMap.find(key);
     if (it != m_textureMap.end()) {
         SDL_DestroyTexture(it->second);
@@ -269,7 +266,6 @@ SDL_Color GUI::getColor(std::string colorName) {
     return color::DEFAULT;
 }
 
-
 void GUI::update() {
 
 }
@@ -278,7 +274,6 @@ void GUI::render() {
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderPresent(m_renderer);
 }
-
 
 void GUI::clearRenderer() {
     SDL_RenderClear(m_renderer);
@@ -327,7 +322,6 @@ GUI::~GUI() {
 void GUIElement::updatePos(Vector2 newPos) {
     m_pos = newPos;
 }
-
 
 // Text
 GText::GText(SDL_Renderer *renderer, Vector2 pos, Vector2 dim, std::string content, TTF_Font *font, SDL_Texture *texture, SDL_Color color) : GUIElement(renderer, pos, texture, color) {
