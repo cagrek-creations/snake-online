@@ -181,7 +181,7 @@ void Game::removeScore(Vector2 pos) {
 Gridpoint *Game::calcScorePoint(Vector2 pos) {
     pos.x = ((pos.x) * (m_grid->getGridPointWidth()));
     pos.y = ((pos.y) * (m_grid->getGridPointHeight()));
-    return m_grid->getPoint(pos.x + 1, pos.y + 1F);
+    return m_grid->getPoint(pos.x + 1, pos.y + 1);
 }
 
 void Game::handleEffects(const std::string &type, int pid) {
