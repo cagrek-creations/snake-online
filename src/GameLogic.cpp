@@ -200,3 +200,4 @@ void Game::handleEffects(const std::string &type, int pid) {
 void Game::playerGrow() {
     m_players[m_myPid]->grow();
 }
+
