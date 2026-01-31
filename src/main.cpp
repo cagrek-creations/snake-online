@@ -5,7 +5,6 @@
 #include <thread>
 #include <fstream>
 #include <string>
-#include <sstream>
 #include <unordered_map>
 
 #include "headers/Gui.hpp"
