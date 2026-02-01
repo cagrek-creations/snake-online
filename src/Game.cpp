@@ -60,7 +60,7 @@ void Game::update(double deltaTime) {
         Vector2 pos = player->getPos();
         Gridpoint *gp = m_grid->getPoint(pos.x + 1, pos.y + 1);
 
-        std::string command = "PLAYER_UPDATE_POSITION;" + std::to_string(m_myPid) + ";" + std::to_string(gp->getGridPointX() / m_grid->getGridPointWidth()) + ";" + std::to_string(gp->getGridPointY() / m_grid->getGridPointHeight());
+        std::string command = "PLAYER_UPDATE_POSITION;" + std::to_string(m_myPid) + ";" + std::to_string(gp->getGridPointX() / m_grid->getGridPointWidth()) + ";" + std::to_string(gp->getGridPointY() / m_grid->getGridPointHeight()) + MESSAGE_STOP;
 
         if (command != m_lastPosition) {
             // std::cout << command << std::endl;
@@ -367,3 +367,4 @@ void Game::loadTextures() {
     m_gui->loadAtlas(TextureID::A_GREEN_SNAKE, "snakes/g_s.png", 16, 16, 4);
     m_gui->loadAtlas(TextureID::A_RED_SNAKE, "snakes/r_s.png", 16, 16, 4);
 }
+
