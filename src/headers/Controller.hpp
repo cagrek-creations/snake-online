@@ -13,6 +13,8 @@
 #include "Client_interface.hpp"
 #include "Observer.hpp"
 
+inline const std::string MESSAGE_STOP = ";;;";
+
 void getIpAdressAndPort(std::string &ip, int &port);
 void getName(std::string &name);
 void getColor(std::string &color);
