@@ -139,5 +139,13 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
 
         void handleEffects(const std::string &type, int pid);
 
+        // Game comms
+        void handleAddScore(const std::vector<std::string> &event);
+        void handleBerryPosition();
+        void handleNewPlayerResponse();
+        void handlePlayingField();
+        void handleWaitingForPlayers();
+        void handleScoreCollected();
+
         bool m_isConnected{false};
 };
