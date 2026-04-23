@@ -3,24 +3,20 @@
 void Game::handleEvent(std::vector<std::string> &event) {
     std::string command = event[0];
 
+    // TODO: I think this could segfault in the future if not handled properly
+    if (command == "NEW_PLAYER_RESPONSE") {
+        handleNewPlayerResponse(event);
+    }
+
+    if (!m_serverSetupIsComplete) return;
+
     if (command == "ADD_SCORE") {
         handleAddScore(event);
     }
 
     if (command == "BERRY_POSITION") {
-        int xPos = stoi(event[1]);
-        int yPos = stoi(event[2]);
-        addScore(Vector2(xPos, yPos), "berry");
+        handleBerryPosition(event);
     }
-
-    // TODO: I think this could segfault in the future if not handled properly
-    if (command == "NEW_PLAYER_RESPONSE") {
-        setupFromServer(event);
-        std::cout << "PID" << m_myPid << std::endl;
-        m_serverSetupIsComplete = true;
-    }
-
-    if (!m_serverSetupIsComplete) return;
 
     if (command == "PLAYING_FIELD") {
         
@@ -32,15 +28,7 @@ void Game::handleEvent(std::vector<std::string> &event) {
 
     // SCORE_COLLECTED;0;berry;1;12;22
     if (command == "SCORE_COLLECTED") {
-        int pid = stoi(event[1]);
-        std::string type = event[2];
-        int xPos = stoi(event[4]);
-        int yPos = stoi(event[5]);
-
-        removeScore(Vector2(xPos, yPos));
-        m_players[pid]->grow();
-
-        handleEffects(type, pid);
+        handleScoreCollected(event);
     }
 
     if (command == "NEW_PLAYER") {
@@ -70,6 +58,30 @@ void Game::handleAddScore(const std::vector<std::string> &event) {
     int xPos = stoi(event[3]);
     int yPos = stoi(event[4]);
     addScore(Vector2(xPos, yPos), type);
+}
+
+void Game::handleBerryPosition(const std::vector<std::string> &event) {
+    int xPos = stoi(event[1]);
+    int yPos = stoi(event[2]);
+    addScore(Vector2(xPos, yPos), "berry");
+}
+
+void Game::handleNewPlayerResponse(const std::vector<std::string> &event) {
+    setupFromServer(event);
+    std::cout << "PID" << m_myPid << std::endl;
+    m_serverSetupIsComplete = true;
+}
+
+void Game::handleScoreCollected(const std::vector<std::string> &event) {
+    int pid = stoi(event[1]);
+    std::string type = event[2];
+    int xPos = stoi(event[4]);
+    int yPos = stoi(event[5]);
+
+    removeScore(Vector2(xPos, yPos));
+    m_players[pid]->grow();
+
+    handleEffects(type, pid);
 }
 
 

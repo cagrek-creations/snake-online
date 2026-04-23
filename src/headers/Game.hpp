@@ -141,11 +141,11 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
 
         // Game comms
         void handleAddScore(const std::vector<std::string> &event);
-        void handleBerryPosition();
-        void handleNewPlayerResponse();
-        void handlePlayingField();
-        void handleWaitingForPlayers();
-        void handleScoreCollected();
+        void handleBerryPosition(const std::vector<std::string> &event);
+        void handleNewPlayerResponse(const std::vector<std::string> &event);
+        void handlePlayingField(const std::vector<std::string> &event);
+        void handleWaitingForPlayers(const std::vector<std::string> &event);
+        void handleScoreCollected(const std::vector<std::string> &event);
 
         bool m_isConnected{false};
 };
