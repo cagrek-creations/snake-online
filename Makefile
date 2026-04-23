@@ -10,7 +10,7 @@ LINKER_FLAGS += `pkg-config --libs --static SDL2_Mixer`
 LINKER_FLAGS += -lbrotlicommon -lsharpyuv
 
 ifeq ($(OS), Windows_NT)
-    LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lws2_32
+    LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lws2_32 -MMD -MP
 else
     UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S), Linux)
@@ -18,45 +18,44 @@ else
 	endif
 endif
 
-IDIR = ./src/headers
 CFLAGS= $(LIBS) $(EXTRA_LIBS)
-DEPS = $(wildcard $(IDIR)/*.hpp)
 
-ODIR = ./obj
-_OBJ =  Gui.o Snake.o Grid.o main.o Menu.o Score.o Soundmanager.o comm_util.o Game.o GameLogic.o Controller.o Vector2.o Sprite.o
-OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
+SRC_DIR = src
+BUILD_DIR = build
 
-LIBSRC = ./src/cpp-lib
-
-.PHONY: all install 
-
-all: snake
-
-$(ODIR)/%.o: ./src/%.cpp $(DEPS)
-	$(CC) -c $(OPTIMIZATION) -o $@ $< -I./src/cpp-lib $(CFLAGS)
-
-$(ODIR)/%.o: $(LIBSRC)/%.cpp
-	$(CC) -c $(OPTIMIZATION) -o $@ $< -I./src/cpp-lib $(CFLAGS)
+SRC = $(wildcard $(SRC_DIR)/*.cpp)
+LIBSRC = $(wildcard $(SRC_DIR)/cpp-lib/*.cpp)
+OBJ = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRC))
+OBJ += $(patsubst $(SRC_DIR)/cpp-lib/%.cpp,$(BUILD_DIR)/%.o,$(LIBSRC))
+DEP = $(OBJ:.o=.d)
 
 snake: $(OBJ)
-	$(CC) $(OPTIMIZATION) -o ./bin/$@ $^ $(CFLAGS)
+	$(CC) $(OPTIMIZATION) -o ./bin/$@ $^ $(CFLAGS) -I./src/cpp-lib
 
 static: $(OBJ)
 	$(CC) $(OPTIMIZATION) -o ./bin/$@ $^ $(CFLAGS) $(LINKER_FLAGS) -mconsole
 
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CC) -c $< -o $@ -I./src/cpp-lib -MMD -MP
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/cpp-lib/%.cpp
+	$(CC) -c $< -o $@ -I./src/cpp-lib -MMD -MP
+
+-include $(DEP)
+
 run: snake
 	./bin/snake
 
-clean: remove snake
+clean: remove
 
 clangd:
 	compiledb make
 
 remove:
-	rm obj/*
+	rm build/*
 
 install:
-	mkdir -p obj/
+	mkdir -p build/
 
 	# Setup bin
 	mkdir -p bin/
@@ -88,3 +87,7 @@ prepare-windows-x86_64:
 	  mingw-w64-x86_64-SDL2_ttf \
 	  mingw-w64-x86_64-SDL2_mixer \
 	  mingw-w64-x86_64-yaml-cpp
+
+.PHONY: all install prepare-windows-x86_64 remove clean run
+
+all: snake
