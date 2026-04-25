@@ -1,6 +1,7 @@
 #include "headers/Game.hpp"
 
 void Game::registerHandlers() {
+    std::cout << "registering handlers" << std::endl;
     // TODO: I think this could segfault in the future if not handled properly
     handlers["NEW_PLAYER_RESPONSE"]     = &Game::handleNewPlayerResponse;
 
@@ -11,9 +12,9 @@ void Game::registerHandlers() {
     // handlers["PLAYER_INFO"]             = &Game::addPlayer;
     // handlers["PLAYER_NEW_POS"]          = &Game::updatePlayerPosition;
     // handlers["PLAYER_UPDATE_POSITION"]  = &Game::updatePlayerPosition;
-    handlers["PLAYING_FIELD"]           = &Game::handlePlayingField;
+    // handlers["PLAYING_FIELD"]           = &Game::handlePlayingField;
     handlers["SCORE_COLLECTED"]         = &Game::handleScoreCollected;
-    handlers["WAITING_FOR_PLAYERS"]     = &Game::handleWaitingForPlayers;
+    // handlers["WAITING_FOR_PLAYERS"]     = &Game::handleWaitingForPlayers;
 
     allowedBeforeSetup.insert("NEW_PLAYER_RESPONSE");
 }
@@ -22,62 +23,66 @@ void Game::handleEvent(std::vector<std::string> &event) {
     std::string command = event[0];
 
     // Before game is setup, only allow specific commands.
-    if (!m_serverSetupIsComplete && allowedBeforeSetup.find(command) == allowedBeforeSetup.end()) return;
+    std::cout << *allowedBeforeSetup.begin() << std::endl;
+    if (!m_serverSetupIsComplete && (allowedBeforeSetup.find(command) == allowedBeforeSetup.end())) {
+        std::cout << command << " is not allowed before server setup" << std::endl;
+        return;
+    }
 
-    // auto it = handlers.find(command);
+    auto it = handlers.find(command);
 
-    // if (it != handlers.end()) {
-    //     (this->*(it->second))(event);
+    if (it != handlers.end()) {
+        (this->*(it->second))(event);
+    }
+
+    // // TODO: I think this could segfault in the future if not handled properly
+    // if (command == "NEW_PLAYER_RESPONSE") {
+    //     handleNewPlayerResponse(event);
     // }
 
-    // TODO: I think this could segfault in the future if not handled properly
-    if (command == "NEW_PLAYER_RESPONSE") {
-        handleNewPlayerResponse(event);
-    }
+    // if (!m_serverSetupIsComplete) return;
 
-    if (!m_serverSetupIsComplete) return;
+    // if (command == "ADD_SCORE") {
+    //     handleAddScore(event);
+    // }
 
-    if (command == "ADD_SCORE") {
-        handleAddScore(event);
-    }
+    // if (command == "BERRY_POSITION") {
+    //     handleBerryPosition(event);
+    // }
 
-    if (command == "BERRY_POSITION") {
-        handleBerryPosition(event);
-    }
-
-    if (command == "PLAYING_FIELD") {
+    // if (command == "PLAYING_FIELD") {
         
-    }
+    // }
 
-    if (command == "WAITING_FOR_PLAYERS") {
+    // if (command == "WAITING_FOR_PLAYERS") {
 
-    }
+    // }
 
-    // SCORE_COLLECTED;0;berry;1;12;22
-    if (command == "SCORE_COLLECTED") {
-        handleScoreCollected(event);
-    }
+    // // SCORE_COLLECTED;0;berry;1;12;22
+    // if (command == "SCORE_COLLECTED") {
+    //     handleScoreCollected(event);
+    // }
 
-    if (command == "NEW_PLAYER") {
-        addNewPlayer(event);
-    }
+    // if (command == "NEW_PLAYER") {
+    //     addNewPlayer(event);
+    // }
 
-    if (command == "NEW_PLAYER_JOINED") {
+    // if (command == "NEW_PLAYER_JOINED") {
 
-    }
+    // }
 
-    if (command == "PLAYER_INFO") {
-        addPlayer(event);
-    }
+    // if (command == "PLAYER_INFO") {
+    //     addPlayer(event);
+    // }
 
-    if (command == "PLAYER_NEW_POS") {
-        updatePlayerPosition(event);
-    }
+    // if (command == "PLAYER_NEW_POS") {
+    //     updatePlayerPosition(event);
+    // }
 
-    // PLAYER_UPDATE_POSITION;pid;xPos;yPos
-    if (command == "PLAYER_UPDATE_POSITION") {
-        updatePlayerPosition(event);
-    }
+    // // PLAYER_UPDATE_POSITION;pid;xPos;yPos
+    // if (command == "PLAYER_UPDATE_POSITION") {
+    //     updatePlayerPosition(event);
+    // }
 }
 
 void Game::handleAddScore(const std::vector<std::string> &event) {
