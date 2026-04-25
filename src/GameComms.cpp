@@ -35,54 +35,6 @@ void Game::handleEvent(std::vector<std::string> &event) {
         (this->*(it->second))(event);
     }
 
-    // // TODO: I think this could segfault in the future if not handled properly
-    // if (command == "NEW_PLAYER_RESPONSE") {
-    //     handleNewPlayerResponse(event);
-    // }
-
-    // if (!m_serverSetupIsComplete) return;
-
-    // if (command == "ADD_SCORE") {
-    //     handleAddScore(event);
-    // }
-
-    // if (command == "BERRY_POSITION") {
-    //     handleBerryPosition(event);
-    // }
-
-    // if (command == "PLAYING_FIELD") {
-        
-    // }
-
-    // if (command == "WAITING_FOR_PLAYERS") {
-
-    // }
-
-    // // SCORE_COLLECTED;0;berry;1;12;22
-    // if (command == "SCORE_COLLECTED") {
-    //     handleScoreCollected(event);
-    // }
-
-    // if (command == "NEW_PLAYER") {
-    //     addNewPlayer(event);
-    // }
-
-    // if (command == "NEW_PLAYER_JOINED") {
-
-    // }
-
-    // if (command == "PLAYER_INFO") {
-    //     addPlayer(event);
-    // }
-
-    // if (command == "PLAYER_NEW_POS") {
-    //     updatePlayerPosition(event);
-    // }
-
-    // // PLAYER_UPDATE_POSITION;pid;xPos;yPos
-    // if (command == "PLAYER_UPDATE_POSITION") {
-    //     updatePlayerPosition(event);
-    // }
 }
 
 void Game::handleAddScore(const std::vector<std::string> &event) {
