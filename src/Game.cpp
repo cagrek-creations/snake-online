@@ -21,6 +21,8 @@ void Game::init() {
     setupController();
 
     setupGame();
+
+    registerHandlers();
 }
 
 void Game::reset() {
