@@ -1,7 +1,34 @@
 #include "headers/Game.hpp"
 
+void Game::registerHandlers() {
+    // TODO: I think this could segfault in the future if not handled properly
+    handlers["NEW_PLAYER_RESPONSE"]     = &Game::handleNewPlayerResponse;
+
+    handlers["ADD_SCORE"]               = &Game::handleAddScore;
+    handlers["BERRY_POSITION"]          = &Game::handleBerryPosition;
+    // handlers["NEW_PLAYER"]              = &Game::addNewPlayer;
+    // handlers["NEW_PLAYER_JOINED"]       = &Game::handleNewPlayerJoined;
+    // handlers["PLAYER_INFO"]             = &Game::addPlayer;
+    // handlers["PLAYER_NEW_POS"]          = &Game::updatePlayerPosition;
+    // handlers["PLAYER_UPDATE_POSITION"]  = &Game::updatePlayerPosition;
+    handlers["PLAYING_FIELD"]           = &Game::handlePlayingField;
+    handlers["SCORE_COLLECTED"]         = &Game::handleScoreCollected;
+    handlers["WAITING_FOR_PLAYERS"]     = &Game::handleWaitingForPlayers;
+
+    allowedBeforeSetup.insert("NEW_PLAYER_RESPONSE");
+}
+
 void Game::handleEvent(std::vector<std::string> &event) {
     std::string command = event[0];
+
+    // Before game is setup, only allow specific commands.
+    if (!m_serverSetupIsComplete && allowedBeforeSetup.find(command) == allowedBeforeSetup.end()) return;
+
+    // auto it = handlers.find(command);
+
+    // if (it != handlers.end()) {
+    //     (this->*(it->second))(event);
+    // }
 
     // TODO: I think this could segfault in the future if not handled properly
     if (command == "NEW_PLAYER_RESPONSE") {

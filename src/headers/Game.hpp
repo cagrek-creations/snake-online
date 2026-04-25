@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <chrono>
+#include <unordered_set>
 
 #include "Controller.hpp"
 #include "Common.hpp"
@@ -140,6 +141,13 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
         void handleEffects(const std::string &type, int pid);
 
         // Game comms
+        std::unordered_map<
+            std::string,
+            void (Game::*)(const std::vector<std::string>&)
+        > handlers;
+
+        std::unordered_set<std::string> allowedBeforeSetup = {};
+        void registerHandlers();
         void handleAddScore(const std::vector<std::string> &event);
         void handleBerryPosition(const std::vector<std::string> &event);
         void handleNewPlayerResponse(const std::vector<std::string> &event);
