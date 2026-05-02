@@ -5,6 +5,7 @@ This version is the online version of: [https://github.com/cagrek-creations/snak
 
 # Dependencies
 [cpp-lib](https://github.com/cagrek-creations/cpp-lib)
+[snake-assets](https://github.com/cagrek-creations/snake-assets)
 
 Before running any `make` command, be sure to run `make install`.
 
