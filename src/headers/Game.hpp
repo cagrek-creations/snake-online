@@ -26,7 +26,8 @@ enum gameState {START_MENU  = 0,
                 GAME_PLAY   = 1,
                 OPTIONS     = 2, 
                 GAME_QUIT   = 3,
-                CREDITS     = 4
+                CREDITS     = 4,
+                SPECTATE    = 5
             };
 
 
@@ -37,7 +38,7 @@ std::function<void()> bindMemberFunction(std::unique_ptr<ClassType>& object, voi
     };
 }
 
-const auto TIMEOUT_DURATION = std::chrono::seconds(1);
+const auto TIMEOUT_DURATION = std::chrono::seconds(5);
 
 class Game : public Observer, public std::enable_shared_from_this<Game>{
 

@@ -144,13 +144,12 @@ void Game::createPlayer(int size, int xPos, int yPos) {
 void Game::renderState() {
 
     if (m_state == START_MENU) {
-        // t->render();
         m_startMenu->render();
         m_gui->renderTexture(TextureID::MAINMENU, Vector2(0,0), Vector2(WINDOW_WIDTH, WINDOW_HEIGHT));
     } else if (m_state == OPTIONS) {
-        // m_optionsMenu->render();
         m_optionsMenu->render();
     } else if (m_state == GAME_PLAY) {
+        // TODO: Move this to a function so spectate can be used.
         m_grid->render();
 
         for (auto &p : m_players) {

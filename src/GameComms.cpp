@@ -3,18 +3,18 @@
 void Game::registerHandlers() {
     std::cout << "registering handlers" << std::endl;
     // TODO: I think this could segfault in the future if not handled properly
-    handlers["NEW_PLAYER_RESPONSE"]     = &Game::handleNewPlayerResponse;
+    handlers["NEW_PLAYER_RESPONSE"]         = &Game::handleNewPlayerResponse;
 
-    handlers["ADD_SCORE"]               = &Game::handleAddScore;
-    handlers["BERRY_POSITION"]          = &Game::handleBerryPosition;
-    // handlers["NEW_PLAYER"]              = &Game::addNewPlayer;
-    // handlers["NEW_PLAYER_JOINED"]       = &Game::handleNewPlayerJoined;
-    // handlers["PLAYER_INFO"]             = &Game::addPlayer;
-    // handlers["PLAYER_NEW_POS"]          = &Game::updatePlayerPosition;
-    // handlers["PLAYER_UPDATE_POSITION"]  = &Game::updatePlayerPosition;
-    // handlers["PLAYING_FIELD"]           = &Game::handlePlayingField;
-    handlers["SCORE_COLLECTED"]         = &Game::handleScoreCollected;
-    // handlers["WAITING_FOR_PLAYERS"]     = &Game::handleWaitingForPlayers;
+    handlers["ADD_SCORE"]                   = &Game::handleAddScore;
+    handlers["BERRY_POSITION"]              = &Game::handleBerryPosition;
+    // handlers["NEW_PLAYER"]               = &Game::addNewPlayer;
+    // handlers["NEW_PLAYER_JOINED"]        = &Game::handleNewPlayerJoined;
+    // handlers["PLAYER_INFO"]              = &Game::addPlayer;
+    // handlers["PLAYER_NEW_POS"]           = &Game::updatePlayerPosition;
+    // handlers["PLAYER_UPDATE_POSITION"]   = &Game::updatePlayerPosition;
+    // handlers["PLAYING_FIELD"]            = &Game::handlePlayingField;
+    handlers["SCORE_COLLECTED"]             = &Game::handleScoreCollected;
+    // handlers["WAITING_FOR_PLAYERS"]      = &Game::handleWaitingForPlayers;
 
     allowedBeforeSetup.insert("NEW_PLAYER_RESPONSE");
 }
