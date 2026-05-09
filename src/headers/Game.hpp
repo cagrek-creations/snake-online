@@ -128,9 +128,9 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
 
         // Game logic
         void setupFromServer(std::vector<std::string> event);
-        void addNewPlayer(std::vector<std::string> event);
-        void addPlayer(std::vector<std::string> event);
-        void updatePlayerPosition(std::vector<std::string> event);
+        void addNewPlayer(const std::vector<std::string> &event);
+        void addPlayer(const std::vector<std::string> &event);
+        void updatePlayerPosition(const std::vector<std::string> &event);
 
         void addScore(Vector2 pos, const std::string &type);
         void removeScore(Vector2 pos);

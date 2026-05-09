@@ -8,7 +8,7 @@ void Game::handleEvents(std::vector<std::string> serverEvents) {
     }
 }
 
-void Game::updatePlayerPosition(std::vector<std::string> event) {
+void Game::updatePlayerPosition(const std::vector<std::string> &event) {
     int pid = stoi(event[1]);
     int xPos = stoi(event[2]);
     int yPos = stoi(event[3]);
@@ -19,7 +19,7 @@ void Game::updatePlayerPosition(std::vector<std::string> event) {
     }
 }
 
-void Game::addNewPlayer(std::vector<std::string> event) {
+void Game::addNewPlayer(const std::vector<std::string> &event) {
     int eventsize = event.size();
     int pid = stoi(event[1]);
     std::string color = event[3];
@@ -32,7 +32,7 @@ void Game::addNewPlayer(std::vector<std::string> event) {
     m_players[pid] = std::move(newPlayer);
 }
 
-void Game::addPlayer(std::vector<std::string> event) {
+void Game::addPlayer(const std::vector<std::string> &event) {
     int eventsize = event.size();
     int pid = stoi(event[1]);
     std::string color = event[3];

@@ -9,9 +9,9 @@ void Game::registerHandlers() {
     handlers["BERRY_POSITION"]          = &Game::handleBerryPosition;
     // handlers["NEW_PLAYER"]              = &Game::addNewPlayer;
     // handlers["NEW_PLAYER_JOINED"]       = &Game::handleNewPlayerJoined;
-    // handlers["PLAYER_INFO"]             = &Game::addPlayer;
-    // handlers["PLAYER_NEW_POS"]          = &Game::updatePlayerPosition;
-    // handlers["PLAYER_UPDATE_POSITION"]  = &Game::updatePlayerPosition;
+    handlers["PLAYER_INFO"]             = &Game::addPlayer;
+    handlers["PLAYER_NEW_POS"]          = &Game::updatePlayerPosition;
+    handlers["PLAYER_UPDATE_POSITION"]  = &Game::updatePlayerPosition;
     // handlers["PLAYING_FIELD"]           = &Game::handlePlayingField;
     handlers["SCORE_COLLECTED"]         = &Game::handleScoreCollected;
     // handlers["WAITING_FOR_PLAYERS"]     = &Game::handleWaitingForPlayers;
