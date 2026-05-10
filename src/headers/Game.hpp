@@ -22,11 +22,12 @@
 
 typedef std::chrono::high_resolution_clock Clock;
 
-enum gameState {START_MENU  = 0, 
-                GAME_PLAY   = 1,
-                OPTIONS     = 2, 
-                GAME_QUIT   = 3,
-                CREDITS     = 4
+enum gameState {START_MENU      = 0,
+                GAME_PLAY       = 1,
+                OPTIONS         = 2,
+                GAME_QUIT       = 3,
+                CREDITS         = 4,
+                GAME_SPECTATE   = 5
             };
 
 
