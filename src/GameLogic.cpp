@@ -9,12 +9,14 @@ void Game::handleEvents(std::vector<std::string> serverEvents) {
 }
 
 void Game::updatePlayerPosition(const std::vector<std::string> &event) {
+
     int pid = stoi(event[1]);
     int xPos = stoi(event[2]);
     int yPos = stoi(event[3]);
     if (m_players[pid]) {
         // TODO: Change to updateSnakePos?
         // TODO: Fix positioning. Currently it is not aligned with server or game logic
+
         m_players[pid]->updatePos(xPos * m_grid->getGridPointWidth(), yPos * m_grid->getGridPointHeight());
     }
 }

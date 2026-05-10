@@ -314,7 +314,6 @@ void Snake::updateSnakePos(Gridpoint *gp) {
     Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
     // std::cout << "creating new block with: " << m_degrees << std::endl;
     snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
-
     snakeBlocks.back().setSprite(m_spriteSnakeTail);
     auto head = &snakeBlocks[0];
     auto neck = &snakeBlocks[1];
@@ -379,6 +378,7 @@ void Snake::calculateDirectionOtherPlayer(Vector2 _op, Vector2 _np) {
 }
 
 void Snake::updatePos(int xPos, int yPos) {
+
     int newPosX = xPos;
     int newPosY = yPos;
   

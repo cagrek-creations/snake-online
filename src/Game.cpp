@@ -59,6 +59,7 @@ void Game::update(double deltaTime) {
 
         auto player = m_players[m_myPid];
         player->update(m_deltaTime);
+
         Vector2 pos = player->getPos();
         Gridpoint *gp = m_grid->getPoint(pos.x + 1, pos.y + 1);
 
@@ -69,6 +70,11 @@ void Game::update(double deltaTime) {
             // std::cout << command << std::endl;
             m_lastPosition = command;
             m_gameController->sendMessage(command);
+        }
+
+    } else if (m_state == GAME_SPECTATE) {
+        for (auto &s : m_scores) {
+            s.second->update(deltaTime);
         }
     }
 }

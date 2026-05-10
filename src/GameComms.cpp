@@ -7,8 +7,12 @@ void Game::registerHandlers() {
 
     handlers["ADD_SCORE"]               = &Game::handleAddScore;
     handlers["BERRY_POSITION"]          = &Game::handleBerryPosition;
-    // handlers["NEW_PLAYER"]              = &Game::addNewPlayer;
+    handlers["NEW_PLAYER"]              = &Game::addNewPlayer;
     // handlers["NEW_PLAYER_JOINED"]       = &Game::handleNewPlayerJoined;
+
+    handlers["GAME_STARTED"]            = &Game::handleWaitGame;
+    handlers["GAME_STARTING"]           = &Game::handleWaitGame;
+
     handlers["PLAYER_INFO"]             = &Game::addPlayer;
     handlers["PLAYER_NEW_POS"]          = &Game::updatePlayerPosition;
     handlers["PLAYER_UPDATE_POSITION"]  = &Game::updatePlayerPosition;
@@ -28,13 +32,17 @@ void Game::handleEvent(std::vector<std::string> &event) {
         std::cout << command << " is not allowed before server setup" << std::endl;
         return;
     }
-
+    std::cout << "cmd: " << command << std::endl;
     auto it = handlers.find(command);
 
     if (it != handlers.end()) {
         (this->*(it->second))(event);
     }
 
+}
+
+void Game::handleWaitGame(const std::vector <std::string> &event) {
+    m_state = GAME_SPECTATE;
 }
 
 void Game::handleAddScore(const std::vector<std::string> &event) {
