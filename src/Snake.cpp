@@ -459,7 +459,7 @@ void Snake::setSpeed(int speed) {
     m_speedLimit = m_speedLimitBase / speed;
 }
 
-// TODO: Redo with vectors and merge with bottom
+// TODO: Redo with vectors and merge with bottom, can this be removed?
 Snakeblock::Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, SDL_Texture *texture, int degrees, SDL_Color color, direction dir) {
 
     m_snakeBlockPos = Vector2(snakeBlockXpos, snakeBlockYpos);

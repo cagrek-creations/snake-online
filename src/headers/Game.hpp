@@ -156,6 +156,7 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
         void handleWaitingForPlayers(const std::vector<std::string> &event);
         void handleScoreCollected(const std::vector<std::string> &event);
         void handleWaitGame(const std::vector<std::string> &event);
+        void handleNewPlayerJoined(const std::vector<std::string> &event);
 
         bool m_isConnected{false};
 };
