@@ -20,6 +20,9 @@ void Game::registerHandlers() {
     handlers["SCORE_COLLECTED"]         = &Game::handleScoreCollected;
     // handlers["WAITING_FOR_PLAYERS"]     = &Game::handleWaitingForPlayers;
 
+    handlers["GAME_RESET"]              = &Game::gameReset;
+    handlers["GAME_STOP"]               = &Game::gameStop;
+
     allowedBeforeSetup.insert("NEW_PLAYER_RESPONSE");
 }
 
@@ -27,7 +30,6 @@ void Game::handleEvent(std::vector<std::string> &event) {
     std::string command = event[0];
 
     // Before game is setup, only allow specific commands.
-    std::cout << *allowedBeforeSetup.begin() << std::endl;
     if (!m_serverSetupIsComplete && (allowedBeforeSetup.find(command) == allowedBeforeSetup.end())) {
         std::cout << command << " is not allowed before server setup" << std::endl;
         return;
@@ -80,6 +82,10 @@ void Game::handleScoreCollected(const std::vector<std::string> &event) {
 void Game::handleNewPlayerJoined(const std::vector<std::string> &event) {}
 
 void Game::handleWaitingForPlayers(const std::vector<std::string> &event) {}
+
+void Game::gameReset(const std::vector<std::string> &event) {}
+
+void Game::gameStop(const std::vector<std::string> &event) {}
 
 
 

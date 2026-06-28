@@ -157,7 +157,7 @@ void Game::renderState() {
     } else if (m_state == OPTIONS) {
         // m_optionsMenu->render();
         m_optionsMenu->render();
-    } else if (m_state == GAME_PLAY) {
+    } else if (m_state == GAME_PLAY || m_state == GAME_SPECTATE) {
         m_grid->render();
 
         for (auto &p : m_players) {
