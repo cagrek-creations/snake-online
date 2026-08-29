@@ -67,6 +67,8 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
         
     private:
         double m_deltaTime = 0;
+        float countdown = 0;
+        bool waitingForPlayers = false;
         // FPS
         float m_fps = 0;
         float m_fpsCounter = 0;
@@ -160,6 +162,7 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
         void gameReset(const std::vector<std::string> &event);
         void gameStop(const std::vector<std::string> &event);
         void handleDisconnected(const std::vector<std::string> &event);
+        void handleGameStarting(const std::vector<std::string> &event);
 
         bool m_isConnected{false};
 };

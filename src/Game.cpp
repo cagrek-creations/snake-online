@@ -52,6 +52,12 @@ void Game::update(double deltaTime) {
     handleEvents(m_gameController->getLocalEvents());
 
     if (m_state == GAME_PLAY) {
+        if (waitingForPlayers) return;
+
+        if (countdown >= 0) {
+            countdown -= deltaTime;
+            return;
+        }
 
         for (auto &s : m_scores) {
             s.second->update(deltaTime);
@@ -167,6 +173,10 @@ void Game::renderState() {
         for (auto &s : m_scores) {
             s.second->render();
         }
+
+        if (waitingForPlayers) m_gui->renderText(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y, "WAITING FOR PLAYERS");
+        if (countdown >= 0) m_gui->renderText(WINDOW_MIDDLE_X-100, WINDOW_MIDDLE_Y-200, std::to_string(countdown));
+
     } else if (m_state == GAME_QUIT) {
         m_isRunning = false;
     } else if (m_state == CREDITS) {

@@ -68,10 +68,10 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, 
     if(gp == nullptr) std::cerr << "Failed finding gridpoint";
     Vector2 gridPos = Vector2(pos.x, pos.y);
     if(gp != nullptr) {
-        std::cout << "Found gridpos";
+        // std::cout << "Found gridpos";
         gridPos = gp->getGridPointPos();
     }
-    std::cout << gridPos.x;
+    // std::cout << gridPos.x;
     if(gp == nullptr) std::cout << "WHAT";
     for (int i = 0; i < snakeSize; i++) {
         snakeBlocks.push_back(Snakeblock(m_gui, gridPos.x, gridPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeBody, m_degrees, m_color, m_snakeDirection));
@@ -308,28 +308,33 @@ int Snake::calculateBodyOffset(direction dir1, direction dir2) {
 }
 
 void Snake::updateSnakePos(Gridpoint *gp) {
-
     snakeBlocks.pop_back();
     Vector2 newPos = gp->getGridPointPos(); //+ Vector2(2, 2);
     Snakeblock newSnakeBlock = Snakeblock(m_gui, newPos.x, newPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeHead, m_degrees, m_color, m_snakeDirection);
     // std::cout << "creating new block with: " << m_degrees << std::endl;
     snakeBlocks.insert(snakeBlocks.begin(), newSnakeBlock);
-    snakeBlocks.back().setSprite(m_spriteSnakeTail);
-    auto head = &snakeBlocks[0];
-    auto neck = &snakeBlocks[1];
-    auto tail = &snakeBlocks[snakeBlocks.size() - 1];
-    auto tailneck = &snakeBlocks[snakeBlocks.size() - 2];
-    neck->setSprite(m_spriteSnakeBody);
-    tail->setDegrees(tailneck->getDegrees());
-    tail->rotateTexture(180);
-
-    // Logic for calculating neck.
-    if (head->getDirection() != neck->getDirection()) {
-        // Direction has changed, set texture to curve and calculate offset
-        neck->setSprite(m_spriteSnakeCurve);
-        neck->rotateTexture(calculateBodyOffset(head->getDirection(), neck->getDirection()) - neck->getDegrees());
+    if (snakeBlocks.empty()) {
+        return;
     }
 
+    snakeBlocks.back().setSprite(m_spriteSnakeTail);
+
+    auto head = &snakeBlocks[0];
+    auto tail = &snakeBlocks[snakeBlocks.size() - 1];
+
+    if (snakeBlocks.size() >= 2) {
+        auto neck = &snakeBlocks[1];
+        auto tailneck = &snakeBlocks[snakeBlocks.size() - 2];
+        neck->setSprite(m_spriteSnakeBody);
+        tail->setDegrees(tailneck->getDegrees());
+        tail->rotateTexture(180);
+        // Logic for calculating neck.
+        if (head->getDirection() != neck->getDirection()) {
+            // Direction has changed, set texture to curve and calculate offset
+            neck->setSprite(m_spriteSnakeCurve);
+            neck->rotateTexture(calculateBodyOffset(head->getDirection(), neck->getDirection()) - neck->getDegrees());
+        }
+    }
 }
 
 int getDegrees(direction dir) {
@@ -378,12 +383,13 @@ void Snake::calculateDirectionOtherPlayer(Vector2 _op, Vector2 _np) {
 }
 
 void Snake::updatePos(int xPos, int yPos) {
-
+    if (snakeBlocks.empty()) {
+        return;
+    }
     int newPosX = xPos;
     int newPosY = yPos;
   
     Gridpoint *newPoint = m_grid->getPoint(newPosX + m_snakeWidth / 2, newPosY + m_snakeHeight / 2);
-
     Vector2 oldPos = snakeBlocks.back().getPos();
     Gridpoint *oldPoint = m_grid->getPoint(oldPos.x + m_snakeWidth / 2, oldPos.y + m_snakeHeight / 2);
 
@@ -392,7 +398,6 @@ void Snake::updatePos(int xPos, int yPos) {
         if(!newPoint->isEmpty()) {
             std::cout << "GAME OVER!" << std::endl;
         }
-
         newPoint->setNotEmpty();
 
         auto neck = snakeBlocks[0].getPos(); // TODO: should verify that index 0 exists?
@@ -402,7 +407,6 @@ void Snake::updatePos(int xPos, int yPos) {
         Vector2 _op = neckPoint->getGridPointPos();
 
         calculateDirectionOtherPlayer(_op, _np);
-
         // std::cout << m_degrees << std::endl;
         updateSnakePos(newPoint);
     } else {

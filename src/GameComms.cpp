@@ -11,20 +11,22 @@ void Game::registerHandlers() {
     handlers["NEW_PLAYER_JOINED"]       = &Game::handleNewPlayerJoined;
 
     handlers["GAME_STARTED"]            = &Game::handleWaitGame;
-    handlers["GAME_STARTING"]           = &Game::handleWaitGame;
+    handlers["GAME_STARTING"]           = &Game::handleGameStarting;
 
     handlers["PLAYER_INFO"]             = &Game::addPlayer;
     handlers["PLAYER_NEW_POS"]          = &Game::updatePlayerPosition;
     handlers["PLAYER_UPDATE_POSITION"]  = &Game::updatePlayerPosition;
     // handlers["PLAYING_FIELD"]           = &Game::handlePlayingField;
     handlers["SCORE_COLLECTED"]         = &Game::handleScoreCollected;
-    // handlers["WAITING_FOR_PLAYERS"]     = &Game::handleWaitingForPlayers;
+    handlers["WAITING_FOR_PLAYERS"]     = &Game::handleWaitingForPlayers;
     handlers["DISCONNECTED"]            = &Game::handleDisconnected;
 
     handlers["GAME_RESET"]              = &Game::gameReset;
     handlers["GAME_STOP"]               = &Game::gameStop;
 
     allowedBeforeSetup.insert("NEW_PLAYER_RESPONSE");
+    allowedBeforeSetup.insert("WAITING_FOR_PLAYERS");
+    // allowedBeforeSetup.insert("GAME_STARTING");
 }
 
 void Game::handleEvent(std::vector<std::string> &event) {
@@ -87,12 +89,19 @@ void Game::handleDisconnected(const std::vector<std::string> &event) {
 
 void Game::handleNewPlayerJoined(const std::vector<std::string> &event) {}
 
-void Game::handleWaitingForPlayers(const std::vector<std::string> &event) {}
+void Game::handleWaitingForPlayers(const std::vector<std::string> &event) {
+    bool waiting = stoi(event[1]);
+    waitingForPlayers = waiting;
+}
 
 void Game::gameReset(const std::vector<std::string> &event) {}
 
 void Game::gameStop(const std::vector<std::string> &event) {}
 
+void Game::handleGameStarting(const std::vector<std::string> &event) {
+    waitingForPlayers = false;
+    countdown = 2000;
+}
 
 
     // if (command == "PLAYER_SCORE_COLLECTED") {
