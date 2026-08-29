@@ -159,6 +159,7 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
         void handleNewPlayerJoined(const std::vector<std::string> &event);
         void gameReset(const std::vector<std::string> &event);
         void gameStop(const std::vector<std::string> &event);
+        void handleDisconnected(const std::vector<std::string> &event);
 
         bool m_isConnected{false};
 };

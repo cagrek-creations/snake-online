@@ -19,6 +19,7 @@ void Game::registerHandlers() {
     // handlers["PLAYING_FIELD"]           = &Game::handlePlayingField;
     handlers["SCORE_COLLECTED"]         = &Game::handleScoreCollected;
     // handlers["WAITING_FOR_PLAYERS"]     = &Game::handleWaitingForPlayers;
+    handlers["DISCONNECTED"]            = &Game::handleDisconnected;
 
     handlers["GAME_RESET"]              = &Game::gameReset;
     handlers["GAME_STOP"]               = &Game::gameStop;
@@ -77,6 +78,11 @@ void Game::handleScoreCollected(const std::vector<std::string> &event) {
     m_players[pid]->grow();
 
     handleEffects(type, pid);
+}
+
+void Game::handleDisconnected(const std::vector<std::string> &event) {
+    int pid = stoi(event[1]);
+    m_players.erase(pid);
 }
 
 void Game::handleNewPlayerJoined(const std::vector<std::string> &event) {}
