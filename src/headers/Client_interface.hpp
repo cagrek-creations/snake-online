@@ -67,12 +67,12 @@ class TcpCommunication {
                     m_isConnected = false;
                     return;
                 }
-                
+
             }
         }
 
         std::string receiveChar(size_t bufferSize) {
-            
+
             if (m_clientSocket == INVALID_SOCKET_VALUE) {
                 std::cerr << "Not connected to a server\n";
                 m_isConnected = false;
@@ -155,7 +155,7 @@ class TcpCommunication {
         bool isConnected() {
             return m_isConnected;
         }
-        
+
 
     private:
 
@@ -170,7 +170,7 @@ class TcpCommunication {
         bool m_isConnected = false;
 
         bool connectToServer() {
-            
+
             std::cout << "Connecting" << std::endl;
             sockaddr_in serverAddr{};
             serverAddr.sin_family = AF_INET;

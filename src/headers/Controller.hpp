@@ -5,7 +5,6 @@
 #include <vector>
 #include <thread>
 #include <mutex>
-#include <algorithm> 
 #include <memory>
 
 #include <SDL2/SDL.h>

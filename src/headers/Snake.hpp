@@ -50,7 +50,7 @@ class UIElementSnakeEffect {
         SDL_Renderer *m_renderer;
 
         SDL_Color m_color;
-        
+
         Vector2 m_pos;
         Vector2 m_barPos;
 
@@ -117,7 +117,7 @@ class Snake : public Observer {
     public:
         Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, int pid, int speed);
         Snake() {
-            
+
         }
         ~Snake();
 
@@ -174,7 +174,7 @@ class Snake : public Observer {
 
     private:
 
-        
+
         int calculateBodyOffset(direction dir1, direction dir2);
 
         int m_snakeSize;
@@ -193,7 +193,7 @@ class Snake : public Observer {
         float m_speedBoostTime;
         float m_speedBoostTimeout;
         float m_speedBoostTimeLimit;
-        
+
         direction m_snakeDirection;
         direction m_newSnakeDirection;
 

@@ -11,9 +11,7 @@
 #include <SDL2/SDL_mixer.h>
 
 #include <unordered_map>
-#include <vector>
 #include <memory>
-#include <thread>
 
 // #include "Menu.hpp"
 #include "Sprite.hpp"
@@ -122,7 +120,7 @@ class GUI : public Observer {
     private:
         int m_windowWidth; 
         int m_windowHeight;
-        
+
         bool m_windowClose;
 
         // std::thread m_guiThread;
