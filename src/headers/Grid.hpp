@@ -3,7 +3,6 @@
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 #include <SDL2/SDL.h>
 
@@ -69,7 +68,7 @@ class Gridpoint {
         SDL_Rect m_destRect;
 
         Vector2 m_pos;
-    
+
 };
 
 class Grid {
