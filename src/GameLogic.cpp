@@ -61,8 +61,13 @@ void Game::setupFromServer(std::vector<std::string> event) {
     // Set grid size
     createGrid(stoi(event[4]), stoi(event[5]));
 
-    // Set snake
-    createPlayer(6, stoi(event[2]), stoi(event[3]));
+    m_isSpectator = stoi(event[6]);
+    if (!m_isSpectator) {
+        // Set snake
+        createPlayer(6, stoi(event[2]), stoi(event[3]));
+    } else {
+        changeState(GAME_SPECTATE);
+    }
 }
 
 void Game::addScore(Vector2 pos, const std::string &type) {

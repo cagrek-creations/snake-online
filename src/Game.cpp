@@ -13,7 +13,7 @@ Game::Game() {
 }
 
 void Game::init() {
-    
+
     setupSound();
 
     setupGui();
@@ -124,6 +124,7 @@ void Game::onEventState(const SDL_Event &event) {
 }
 
 void Game::onEvent(const SDL_Event& event) {
+    if (m_state == GAME_SPECTATE) return;
     if (m_myPid != -1) m_players[m_myPid]->onEvent(event);
 
     const Uint8 *key_state = SDL_GetKeyboardState(NULL);
@@ -266,11 +267,12 @@ void Game::setupStartMenu() {
 
     auto s = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() - 275, m_startMenu->getY() - 25), "START GAME", "pixeloidm_64", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     s->bind([this]() {
+        this->changeState(gameState::GAME_PLAY);
+
         if (!m_isConnected) {
             connect();
         }
 
-        this->changeState(gameState::GAME_PLAY);
         this->m_sound->playSound("MenuSelectEnter", 0);
     });
 
