@@ -61,7 +61,7 @@ void Game::setupFromServer(std::vector<std::string> event) {
     // Set grid size
     createGrid(stoi(event[4]), stoi(event[5]));
 
-    m_isSpectator = stoi(event[6]);
+    m_isSpectator = false;// stoi(event[6]);
     if (!m_isSpectator) {
         // Set snake
         createPlayer(6, stoi(event[2]), stoi(event[3]));
