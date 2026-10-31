@@ -46,6 +46,10 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/cpp-lib/%.cpp
 run: snake
 	./bin/snake
 
+test: snake
+	./bin/snake &
+	./bin/snake &
+
 clean: remove
 
 clangd:
