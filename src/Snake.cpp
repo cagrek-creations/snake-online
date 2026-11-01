@@ -94,7 +94,7 @@ Snake::~Snake() {
     // SDL_DestroyTexture(m_textureSnakeHead);
 }
 
-void Snake::render() {
+void Snake::render(int myPid) {
 
     for (int i = 0; i < snakeBlocks.size(); i++) {
         if (m_isGhost > 0) {
@@ -103,8 +103,9 @@ void Snake::render() {
             snakeBlocks[i].render();
         }
     }
-
-    if (m_pid == 0) {
+    std::cout << "my pid: " << myPid << std::endl;
+    std::cout << "snake pid: " << m_pid << std::endl;
+    if (m_pid == myPid) {
         renderBoostBar();
         // renderEffectBars();
         for (const auto& pair : m_effectUIs) {

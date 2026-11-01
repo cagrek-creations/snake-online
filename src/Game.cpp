@@ -150,13 +150,12 @@ void Game::createPlayer(int size, int xPos, int yPos) {
     int xPosGrid = ((xPos) * (m_grid->getGridPointWidth()));
     int yPosGrid = ((yPos) * (m_grid->getGridPointHeight()));
     Vector2 initialPos = Vector2(xPosGrid, yPosGrid);
-    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), size, m_gui->getColor(m_playerColor), m_players.size(), 1);
+    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), size, m_gui->getColor(m_playerColor), m_myPid, 1);
     m_gameController->attachObserver(snake);
     m_players[m_myPid] = std::move(snake);
 }
 
 void Game::renderState() {
-
     if (m_state == START_MENU) {
         // t->render();
         m_startMenu->render();
@@ -169,7 +168,7 @@ void Game::renderState() {
 
         for (auto &p : m_players) {
             if (!p.second) continue;
-            p.second->render();
+            p.second->render(m_myPid);
         }
 
         for (auto &s : m_scores) {
@@ -389,4 +388,3 @@ void Game::loadTextures() {
     m_gui->loadAtlas(TextureID::A_GREEN_SNAKE, "snakes/g_s.png", 16, 16, 4);
     m_gui->loadAtlas(TextureID::A_RED_SNAKE, "snakes/r_s.png", 16, 16, 4);
 }
-
