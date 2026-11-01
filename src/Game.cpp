@@ -168,6 +168,7 @@ void Game::renderState() {
         m_grid->render();
 
         for (auto &p : m_players) {
+            if (!p.second) continue;
             p.second->render();
         }
 
