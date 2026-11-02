@@ -13,7 +13,7 @@ Game::Game() {
 }
 
 void Game::init() {
-    
+
     setupSound();
 
     setupGui();
@@ -124,6 +124,7 @@ void Game::onEventState(const SDL_Event &event) {
 }
 
 void Game::onEvent(const SDL_Event& event) {
+    if (m_state == GAME_SPECTATE) return;
     if (m_myPid != -1) m_players[m_myPid]->onEvent(event);
 
     const Uint8 *key_state = SDL_GetKeyboardState(NULL);
@@ -149,13 +150,12 @@ void Game::createPlayer(int size, int xPos, int yPos) {
     int xPosGrid = ((xPos) * (m_grid->getGridPointWidth()));
     int yPosGrid = ((yPos) * (m_grid->getGridPointHeight()));
     Vector2 initialPos = Vector2(xPosGrid, yPosGrid);
-    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), size, m_gui->getColor(m_playerColor), m_players.size(), 1);
+    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), size, m_gui->getColor(m_playerColor), m_myPid, 1);
     m_gameController->attachObserver(snake);
     m_players[m_myPid] = std::move(snake);
 }
 
 void Game::renderState() {
-
     if (m_state == START_MENU) {
         // t->render();
         m_startMenu->render();
@@ -167,7 +167,8 @@ void Game::renderState() {
         m_grid->render();
 
         for (auto &p : m_players) {
-            p.second->render();
+            if (!p.second) continue;
+            p.second->render(m_myPid);
         }
 
         for (auto &s : m_scores) {
@@ -266,11 +267,12 @@ void Game::setupStartMenu() {
 
     auto s = std::make_shared<GMenuItemButton>(m_gui.get(), Vector2(m_startMenu->getX() - 275, m_startMenu->getY() - 25), "START GAME", "pixeloidm_64", color::GREEN_7EAD63, color::WHITE_CCCCCC);
     s->bind([this]() {
+        this->changeState(gameState::GAME_PLAY);
+
         if (!m_isConnected) {
             connect();
         }
 
-        this->changeState(gameState::GAME_PLAY);
         this->m_sound->playSound("MenuSelectEnter", 0);
     });
 
@@ -386,4 +388,3 @@ void Game::loadTextures() {
     m_gui->loadAtlas(TextureID::A_GREEN_SNAKE, "snakes/g_s.png", 16, 16, 4);
     m_gui->loadAtlas(TextureID::A_RED_SNAKE, "snakes/r_s.png", 16, 16, 4);
 }
-

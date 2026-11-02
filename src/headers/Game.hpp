@@ -69,6 +69,8 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
         double m_deltaTime = 0;
         float countdown = 0;
         bool waitingForPlayers = false;
+        bool m_isSpectator = true;
+
         // FPS
         float m_fps = 0;
         float m_fpsCounter = 0;
