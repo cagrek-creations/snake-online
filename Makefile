@@ -14,7 +14,7 @@ ifeq ($(OS), Windows_NT)
 else
     UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S), Linux)
-		LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+		LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -MMD -MP
 	endif
 endif
 
@@ -52,7 +52,8 @@ clangd:
 	compiledb make
 
 remove:
-	rm build/*
+	rm -f obj/*
+	rm -f build/*
 
 install:
 	mkdir -p build/
