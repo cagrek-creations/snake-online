@@ -121,7 +121,7 @@ class Snake : public Observer {
         }
         ~Snake();
 
-        void render();
+        void render(int myPid);
         void update(double deltaTime);
 
         void updatePos(int xPos, int yPos);
