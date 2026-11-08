@@ -103,8 +103,7 @@ void Snake::render(int myPid) {
             snakeBlocks[i].render();
         }
     }
-    std::cout << "my pid: " << myPid << std::endl;
-    std::cout << "snake pid: " << m_pid << std::endl;
+
     if (m_pid == myPid) {
         renderBoostBar();
         // renderEffectBars();
@@ -112,7 +111,6 @@ void Snake::render(int myPid) {
             pair.second->render();
         }
     }
-
 }
 
 void Snake::renderBoostBar() {

@@ -94,7 +94,11 @@ void Game::handleWaitingForPlayers(const std::vector<std::string> &event) {
     waitingForPlayers = waiting;
 }
 
-void Game::gameReset(const std::vector<std::string> &event) {}
+void Game::gameReset(const std::vector<std::string> &event) {
+    reset();
+    disconnect();
+    connect();
+}
 
 void Game::gameStop(const std::vector<std::string> &event) {}
 
