@@ -90,7 +90,7 @@ void Game::render() {
     m_gui->update();
 
     renderState();
-    
+
     if (m_fpsCounter > 500.f) {
         m_fpsCounter = 0;
         m_fpsString = "fps: " + std::to_string((int)m_fps);

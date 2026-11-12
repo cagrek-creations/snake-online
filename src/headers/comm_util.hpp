@@ -43,4 +43,3 @@ std::unordered_map<std::string, std::string> getConfiguration(const std::string&
 std::vector<std::string> splitString(const std::string& input, char delimiter);
 
 #endif
-

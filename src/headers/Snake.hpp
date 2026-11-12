@@ -246,4 +246,3 @@ class Snake : public Observer {
         void calculateDirectionOtherPlayer(Vector2 _op, Vector2 _np);
 
 };
-

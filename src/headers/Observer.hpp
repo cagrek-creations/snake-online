@@ -4,7 +4,6 @@
 #include <functional>
 #include <SDL2/SDL.h>
 
-
 class Observer {
     public:
         virtual void onEvent(const SDL_Event& event) {};

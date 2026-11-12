@@ -40,7 +40,7 @@ class TcpCommunication {
             std::cout << m_port << std::endl;
 
             m_isConnected = connectToServer();
-    
+
         }
 
         ~TcpCommunication() {

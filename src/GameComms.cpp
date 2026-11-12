@@ -106,13 +106,3 @@ void Game::handleGameStarting(const std::vector<std::string> &event) {
     waitingForPlayers = false;
     countdown = 2000;
 }
-
-
-    // if (command == "PLAYER_SCORE_COLLECTED") {
-    //     int xPos = stoi(event[1]);
-    //     int yPos = stoi(event[2]);
-    //     std::string command = "SCORE_COLLECTED;" + std::to_string(m_myPid) + ";0;0;" + std::to_string(xPos) + ";" + std::to_string(yPos); 
-    //     m_gameController->sendMessage(command);
-    //     removeScore(xPos, yPos);
-    //     playerGrow();
-    // }

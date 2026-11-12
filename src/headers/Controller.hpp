@@ -73,7 +73,7 @@ class Controller {
             m_client.reset();
         }
 
-        
+
         // void attachObserver(Observer* observer) {
         //     observers.push_back(observer);
 
@@ -155,7 +155,7 @@ class Controller {
         }
 
     protected:
-        
+
         std::unique_ptr<TcpCommunication> m_client; 
 
         std::string m_nickname;

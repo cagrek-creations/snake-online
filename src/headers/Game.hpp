@@ -64,7 +64,7 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
 
         void connect();
         void disconnect();
-        
+
     private:
         double m_deltaTime = 0;
         float countdown = 0;
