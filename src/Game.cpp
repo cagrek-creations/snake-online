@@ -96,7 +96,7 @@ void Game::render() {
         m_fpsString = "fps: " + std::to_string((int)m_fps);
     }
 
-    m_gui->renderText(WINDOW_WIDTH - 200, 100, m_fpsString, 0);
+    m_gui->renderText(WINDOW_WIDTH - 200, 100, m_fpsString, "pixeloidm_32", 0);
 
     // TODO: Update this to only render over the grid instead of the screen.
     SDL_Rect dstRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
@@ -175,8 +175,10 @@ void Game::renderState() {
             s.second->render();
         }
 
-        if (waitingForPlayers) m_gui->renderText(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y, "WAITING FOR PLAYERS", TEXT_CENTRALIZED);
-        if (countdown >= 0) m_gui->renderText(WINDOW_MIDDLE_X-100, WINDOW_MIDDLE_Y-200, std::to_string(countdown), 0);
+        if (waitingForPlayers) m_gui->renderText(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y, "WAITING FOR PLAYERS", "pixeloidm_32",TEXT_CENTRALIZED);
+        if (countdown >= 0) {
+            m_gui->renderText(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y-200, std::to_string((int)(countdown / 1000)), "pixeloidm_64", TEXT_CENTRALIZED);
+        }
 
     } else if (m_state == GAME_QUIT) {
         m_isRunning = false;

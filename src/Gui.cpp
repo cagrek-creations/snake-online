@@ -190,12 +190,17 @@ SDL_Texture *GUI::copyTexture(TextureID key) {
     return copy;
 }
 
-void GUI::renderText(int x, int y, const std::string &text, int flags) {
+void GUI::renderText(int x, int y, const std::string &text, const std::string &fontName, int flags) {
     int _x = x;
     int _y = y;
 
+    TTF_Font *font = m_fonts[fontName];
+    if (!font) {
+        font = m_font;
+    }
+
     // Create surface from text
-    SDL_Surface *surface = TTF_RenderText_Blended(m_font, text.c_str(), color::WHITE);
+    SDL_Surface *surface = TTF_RenderText_Blended(font, text.c_str(), color::WHITE);
     if (!surface) {
         SDL_Log("Failed to create text surface: %s", TTF_GetError());
         return;
