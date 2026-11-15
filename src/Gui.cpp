@@ -190,7 +190,10 @@ SDL_Texture *GUI::copyTexture(TextureID key) {
     return copy;
 }
 
-void GUI::renderText(int x, int y, const std::string &text) {
+void GUI::renderText(int x, int y, const std::string &text, int flags) {
+    int _x = x;
+    int _y = y;
+
     // Create surface from text
     SDL_Surface *surface = TTF_RenderText_Blended(m_font, text.c_str(), color::WHITE);
     if (!surface) {
@@ -206,7 +209,12 @@ void GUI::renderText(int x, int y, const std::string &text) {
         return;
     }
 
-    SDL_Rect destRect = { x, y, surface->w, surface->h };
+    if (flags & TEXT_CENTRALIZED) {
+        _x = x - surface->w / 2;
+        _y = y - surface->h / 2;
+    }
+
+    SDL_Rect destRect = { _x, _y, surface->w, surface->h };
 
     // surface no longer needed
     SDL_FreeSurface(surface);

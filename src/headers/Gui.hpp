@@ -78,7 +78,7 @@ class GUI : public Observer {
         ~GUI();
 
         void render();
-        void renderText(int x, int y, const std::string &text);
+        void renderText(int x, int y, const std::string &text, int flags);
         void update();
 
         void onEvent(const SDL_Event& event) override;
