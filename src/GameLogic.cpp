@@ -21,28 +21,31 @@ void Game::updatePlayerPosition(const std::vector<std::string> &event) {
     }
 }
 
+// TODO: redundant code, abstract?
 void Game::addNewPlayer(const std::vector<std::string> &event) {
     int eventsize = event.size();
     int pid = stoi(event[1]);
+    std::string name = event[2];
     std::string color = event[3];
     int snakeSize = stoi(event[4]);
     int xPos = stoi(event[5]) * m_grid->getGridPointWidth();
     int yPos = stoi(event[6]) * m_grid->getGridPointHeight();
     Vector2 pos = Vector2(xPos, yPos);
 
-    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), pos, m_grid.get(), snakeSize, m_gui->getColor(color), m_players.size(), 1);
+    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), pos, m_grid.get(), snakeSize, m_gui->getColor(color), color, m_players.size(), 1, name);
     m_players[pid] = std::move(newPlayer);
 }
 
 void Game::addPlayer(const std::vector<std::string> &event) {
     int eventsize = event.size();
     int pid = stoi(event[1]);
+    std::string name = event[2];
     std::string color = event[3];
     int xPos = stoi(event[4]) * m_grid->getGridPointWidth();
     int yPos = stoi(event[5]) * m_grid->getGridPointHeight();
     Vector2 pos = Vector2(xPos, yPos);
 
-    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), pos, m_grid.get(), 1, m_gui->getColor(color), m_players.size(), 1);
+    std::shared_ptr<Snake> newPlayer = std::make_shared<Snake>(m_gui.get(), pos, m_grid.get(), 1, m_gui->getColor(color), color, m_players.size(), 1, name);
     m_players[pid] = std::move(newPlayer);
 
     // Should always be true but just in case.

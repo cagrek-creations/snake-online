@@ -115,13 +115,15 @@ class Snakeblock {
 class Snake : public Observer {
 
     public:
-        Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, int pid, int speed);
+        // TODO: Remove SDL_Color double implementation.
+        Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, std::string c, int pid, int speed, const std::string &name);
         Snake() {
 
         }
         ~Snake();
 
         void render(int myPid);
+        void renderName();
         void update(double deltaTime);
 
         void updatePos(int xPos, int yPos);
@@ -176,6 +178,7 @@ class Snake : public Observer {
 
 
         int calculateBodyOffset(direction dir1, direction dir2);
+        TextureID calculateTextureIDfromString(std::string c);
 
         int m_snakeSize;
         int m_snakeWidth;
@@ -184,6 +187,8 @@ class Snake : public Observer {
         int m_newDegrees;
         int m_pid;
         int m_speed;
+        std::string m_name;
+        std::string m_c;
 
         double m_limit;
         double m_speedLimit;

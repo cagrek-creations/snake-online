@@ -153,7 +153,7 @@ void Game::createPlayer(int size, int xPos, int yPos) {
     int xPosGrid = ((xPos) * (m_grid->getGridPointWidth()));
     int yPosGrid = ((yPos) * (m_grid->getGridPointHeight()));
     Vector2 initialPos = Vector2(xPosGrid, yPosGrid);
-    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), size, m_gui->getColor(m_playerColor), m_myPid, 1);
+    std::shared_ptr<Snake> snake = std::make_shared<Snake>(m_gui.get(), initialPos, m_grid.get(), size, m_gui->getColor(m_playerColor), m_playerColor, m_myPid, 1, m_playerName);
     m_gameController->attachObserver(snake);
     m_players[m_myPid] = std::move(snake);
 }
@@ -172,13 +172,17 @@ void Game::renderState() {
         for (auto &p : m_players) {
             if (!p.second) continue;
             p.second->render(m_myPid);
+            if (waitingForPlayers || countdown > 0) p.second->renderName();
         }
 
         for (auto &s : m_scores) {
             s.second->render();
         }
 
-        if (waitingForPlayers) m_gui->renderText(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y, "WAITING FOR PLAYERS", "pixeloidm_32",TEXT_CENTRALIZED);
+        if (waitingForPlayers) {
+            m_gui->renderText(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y, "WAITING FOR PLAYERS", "pixeloidm_32", TEXT_CENTRALIZED);
+        }
+
         if (countdown >= 0) {
             m_gui->renderText(WINDOW_MIDDLE_X, WINDOW_MIDDLE_Y-200, std::to_string((int)(countdown / 1000)), "pixeloidm_64", TEXT_CENTRALIZED);
         }
