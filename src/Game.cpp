@@ -124,11 +124,14 @@ void Game::onEventState(const SDL_Event &event) {
 }
 
 void Game::onEvent(const SDL_Event& event) {
-    if (m_state == GAME_SPECTATE) return;
-    if (m_myPid != -1) m_players[m_myPid]->onEvent(event);
-
     const Uint8 *key_state = SDL_GetKeyboardState(NULL);
-    if(key_state[SDL_SCANCODE_ESCAPE] && m_state == GAME_PLAY) escape();
+    if (m_state == GAME_SPECTATE) {
+        if(key_state[SDL_SCANCODE_ESCAPE]) escape();
+        return; // Early return to avoid other events that can cause a segfault.
+    }
+
+    if (m_myPid != -1) m_players[m_myPid]->onEvent(event);
+    if(key_state[SDL_SCANCODE_ESCAPE] && (m_state == GAME_PLAY)) escape();
 
     onEventState(event);
 }
