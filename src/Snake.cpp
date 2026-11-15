@@ -31,7 +31,7 @@ void Snake::createEffectUi() {
     }
 }
 
-Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, int pid, int speed) {
+Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, std::string c, int pid, int speed, const std::string &name) {
 
     this->m_renderer = gui->getRenderer();
     // this->m_snakeWidth = snakeWidth;
@@ -39,7 +39,9 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, 
     this->m_snakeSize = snakeSize;
     this->m_grid = grid;
     this->m_gui = gui;
+    m_name = name;
     m_color = color;
+    m_c = c;
     m_pid = pid;
     m_speed = speed;
     m_speedLimit = 100.0f * m_speed;
@@ -49,7 +51,7 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, 
     m_speedBoostTime = m_speedBoostTimeLimit;
     m_speedBoostTimeout = 0.0f;
 
-    SpriteSheet *atlas = m_gui->getAtlas(TextureID::A_YELLOW_SNAKE);
+    SpriteSheet *atlas = m_gui->getAtlas(calculateTextureIDfromString(c));
     m_spriteSnakeHead = std::make_shared<Sprite>(atlas->getTexture(), atlas->getClip(0));
     m_spriteSnakeBody = std::make_shared<Sprite>(atlas->getTexture(), atlas->getClip(1));
     m_spriteSnakeCurve = std::make_shared<Sprite>(atlas->getTexture(), atlas->getClip(2));
@@ -111,6 +113,14 @@ void Snake::render(int myPid) {
             pair.second->render();
         }
     }
+}
+
+void Snake::renderName() {
+    auto head = &snakeBlocks.front();
+    if (!head) return;
+    int xPos = head->getPos().x;
+    int yPos = head->getPos().y;
+    m_gui->renderText(xPos + m_grid->getGridPointWidth() / 2, yPos - m_grid->getGridPointHeight(), m_name, "pixeloidm_32", TEXT_CENTRALIZED);
 }
 
 void Snake::renderBoostBar() {
@@ -620,4 +630,13 @@ void UIElementSnakeEffect::render() {
 
     SDL_SetRenderDrawColor(m_renderer, m_color.r, m_color.g, m_color.b, m_color.a);
     SDL_RenderFillRect(m_renderer, &m_effectDurationBar);
+}
+
+// TODO: better implementation?
+TextureID Snake::calculateTextureIDfromString(std::string c) {
+    if (c == "green") return TextureID::A_GREEN_SNAKE;
+    if (c == "yellow") return TextureID::A_YELLOW_SNAKE;
+    if (c == "red") return TextureID::A_RED_SNAKE;
+    if (c == "purple") return TextureID::A_PURPLE_SNAKE;
+    return TextureID::A_YELLOW_SNAKE;
 }
