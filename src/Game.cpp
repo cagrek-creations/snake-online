@@ -31,6 +31,7 @@ void Game::reset() {
     m_scores.clear();
     m_myPid = -1;
     m_serverSetupIsComplete = false;
+    m_gameStopped = false;
 }
 
 void Game::update(double deltaTime) {
@@ -50,6 +51,9 @@ void Game::update(double deltaTime) {
     // }
     handleEvents(m_gameController->getServerEvents());
     handleEvents(m_gameController->getLocalEvents());
+
+
+    if (m_gameStopped) return;
 
     if (m_state == GAME_PLAY) {
         if (waitingForPlayers) return;
