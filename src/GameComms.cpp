@@ -100,7 +100,10 @@ void Game::gameReset(const std::vector<std::string> &event) {
     connect();
 }
 
-void Game::gameStop(const std::vector<std::string> &event) {}
+void Game::gameStop(const std::vector<std::string> &event) {
+    bool _gameStop = stoi(event[1]);
+    m_gameStopped = _gameStop;
+}
 
 void Game::handleGameStarting(const std::vector<std::string> &event) {
     waitingForPlayers = false;
