@@ -49,5 +49,3 @@ Score::~Score() {
 void Score::addEffect(std::unique_ptr<Effect> effect) {
     m_effects.emplace_back(std::move(effect));
 }
-
-

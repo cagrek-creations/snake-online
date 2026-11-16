@@ -73,7 +73,7 @@ Snake::Snake(GUI *gui, Vector2 pos, Grid *grid, int snakeSize, SDL_Color color, 
         // std::cout << "Found gridpos";
         gridPos = gp->getGridPointPos();
     }
-    // std::cout << gridPos.x;
+
     if(gp == nullptr) std::cout << "WHAT";
     for (int i = 0; i < snakeSize; i++) {
         snakeBlocks.push_back(Snakeblock(m_gui, gridPos.x, gridPos.y, m_snakeWidth, m_snakeHeight, m_spriteSnakeBody, m_degrees, m_color, m_snakeDirection));
@@ -470,30 +470,6 @@ void Snake::removeSlowBoost() {
 
 void Snake::setSpeed(int speed) {
     m_speedLimit = m_speedLimitBase / speed;
-}
-
-// TODO: Redo with vectors and merge with bottom, can this be removed?
-Snakeblock::Snakeblock(GUI *gui, int snakeBlockXpos, int snakeBlockYpos, int snakeBlockWidth, int snakeBlockHeight, SDL_Texture *texture, int degrees, SDL_Color color, direction dir) {
-
-    m_snakeBlockPos = Vector2(snakeBlockXpos, snakeBlockYpos);
-    this->m_snakeBlockWidth = snakeBlockWidth;
-    this->m_snakeBlockheight = snakeBlockHeight;
-    m_gui = gui;
-    this->m_texture = texture;
-    this->m_degrees = degrees;
-    m_snakeBlockDirection = dir;
-    m_color = color;
-
-    m_snakeblock.w = m_snakeBlockWidth;
-    m_snakeblock.h = m_snakeBlockheight;
-    m_snakeblock.x = m_snakeBlockPos.x;
-    m_snakeblock.y = m_snakeBlockPos.y;
-
-    m_snakeblockOverlay.w = m_snakeBlockWidth /* -4 */;
-    m_snakeblockOverlay.h = m_snakeBlockWidth /* -4 */;
-    m_snakeblockOverlay.x = m_snakeBlockPos.x;
-    m_snakeblockOverlay.y = m_snakeBlockPos.y;
-    m_textureDegreeOffset = 180;
 }
 
 // TODO: Redo with vectors
