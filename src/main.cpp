@@ -99,7 +99,7 @@ void getColor(GUI &ui, SDL_Color &color, std::string &colorString) {
 int main(int argc, char **argv) {
 
     int pid = -1;
-    
+
     auto g = std::make_shared<Game>();
     g->init();
 
@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
         auto t1 = Clock::now();
         deltaTime = (double)(std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()) / 1000000.f;
     }
-    
+
     return 0;
 }
 

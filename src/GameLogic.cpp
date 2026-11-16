@@ -3,7 +3,6 @@
 void Game::handleEvents(std::vector<std::string> serverEvents) {
     for (auto se : serverEvents) {
         std::vector<std::string> event = splitString(se, ';');
-        // std::cout << "Handling: " << event[0] << std::endl;
         handleEvent(event);
     }
 }
@@ -119,7 +118,6 @@ Gridpoint *Game::calcScorePoint(Vector2 pos) {
 }
 
 void Game::handleEffects(const std::string &type, int pid) {
-    std::cout << m_myPid;
     if (type == "inverse_self" && pid == m_myPid) {
         m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 5000.0f));
     }
