@@ -58,3 +58,4 @@ debug/*
 bin/*
 src/cpp-lib/*
 old/
+release/
