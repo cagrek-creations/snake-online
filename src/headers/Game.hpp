@@ -140,7 +140,7 @@ class Game : public Observer, public std::enable_shared_from_this<Game>{
 
         void addScore(Vector2 pos, const std::string &type);
         void removeScore(Vector2 pos);
-        void playerGrow();
+        void playerGrow(int pid);
 
         Gridpoint *calcScorePoint(Vector2 pos);
 

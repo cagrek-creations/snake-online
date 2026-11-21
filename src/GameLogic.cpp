@@ -121,14 +121,22 @@ void Game::handleEffects(const std::string &type, int pid) {
     if (type == "inverse_self" && pid == m_myPid) {
         m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 5000.0f));
     }
-    if (type == "speed_self" && pid == m_myPid) {
+    else if (type == "speed_self" && pid == m_myPid) {
         m_players[m_myPid]->addEffect(std::make_unique<SpeedBoostEffect>(*m_players[m_myPid], 5000.0f));
     }
-    if (type == "inverse_other" && pid != m_myPid) {
+    else if (type == "inverse_other" && pid != m_myPid) {
         m_players[m_myPid]->addEffect(std::make_unique<InvertControlsEffect>(*m_players[m_myPid], 5000.0f));
+    }
+    else if (type == "speed_other" && pid != m_myPid) {
+        m_players[m_myPid]->addEffect(std::make_unique<SpeedBoostEffect>(*m_players[m_myPid], 5000.0f));
+    }
+    else if (type == "golden_berry") {
+        for (int i = 0; i < 5; i++) {
+            playerGrow(pid);
+        }
     }
 }
 
-void Game::playerGrow() {
+void Game::playerGrow(int pid) {
     m_players[m_myPid]->grow();
 }
