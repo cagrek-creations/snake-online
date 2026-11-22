@@ -1,5 +1,5 @@
 CC=g++
-OPTIMIZATION= #-O2
+# OPTIMIZATION= -O2
 
 # https://www.reddit.com/r/gamedev/comments/5pl8vs/sdl2_staticlly_link/
 LINKER_FLAGS= -static
@@ -33,13 +33,13 @@ snake: $(OBJ)
 	$(CC) $(OPTIMIZATION) -o ./bin/$@ $^ $(CFLAGS) -I./src/cpp-lib
 
 static: $(OBJ)
-	$(CC) $(OPTIMIZATION) -o ./bin/$@ $^ $(CFLAGS) $(LINKER_FLAGS) -mconsole
+	$(CC) $(OPTIMIZATION) -o ./bin/$@ $^ $(CFLAGS) $(LINKER_FLAGS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CC) -c $< -o $@ -I./src/cpp-lib -MMD -MP
+	$(CC) -c $< $(OPTIMIZATION) -o $@ -I./src/cpp-lib -MMD -MP
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/cpp-lib/%.cpp
-	$(CC) -c $< -o $@ -I./src/cpp-lib -MMD -MP
+	$(CC) -c $< $(OPTIMIZATION) -o $@ -I./src/cpp-lib -MMD -MP
 
 -include $(DEP)
 
@@ -96,3 +96,14 @@ prepare-windows-x86_64:
 .PHONY: all install prepare-windows-x86_64 remove clean run
 
 all: snake
+
+release: static
+	rm -rf release/
+	mkdir -p release/
+	cp -r bin/fonts release/
+	cp -r bin/gfx release/
+	cp -r bin/sfx release/
+	cp bin/static release/
+	cp bin/font.ttf release/
+	cp bin/config.txt release/
+

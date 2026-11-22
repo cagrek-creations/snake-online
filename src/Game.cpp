@@ -384,6 +384,7 @@ void Game::loadSounds() {
 void Game::loadTextures() {
     m_gui->loadTexture(TextureID::ERR, "err.png");
     m_gui->loadTexture(TextureID::BERRY, "scores/SnakePowerBerry.png");
+    m_gui->loadTexture(TextureID::GOLDEN_BERRY, "scores/SnakePowerGoldenBerry.png");
     m_gui->loadTexture(TextureID::SPEED, "scores/SnakePowerSpeed.png");
     m_gui->loadTexture(TextureID::SPEED_O, "scores/SnakePowerSpeedO.png");
     m_gui->loadTexture(TextureID::SWAPAROO, "scores/SnakePowerInvert.png");
